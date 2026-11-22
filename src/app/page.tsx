@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { Navbar } from "@/components/site/navbar";
 import { Hero } from "@/components/site/hero";
-import { MarqueeStrip } from "@/components/site/marquee";
 import { AboutSection } from "@/components/site/about-section";
 import { ClassesSection } from "@/components/site/classes-section";
 import { ScheduleSection } from "@/components/site/schedule-section";
@@ -139,7 +138,6 @@ export default async function HomePage() {
       <Navbar />
       <main className="flex-1">
         <Hero />
-        <MarqueeStrip />
         <AboutSection />
         <ClassesSection classes={classes} />
         <ScheduleSection slots={slots} initialDay={currentGymDay()} />
