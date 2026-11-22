@@ -234,6 +234,10 @@
 .animate-slider-progress {
   animation: slider-progress-x var(--slide-duration, 6s) linear forwards;
 }
+/* Pause toggle — declared after the shorthand rule so it wins the cascade */
+.animate-slider-paused {
+  animation-play-state: paused !important;
+}
 
 /* Slow cinematic zoom on the active slide */
 @keyframes ken-burns {
@@ -247,3 +251,5 @@
 .animate-ken-burns {
   animation: ken-burns calc(var(--slide-duration, 6s) * 1.4) ease-out forwards;
 }
+
+/* cache-bust */
