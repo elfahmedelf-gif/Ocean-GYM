@@ -3,16 +3,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+  Copy,
   Loader2,
   Pencil,
   Plus,
   Search,
   Trash2,
+  TrendingUp,
   UserCheck,
   Users,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -52,23 +53,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
-import type { Member, MemberStatus, Plan } from "@/components/admin/types";
-
-const STATUS_LABELS: Record<MemberStatus, string> = {
-  pending: "قيد المراجعة",
-  active: "نشط",
-  expired: "منتهي",
-  frozen: "مجمّد",
-};
-
-const STATUS_BADGE_CLASS: Record<MemberStatus, string> = {
-  pending: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-  active: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  expired: "bg-red-500/15 text-red-400 border-red-500/30",
-  frozen: "bg-slate-500/15 text-slate-300 border-slate-500/30",
-};
-
-const ALL_STATUSES: MemberStatus[] = ["pending", "active", "expired", "frozen"];
+import { EmptyState, Field, PageHeader, StatusBadge } from "@/components/admin/shared";
+import { MEMBER_STATUSES } from "@/lib/gym";
+import type {
+  Member,
+  MemberStatus,
+  NutritionPlanItem,
+  Plan,
+  ProgressLogItem,
+} from "@/components/admin/types";
 
 interface MemberFormState {
   name: string;
@@ -79,6 +72,8 @@ interface MemberFormState {
   startDate: string;
   endDate: string;
   notes: string;
+  nutritionPlanId: string;
+  accessCode: string;
 }
 
 const EMPTY_FORM: MemberFormState = {
@@ -89,6 +84,37 @@ const EMPTY_FORM: MemberFormState = {
   status: "pending",
   startDate: "",
   endDate: "",
+  notes: "",
+  nutritionPlanId: "none",
+  accessCode: "",
+};
+
+interface ProgressFormState {
+  date: string;
+  weight: string;
+  fatPercent: string;
+  muscleMass: string;
+  waist: string;
+  chest: string;
+  arm: string;
+  notes: string;
+}
+
+function todayDateInput(): string {
+  const d = new Date();
+  const offset = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - offset * 60 * 1000);
+  return local.toISOString().slice(0, 10);
+}
+
+const EMPTY_PROGRESS: ProgressFormState = {
+  date: "",
+  weight: "",
+  fatPercent: "",
+  muscleMass: "",
+  waist: "",
+  chest: "",
+  arm: "",
   notes: "",
 };
 
@@ -112,9 +138,27 @@ function formatDate(iso: string | null): string {
   }
 }
 
+function formatLogDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("ar-EG", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function fmtNum(v: number | null): string {
+  if (v === null || v === undefined) return "—";
+  return String(v);
+}
+
 export default function MembersView() {
   const [members, setMembers] = useState<Member[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [nutritionPlans, setNutritionPlans] = useState<NutritionPlanItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -122,12 +166,23 @@ export default function MembersView() {
   const [editing, setEditing] = useState<Member | null>(null);
   const [form, setForm] = useState<MemberFormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [generatingCode, setGeneratingCode] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState<Member | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [activatingId, setActivatingId] = useState<string | null>(null);
 
+  // Progress dialog
+  const [progressMember, setProgressMember] = useState<Member | null>(null);
+  const [progressLogs, setProgressLogs] = useState<ProgressLogItem[]>([]);
+  const [progressLoading, setProgressLoading] = useState(false);
+  const [progressForm, setProgressForm] = useState<ProgressFormState>(EMPTY_PROGRESS);
+  const [progressSaving, setProgressSaving] = useState(false);
+  const [logDeleteTarget, setLogDeleteTarget] = useState<ProgressLogItem | null>(null);
+  const [logDeleting, setLogDeleting] = useState(false);
+
   const plansLoaded = useRef(false);
+  const nutritionLoaded = useRef(false);
 
   async function loadMembers() {
     try {
@@ -148,6 +203,12 @@ export default function MembersView() {
         .then(setPlans)
         .catch(() => {});
     }
+    if (!nutritionLoaded.current) {
+      nutritionLoaded.current = true;
+      apiFetch<NutritionPlanItem[]>("/api/admin/nutrition")
+        .then(setNutritionPlans)
+        .catch(() => {});
+    }
   }, []);
 
   const filtered = useMemo(() => {
@@ -157,9 +218,15 @@ export default function MembersView() {
       (m) =>
         m.name.toLowerCase().includes(q) ||
         m.email.toLowerCase().includes(q) ||
-        m.phone.toLowerCase().includes(q)
+        m.phone.toLowerCase().includes(q) ||
+        (m.accessCode ?? "").toLowerCase().includes(q)
     );
   }, [members, search]);
+
+  const lastWeight = useMemo(() => {
+    if (progressLogs.length === 0) return null;
+    return progressLogs[0].weight;
+  }, [progressLogs]);
 
   function openAdd() {
     setEditing(null);
@@ -178,8 +245,28 @@ export default function MembersView() {
       startDate: toDateInputValue(m.startDate),
       endDate: toDateInputValue(m.endDate),
       notes: m.notes ?? "",
+      nutritionPlanId: m.nutritionPlanId ?? "none",
+      accessCode: m.accessCode ?? "",
     });
     setFormOpen(true);
+  }
+
+  async function handleGenerateCode() {
+    setGeneratingCode(true);
+    try {
+      const res = await apiFetch<{ accessCode: string | null }>(
+        `/api/admin/members/${editing?.id}/access-code`,
+        { method: "POST" }
+      );
+      if (res.accessCode) {
+        setForm((f) => ({ ...f, accessCode: res.accessCode as string }));
+        toast.success(`تم توليد كود جديد: ${res.accessCode}`);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "تعذر توليد الكود");
+    } finally {
+      setGeneratingCode(false);
+    }
   }
 
   async function handleSave(e: React.FormEvent<HTMLFormElement>) {
@@ -200,6 +287,8 @@ export default function MembersView() {
       startDate: form.startDate || null,
       endDate: form.endDate || null,
       notes: form.notes.trim() || null,
+      nutritionPlanId: form.nutritionPlanId === "none" ? null : form.nutritionPlanId,
+      accessCode: form.accessCode.trim() || null,
     };
 
     try {
@@ -247,24 +336,104 @@ export default function MembersView() {
     }
   }
 
+  function handleCopyCode(code: string) {
+    navigator.clipboard
+      .writeText(code)
+      .then(() => toast.success(`تم نسخ الكود ${code}`))
+      .catch(() => toast.error("تعذر نسخ الكود"));
+  }
+
+  // ===== Progress dialog handlers =====
+
+  async function openProgress(m: Member) {
+    setProgressMember(m);
+    setProgressLogs([]);
+    setProgressForm({ ...EMPTY_PROGRESS, date: todayDateInput() });
+    setProgressLoading(true);
+    try {
+      const logs = await apiFetch<ProgressLogItem[]>(`/api/admin/members/${m.id}/progress`);
+      setProgressLogs(logs);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "تعذر تحميل سجلات المتابعة");
+    } finally {
+      setProgressLoading(false);
+    }
+  }
+
+  async function handleSaveProgress(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!progressMember) return;
+
+    if (!progressForm.date) {
+      toast.error("تاريخ القياس مطلوب");
+      return;
+    }
+    const weight = Number(progressForm.weight);
+    if (!progressForm.weight || Number.isNaN(weight) || weight <= 0) {
+      toast.error("الوزن مطلوب ويجب أن يكون أكبر من صفر");
+      return;
+    }
+
+    setProgressSaving(true);
+    const payload = {
+      date: new Date(`${progressForm.date}T12:00:00`).toISOString(),
+      weight,
+      fatPercent: progressForm.fatPercent ? Number(progressForm.fatPercent) : null,
+      muscleMass: progressForm.muscleMass ? Number(progressForm.muscleMass) : null,
+      waist: progressForm.waist ? Number(progressForm.waist) : null,
+      chest: progressForm.chest ? Number(progressForm.chest) : null,
+      arm: progressForm.arm ? Number(progressForm.arm) : null,
+      notes: progressForm.notes.trim() || null,
+    };
+
+    try {
+      await jsonPost(`/api/admin/members/${progressMember.id}/progress`, payload);
+      toast.success("تم إضافة سجل المتابعة بنجاح");
+      setProgressForm({ ...EMPTY_PROGRESS, date: todayDateInput() });
+      const logs = await apiFetch<ProgressLogItem[]>(
+        `/api/admin/members/${progressMember.id}/progress`
+      );
+      setProgressLogs(logs);
+      await loadMembers();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "تعذر حفظ السجل");
+    } finally {
+      setProgressSaving(false);
+    }
+  }
+
+  async function handleDeleteLog() {
+    if (!logDeleteTarget) return;
+    setLogDeleting(true);
+    try {
+      await jsonDelete(`/api/admin/progress/${logDeleteTarget.id}`);
+      toast.success("تم حذف السجل بنجاح");
+      setLogDeleteTarget(null);
+      if (progressMember) {
+        const logs = await apiFetch<ProgressLogItem[]>(
+          `/api/admin/members/${progressMember.id}/progress`
+        );
+        setProgressLogs(logs);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "تعذر حذف السجل");
+    } finally {
+      setLogDeleting(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Users className="h-7 w-7 text-primary" aria-hidden="true" />
-            إدارة الأعضاء
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            متابعة الأعضاء وتنشيط الاشتراكات وإدارة بياناتهم
-          </p>
-        </div>
+      <PageHeader
+        icon={Users}
+        title="إدارة الأعضاء"
+        subtitle="متابعة الأعضاء وتنشيط الاشتراكات والخطط الغذائية وأكواد الدخول"
+      >
         <Button onClick={openAdd} className="w-full md:w-auto">
           <Plus className="h-4 w-4" aria-hidden="true" />
           إضافة عضو
         </Button>
-      </div>
+      </PageHeader>
 
       {/* Search */}
       <div className="relative max-w-md">
@@ -274,7 +443,7 @@ export default function MembersView() {
         />
         <Input
           type="search"
-          placeholder="بحث بالاسم أو الهاتف أو البريد"
+          placeholder="بحث بالاسم أو الهاتف أو البريد أو الكود"
           aria-label="بحث في الأعضاء"
           className="pr-9"
           value={search}
@@ -291,20 +460,19 @@ export default function MembersView() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <Users className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">
-              {search
-                ? "لا توجد نتائج مطابقة للبحث"
-                : "لا يوجد أعضاء بعد — ابدأ بإضافة أول عضو"}
-            </p>
+          <EmptyState
+            icon={Users}
+            title={search ? "لا توجد نتائج مطابقة للبحث" : "لا يوجد أعضاء بعد"}
+            description={search ? undefined : "ابدأ بإضافة أول عضو"}
+            className="border-0"
+          >
             {!search && (
               <Button variant="outline" onClick={openAdd}>
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 إضافة عضو
               </Button>
             )}
-          </div>
+          </EmptyState>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
             <Table>
@@ -313,8 +481,9 @@ export default function MembersView() {
                   <TableHead>الاسم</TableHead>
                   <TableHead>الهاتف</TableHead>
                   <TableHead>الباقة</TableHead>
+                  <TableHead>الخطة الغذائية</TableHead>
                   <TableHead>الحالة</TableHead>
-                  <TableHead>تاريخ الانتهاء</TableHead>
+                  <TableHead>كود الدخول</TableHead>
                   <TableHead className="text-left">إجراءات</TableHead>
                 </TableRow>
               </TableHeader>
@@ -333,19 +502,47 @@ export default function MembersView() {
                     <TableCell className="text-muted-foreground text-sm">
                       {m.plan?.name ?? "بدون باقة"}
                     </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={STATUS_BADGE_CLASS[m.status] ?? ""}
-                      >
-                        {STATUS_LABELS[m.status] ?? m.status}
-                      </Badge>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {m.nutritionPlan?.name ?? "—"}
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-xs whitespace-nowrap">
-                      {formatDate(m.endDate)}
+                    <TableCell>
+                      <StatusBadge status={m.status} />
+                    </TableCell>
+                    <TableCell>
+                      {m.accessCode ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <code
+                            dir="ltr"
+                            className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-xs font-mono text-cyan-300 tabular-nums"
+                          >
+                            {m.accessCode}
+                          </code>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7 text-muted-foreground hover:text-primary"
+                            onClick={() => handleCopyCode(m.accessCode as string)}
+                            aria-label={`نسخ كود ${m.name}`}
+                          >
+                            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                          </Button>
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1 justify-start md:justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+                          onClick={() => openProgress(m)}
+                          aria-label={`متابعة ${m.name}`}
+                        >
+                          <TrendingUp className="h-4 w-4" aria-hidden="true" />
+                          المتابعة
+                        </Button>
                         {m.status === "pending" && (
                           <Button
                             size="sm"
@@ -403,8 +600,7 @@ export default function MembersView() {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSave} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="member-name">الاسم *</Label>
+            <Field label="الاسم" required htmlFor="member-name">
               <Input
                 id="member-name"
                 value={form.name}
@@ -412,10 +608,9 @@ export default function MembersView() {
                 placeholder="اسم العضو"
                 required
               />
-            </div>
+            </Field>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="member-email">البريد الإلكتروني *</Label>
+              <Field label="البريد الإلكتروني" required htmlFor="member-email">
                 <Input
                   id="member-email"
                   type="email"
@@ -425,9 +620,8 @@ export default function MembersView() {
                   placeholder="name@example.com"
                   required
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="member-phone">الهاتف *</Label>
+              </Field>
+              <Field label="الهاتف" required htmlFor="member-phone">
                 <Input
                   id="member-phone"
                   type="tel"
@@ -437,11 +631,10 @@ export default function MembersView() {
                   placeholder="01012345678"
                   required
                 />
-              </div>
+              </Field>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="member-plan">الباقة</Label>
+              <Field label="الباقة" htmlFor="member-plan">
                 <Select
                   value={form.planId}
                   onValueChange={(v) => setForm({ ...form, planId: v })}
@@ -458,9 +651,8 @@ export default function MembersView() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="member-status">الحالة</Label>
+              </Field>
+              <Field label="الحالة" htmlFor="member-status">
                 <Select
                   value={form.status}
                   onValueChange={(v) => setForm({ ...form, status: v as MemberStatus })}
@@ -469,18 +661,17 @@ export default function MembersView() {
                     <SelectValue placeholder="اختر الحالة" />
                   </SelectTrigger>
                   <SelectContent>
-                    {ALL_STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {STATUS_LABELS[s]}
+                    {MEMBER_STATUSES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </Field>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="member-start">تاريخ البدء</Label>
+              <Field label="تاريخ البدء" htmlFor="member-start">
                 <Input
                   id="member-start"
                   type="date"
@@ -488,9 +679,8 @@ export default function MembersView() {
                   value={form.startDate}
                   onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="member-end">تاريخ الانتهاء</Label>
+              </Field>
+              <Field label="تاريخ الانتهاء" htmlFor="member-end">
                 <Input
                   id="member-end"
                   type="date"
@@ -498,10 +688,55 @@ export default function MembersView() {
                   value={form.endDate}
                   onChange={(e) => setForm({ ...form, endDate: e.target.value })}
                 />
-              </div>
+              </Field>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="member-notes">ملاحظات</Label>
+            <Field label="الخطة الغذائية" htmlFor="member-nutrition">
+              <Select
+                value={form.nutritionPlanId}
+                onValueChange={(v) => setForm({ ...form, nutritionPlanId: v })}
+              >
+                <SelectTrigger id="member-nutrition" className="w-full">
+                  <SelectValue placeholder="اختر الخطة الغذائية" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">بدون خطة</SelectItem>
+                  {nutritionPlans.map((np) => (
+                    <SelectItem key={np.id} value={np.id}>
+                      {np.name} — {np.calories} سعرة
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="كود الدخول (بوابة الأعضاء)" htmlFor="member-access-code">
+              <div className="flex gap-2">
+                <Input
+                  id="member-access-code"
+                  dir="ltr"
+                  className="font-mono tabular-nums"
+                  value={form.accessCode}
+                  onChange={(e) => setForm({ ...form, accessCode: e.target.value })}
+                  placeholder="OC-1234"
+                />
+                {editing && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="shrink-0 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+                    onClick={handleGenerateCode}
+                    disabled={generatingCode}
+                  >
+                    {generatingCode ? (
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Plus className="h-4 w-4" aria-hidden="true" />
+                    )}
+                    توليد كود جديد
+                  </Button>
+                )}
+              </div>
+            </Field>
+            <Field label="ملاحظات" htmlFor="member-notes">
               <Textarea
                 id="member-notes"
                 value={form.notes}
@@ -509,7 +744,7 @@ export default function MembersView() {
                 placeholder="أي ملاحظات إضافية عن العضو..."
                 rows={3}
               />
-            </div>
+            </Field>
             <DialogFooter className="gap-2">
               <Button
                 type="button"
@@ -551,6 +786,252 @@ export default function MembersView() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+              حذف نهائي
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Progress dialog */}
+      <Dialog
+        open={!!progressMember}
+        onOpenChange={(open) => !open && setProgressMember(null)}
+      >
+        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>متابعة العضو — {progressMember?.name}</DialogTitle>
+            <DialogDescription>
+              الوزن الحالي:{" "}
+              <span className="font-bold text-cyan-400 tabular-nums">
+                {lastWeight !== null ? `${fmtNum(lastWeight)} كجم` : "لا يوجد قياس بعد"}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Add log form */}
+          <form onSubmit={handleSaveProgress} className="space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <Field label="التاريخ" required htmlFor="progress-date">
+                <Input
+                  id="progress-date"
+                  type="date"
+                  dir="ltr"
+                  value={progressForm.date}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, date: e.target.value })
+                  }
+                  required
+                />
+              </Field>
+              <Field label="الوزن (كجم)" required htmlFor="progress-weight">
+                <Input
+                  id="progress-weight"
+                  type="number"
+                  step="0.1"
+                  min="20"
+                  max="300"
+                  dir="ltr"
+                  value={progressForm.weight}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, weight: e.target.value })
+                  }
+                  placeholder="78.5"
+                  required
+                />
+              </Field>
+              <Field label="نسبة الدهون %" htmlFor="progress-fat">
+                <Input
+                  id="progress-fat"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="70"
+                  dir="ltr"
+                  value={progressForm.fatPercent}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, fatPercent: e.target.value })
+                  }
+                  placeholder="18"
+                />
+              </Field>
+              <Field label="الكتلة العضلية" htmlFor="progress-muscle">
+                <Input
+                  id="progress-muscle"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  dir="ltr"
+                  value={progressForm.muscleMass}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, muscleMass: e.target.value })
+                  }
+                  placeholder="32"
+                />
+              </Field>
+              <Field label="الخصر (سم)" htmlFor="progress-waist">
+                <Input
+                  id="progress-waist"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  dir="ltr"
+                  value={progressForm.waist}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, waist: e.target.value })
+                  }
+                  placeholder="82"
+                />
+              </Field>
+              <Field label="الصدر (سم)" htmlFor="progress-chest">
+                <Input
+                  id="progress-chest"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  dir="ltr"
+                  value={progressForm.chest}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, chest: e.target.value })
+                  }
+                  placeholder="98"
+                />
+              </Field>
+              <Field label="الذراع (سم)" htmlFor="progress-arm">
+                <Input
+                  id="progress-arm"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  dir="ltr"
+                  value={progressForm.arm}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, arm: e.target.value })
+                  }
+                  placeholder="34"
+                />
+              </Field>
+              <Field label="ملاحظات" htmlFor="progress-notes">
+                <Input
+                  id="progress-notes"
+                  value={progressForm.notes}
+                  onChange={(e) =>
+                    setProgressForm({ ...progressForm, notes: e.target.value })
+                  }
+                  placeholder="ملاحظة سريعة..."
+                />
+              </Field>
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={progressSaving}>
+                {progressSaving && (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                )}
+                إضافة سجل
+              </Button>
+            </div>
+          </form>
+
+          {/* Logs table */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-muted-foreground">
+              سجلات المتابعة
+            </h3>
+            {progressLoading ? (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))}
+              </div>
+            ) : progressLogs.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                لا توجد سجلات متابعة بعد — أضف أول قياس
+              </p>
+            ) : (
+              <div className="rounded-lg border overflow-hidden">
+                <div className="overflow-x-auto custom-scrollbar">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>التاريخ</TableHead>
+                        <TableHead>الوزن</TableHead>
+                        <TableHead>الدهون %</TableHead>
+                        <TableHead>العضلات</TableHead>
+                        <TableHead>الخصر</TableHead>
+                        <TableHead>ملاحظات</TableHead>
+                        <TableHead className="text-left">حذف</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {progressLogs.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell className="text-xs whitespace-nowrap text-muted-foreground">
+                            {formatLogDate(log.date)}
+                          </TableCell>
+                          <TableCell className="font-bold text-cyan-400 tabular-nums">
+                            {fmtNum(log.weight)}
+                          </TableCell>
+                          <TableCell className="tabular-nums">
+                            {fmtNum(log.fatPercent)}
+                          </TableCell>
+                          <TableCell className="tabular-nums">
+                            {fmtNum(log.muscleMass)}
+                          </TableCell>
+                          <TableCell className="tabular-nums">
+                            {fmtNum(log.waist)}
+                          </TableCell>
+                          <TableCell className="max-w-40">
+                            <p className="text-xs text-muted-foreground line-clamp-1">
+                              {log.notes ?? "—"}
+                            </p>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-end">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                onClick={() => setLogDeleteTarget(log)}
+                                aria-label="حذف السجل"
+                              >
+                                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Log delete confirm */}
+      <AlertDialog
+        open={!!logDeleteTarget}
+        onOpenChange={(open) => !open && setLogDeleteTarget(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد حذف السجل</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من حذف سجل المتابعة بتاريخ{" "}
+              {logDeleteTarget ? formatLogDate(logDeleteTarget.date) : ""}؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={logDeleting}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteLog();
+              }}
+              disabled={logDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {logDeleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
               حذف نهائي
             </AlertDialogAction>
           </AlertDialogFooter>

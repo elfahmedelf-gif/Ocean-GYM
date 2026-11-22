@@ -47,6 +47,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
 import { IMAGE_OPTIONS } from "@/components/admin/image-options";
+import { EmptyState, PageHeader } from "@/components/admin/shared";
 import type { Testimonial } from "@/components/admin/types";
 
 interface TestimonialFormState {
@@ -200,21 +201,16 @@ export default function TestimonialsView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <MessageSquareQuote className="h-7 w-7 text-primary" aria-hidden="true" />
-            آراء العملاء
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            إدارة شهادات العملاء ومراجعاتهم — الأراء المعتمدة تظهر في الموقع
-          </p>
-        </div>
+      <PageHeader
+        icon={MessageSquareQuote}
+        title="آراء العملاء"
+        subtitle="إدارة شهادات العملاء ومراجعاتهم — الأراء المعتمدة تظهر في الموقع"
+      >
         <Button onClick={openAdd} className="w-full md:w-auto">
           <Plus className="h-4 w-4" aria-hidden="true" />
           إضافة رأي
         </Button>
-      </div>
+      </PageHeader>
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -223,16 +219,16 @@ export default function TestimonialsView() {
           ))}
         </div>
       ) : testimonials.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <MessageSquareQuote className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">لا توجد آراء بعد — ابدأ بإضافة أول رأي</p>
-            <Button variant="outline" onClick={openAdd}>
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              إضافة رأي
-            </Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={MessageSquareQuote}
+          title="لا توجد آراء بعد"
+          description="ابدأ بإضافة أول رأي"
+        >
+          <Button variant="outline" onClick={openAdd}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            إضافة رأي
+          </Button>
+        </EmptyState>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {testimonials.map((t) => (

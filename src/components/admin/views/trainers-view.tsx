@@ -47,6 +47,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
 import { TRAINER_IMAGE_OPTIONS } from "@/components/admin/image-options";
+import { EmptyState, PageHeader } from "@/components/admin/shared";
 import type { Trainer } from "@/components/admin/types";
 
 interface TrainerFormState {
@@ -173,21 +174,16 @@ export default function TrainersView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <UserCheck className="h-7 w-7 text-primary" aria-hidden="true" />
-            إدارة المدربين
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            فريق التدريب المعتمد — إضافة وتعديل بيانات المدربين
-          </p>
-        </div>
+      <PageHeader
+        icon={UserCheck}
+        title="إدارة المدربين"
+        subtitle="فريق التدريب المعتمد — إضافة وتعديل بيانات المدربين"
+      >
         <Button onClick={openAdd} className="w-full md:w-auto">
           <Plus className="h-4 w-4" aria-hidden="true" />
           إضافة مدرب
         </Button>
-      </div>
+      </PageHeader>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -196,16 +192,16 @@ export default function TrainersView() {
           ))}
         </div>
       ) : trainers.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <UserCheck className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">لا يوجد مدربون بعد — ابدأ بإضافة أول مدرب</p>
-            <Button variant="outline" onClick={openAdd}>
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              إضافة مدرب
-            </Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={UserCheck}
+          title="لا يوجد مدربون بعد"
+          description="ابدأ بإضافة أول مدرب"
+        >
+          <Button variant="outline" onClick={openAdd}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            إضافة مدرب
+          </Button>
+        </EmptyState>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {trainers.map((t) => (

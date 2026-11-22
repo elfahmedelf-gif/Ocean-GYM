@@ -54,7 +54,10 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-foreground/85 transition-colors hover:bg-primary/10 hover:text-primary"
+              className={cn(
+                "rounded-lg px-3 py-2 text-sm font-semibold text-foreground/85 transition-colors hover:bg-primary/10 hover:text-primary",
+                link.secondary && "hidden xl:inline"
+              )}
             >
               {link.label}
             </a>

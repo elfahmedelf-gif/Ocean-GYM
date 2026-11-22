@@ -19,6 +19,12 @@ export interface TrainerRef {
   name: string;
 }
 
+export interface NutritionPlanRef {
+  id: string;
+  name: string;
+  goal: string;
+}
+
 export interface Member {
   id: string;
   name: string;
@@ -30,6 +36,9 @@ export interface Member {
   startDate: string | null;
   endDate: string | null;
   notes: string | null;
+  accessCode: string | null;
+  nutritionPlanId: string | null;
+  nutritionPlan: NutritionPlanRef | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -106,6 +115,59 @@ export interface Message {
   createdAt: string;
 }
 
+export interface ScheduleSlot {
+  id: string;
+  day: number;
+  time: string;
+  gymClassId: string;
+  gymClass: { name: string; level: ClassLevel; duration: number };
+  trainerId: string | null;
+  trainer: TrainerRef | null;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface NutritionMeal {
+  id: string;
+  planId: string;
+  day: number;
+  mealType: string;
+  content: string;
+  calories: number | null;
+  createdAt: string;
+}
+
+export interface NutritionPlanItem {
+  id: string;
+  name: string;
+  goal: string;
+  calories: number;
+  protein: number | null;
+  carbs: number | null;
+  fats: number | null;
+  description: string | null;
+  notes: string | null;
+  active: boolean;
+  meals?: NutritionMeal[];
+  _count?: { meals: number; members: number };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProgressLogItem {
+  id: string;
+  memberId: string;
+  date: string;
+  weight: number;
+  fatPercent: number | null;
+  muscleMass: number | null;
+  waist: number | null;
+  chest: number | null;
+  arm: number | null;
+  notes: string | null;
+  createdAt: string;
+}
+
 export interface StatsResponse {
   totalMembers: number;
   activeMembers: number;
@@ -114,6 +176,8 @@ export interface StatsResponse {
   unreadMessages: number;
   totalTrainers: number;
   totalClasses: number;
+  totalSlots: number;
+  nutritionPlans: number;
   monthlyRevenue: number;
   planDistribution: { name: string; count: number }[];
   recentMembers: {

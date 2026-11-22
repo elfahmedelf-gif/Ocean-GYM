@@ -47,3 +47,18 @@ export interface GalleryView {
   title: string;
   image: string;
 }
+
+export interface ScheduleSlotView {
+  id: string;
+  /** Gym week index: 0=السبت .. 6=الجمعة */
+  day: number;
+  /** "HH:MM" 24h format */
+  time: string;
+  gymClass: {
+    name: string;
+    level: string;
+    duration: number;
+    image?: string | null;
+  };
+  trainer: { name: string } | null;
+}

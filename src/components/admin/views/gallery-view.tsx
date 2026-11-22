@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
 import { IMAGE_OPTIONS } from "@/components/admin/image-options";
+import { EmptyState, PageHeader } from "@/components/admin/shared";
 import type { GalleryItem } from "@/components/admin/types";
 
 interface GalleryFormState {
@@ -123,21 +124,16 @@ export default function GalleryView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <ImageIcon className="h-7 w-7 text-primary" aria-hidden="true" />
-            معرض الصور
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            صور الجيم التي تظهر في قسم المعرض بالصفحة الرئيسية
-          </p>
-        </div>
+      <PageHeader
+        icon={ImageIcon}
+        title="معرض الصور"
+        subtitle="صور الجيم التي تظهر في قسم المعرض بالصفحة الرئيسية"
+      >
         <Button onClick={openAdd} className="w-full md:w-auto">
           <Plus className="h-4 w-4" aria-hidden="true" />
           إضافة صورة
         </Button>
-      </div>
+      </PageHeader>
 
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -146,16 +142,16 @@ export default function GalleryView() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <ImageIcon className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">لا توجد صور بعد — ابدأ بإضافة أول صورة</p>
-            <Button variant="outline" onClick={openAdd}>
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              إضافة صورة
-            </Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={ImageIcon}
+          title="لا توجد صور بعد"
+          description="ابدأ بإضافة أول صورة"
+        >
+          <Button variant="outline" onClick={openAdd}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            إضافة صورة
+          </Button>
+        </EmptyState>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {items.map((item) => (

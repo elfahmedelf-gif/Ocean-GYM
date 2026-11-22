@@ -45,6 +45,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
+import { durationLabel } from "@/lib/gym";
+import { EmptyState, PageHeader } from "@/components/admin/shared";
 import type { Plan } from "@/components/admin/types";
 
 interface PlanFormState {
@@ -163,21 +165,16 @@ export default function PlansView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <CreditCard className="h-7 w-7 text-primary" aria-hidden="true" />
-            إدارة الباقات
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            باقات الاشتراك وأسعارها ومزاياها
-          </p>
-        </div>
+      <PageHeader
+        icon={CreditCard}
+        title="إدارة الباقات"
+        subtitle="باقات الاشتراك وأسعارها ومزاياها"
+      >
         <Button onClick={openAdd} className="w-full md:w-auto">
           <Plus className="h-4 w-4" aria-hidden="true" />
           إضافة باقة
         </Button>
-      </div>
+      </PageHeader>
 
       <div className="rounded-xl border bg-card overflow-hidden">
         {loading ? (
@@ -187,14 +184,17 @@ export default function PlansView() {
             ))}
           </div>
         ) : plans.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <CreditCard className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">لا توجد باقات بعد — ابدأ بإضافة أول باقة</p>
+          <EmptyState
+            icon={CreditCard}
+            title="لا توجد باقات بعد"
+            description="ابدأ بإضافة أول باقة"
+            className="border-0"
+          >
             <Button variant="outline" onClick={openAdd}>
               <Plus className="h-4 w-4" aria-hidden="true" />
               إضافة باقة
             </Button>
-          </div>
+          </EmptyState>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
             <Table>
@@ -234,7 +234,7 @@ export default function PlansView() {
                       {p.price.toLocaleString("ar-EG")} ج.م
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
-                      {p.duration} {p.duration === 1 ? "شهر" : p.duration === 2 ? "شهران" : "شهور"}
+                      {durationLabel(p.duration)}
                     </TableCell>
                     <TableCell className="max-w-64">
                       <p className="text-xs text-muted-foreground line-clamp-2 whitespace-pre-line">

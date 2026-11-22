@@ -14,6 +14,8 @@ export async function GET() {
       unreadMessages,
       totalTrainers,
       totalClasses,
+      totalSlots,
+      nutritionPlans,
       activeMembersWithPlan,
     ] = await Promise.all([
       db.member.count(),
@@ -23,6 +25,8 @@ export async function GET() {
       db.message.count({ where: { read: false } }),
       db.trainer.count(),
       db.gymClass.count(),
+      db.scheduleSlot.count({ where: { active: true } }),
+      db.nutritionPlan.count(),
       db.member.findMany({
         where: { status: "active", planId: { not: null } },
         select: { plan: { select: { name: true, price: true } } },
@@ -71,6 +75,8 @@ export async function GET() {
       unreadMessages,
       totalTrainers,
       totalClasses,
+      totalSlots,
+      nutritionPlans,
       monthlyRevenue,
       planDistribution,
       recentMembers,

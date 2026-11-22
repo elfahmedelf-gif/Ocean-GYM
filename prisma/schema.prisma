@@ -30,35 +30,83 @@ model Session {
 // ===== Gym Content =====
 
 model Trainer {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   name      String
   role      String // التخصص
   bio       String?
   image     String?
   specialty String?
   instagram String?
-  active    Boolean  @default(true)
-  order     Int      @default(0)
+  active    Boolean        @default(true)
+  order     Int            @default(0)
   classes   GymClass[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slots     ScheduleSlot[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 model GymClass {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
   description String
   trainerId   String?
-  trainer     Trainer? @relation(fields: [trainerId], references: [id])
+  trainer     Trainer?       @relation(fields: [trainerId], references: [id])
   schedule    String
-  duration    Int      @default(60)
-  capacity    Int      @default(20)
-  level       String   @default("all") // beginner | intermediate | advanced | all
+  duration    Int            @default(60)
+  capacity    Int            @default(20)
+  level       String         @default("all") // beginner | intermediate | advanced | all
   image       String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  active      Boolean        @default(true)
+  slots       ScheduleSlot[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
+
+// ===== Weekly Schedule =====
+
+model ScheduleSlot {
+  id         String    @id @default(cuid())
+  day        Int // 0=السبت .. 6=الجمعة
+  time       String // "HH:MM" 24h format
+  gymClassId String
+  gymClass   GymClass  @relation(fields: [gymClassId], references: [id], onDelete: Cascade)
+  trainerId  String?
+  trainer    Trainer?  @relation(fields: [trainerId], references: [id])
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+}
+
+// ===== Nutrition System =====
+
+model NutritionPlan {
+  id          String          @id @default(cuid())
+  name        String
+  goal        String          @default("maintain") // bulk | cut | maintain | healthy
+  calories    Int             @default(2000)
+  protein     Int?
+  carbs       Int?
+  fats        Int?
+  description String?
+  notes       String?
+  active      Boolean         @default(true)
+  meals       NutritionMeal[]
+  members     Member[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model NutritionMeal {
+  id        String        @id @default(cuid())
+  planId    String
+  plan      NutritionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  day       Int // 0=السبت .. 6=الجمعة
+  mealType  String        @default("breakfast") // breakfast | lunch | dinner | snack
+  content   String
+  calories  Int?
+  createdAt DateTime      @default(now())
+}
+
+// ===== Members & Follow-up =====
 
 model Plan {
   id        String   @id @default(cuid())
@@ -74,18 +122,47 @@ model Plan {
 }
 
 model Member {
-  id        String    @id @default(cuid())
-  name      String
-  email     String
-  phone     String
-  planId    String?
-  plan      Plan?     @relation(fields: [planId], references: [id])
-  status    String    @default("pending") // pending | active | expired | frozen
-  startDate DateTime?
-  endDate   DateTime?
-  notes     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              String          @id @default(cuid())
+  name            String
+  email           String
+  phone           String
+  planId          String?
+  plan            Plan?           @relation(fields: [planId], references: [id])
+  status          String          @default("pending") // pending | active | expired | frozen
+  startDate       DateTime?
+  endDate         DateTime?
+  notes           String?
+  accessCode      String?         @unique // كود دخول بوابة الأعضاء (مثل OC-1234)
+  nutritionPlanId String?
+  nutritionPlan   NutritionPlan?  @relation(fields: [nutritionPlanId], references: [id])
+  progressLogs    ProgressLog[]
+  portalSessions  PortalSession[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model ProgressLog {
+  id         String   @id @default(cuid())
+  memberId   String
+  member     Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  date       DateTime
+  weight     Float
+  fatPercent Float?
+  muscleMass Float?
+  waist      Float?
+  chest      Float?
+  arm        Float?
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model PortalSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Testimonial {
@@ -115,10 +192,4 @@ model Message {
   content   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
-}
-
-model SiteSettings {
-  id       String  @id @default(cuid())
-  key      String  @unique
-  value    String
 }

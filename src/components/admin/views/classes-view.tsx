@@ -48,14 +48,9 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
 import { CLASS_IMAGE_OPTIONS } from "@/components/admin/image-options";
+import { EmptyState, PageHeader } from "@/components/admin/shared";
+import { CLASS_LEVELS, levelLabel } from "@/lib/gym";
 import type { ClassLevel, GymClass, Trainer } from "@/components/admin/types";
-
-const LEVEL_LABELS: Record<ClassLevel, string> = {
-  beginner: "مبتدئ",
-  intermediate: "متوسط",
-  advanced: "متقدم",
-  all: "جميع المستويات",
-};
 
 const LEVEL_BADGE_CLASS: Record<ClassLevel, string> = {
   beginner: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
@@ -64,7 +59,7 @@ const LEVEL_BADGE_CLASS: Record<ClassLevel, string> = {
   all: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
 };
 
-const ALL_LEVELS: ClassLevel[] = ["beginner", "intermediate", "advanced", "all"];
+const ALL_LEVELS: ClassLevel[] = CLASS_LEVELS.map((l) => l.value);
 
 interface ClassFormState {
   name: string;
@@ -198,21 +193,16 @@ export default function ClassesView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Dumbbell className="h-7 w-7 text-primary" aria-hidden="true" />
-            إدارة الكلاسات
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            إضافة وتعديل الكلاسات الجماعية ومواعيدها ومستوياتها
-          </p>
-        </div>
+      <PageHeader
+        icon={Dumbbell}
+        title="إدارة الكلاسات"
+        subtitle="إضافة وتعديل الكلاسات الجماعية ومواعيدها ومستوياتها"
+      >
         <Button onClick={openAdd} className="w-full md:w-auto">
           <Plus className="h-4 w-4" aria-hidden="true" />
           إضافة كلاس
         </Button>
-      </div>
+      </PageHeader>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -221,16 +211,16 @@ export default function ClassesView() {
           ))}
         </div>
       ) : classes.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <Dumbbell className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">لا توجد كلاسات بعد — ابدأ بإضافة أول كلاس</p>
-            <Button variant="outline" onClick={openAdd}>
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              إضافة كلاس
-            </Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Dumbbell}
+          title="لا توجد كلاسات بعد"
+          description="ابدأ بإضافة أول كلاس"
+        >
+          <Button variant="outline" onClick={openAdd}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            إضافة كلاس
+          </Button>
+        </EmptyState>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {classes.map((c) => (
@@ -254,7 +244,7 @@ export default function ClassesView() {
                     variant="outline"
                     className={LEVEL_BADGE_CLASS[c.level] ?? "bg-background/80"}
                   >
-                    {LEVEL_LABELS[c.level] ?? c.level}
+                    {levelLabel(c.level)}
                   </Badge>
                   {!c.active && (
                     <Badge variant="outline" className="bg-slate-900/80 text-slate-300 border-slate-500/40">
@@ -405,7 +395,7 @@ export default function ClassesView() {
                   <SelectContent>
                     {ALL_LEVELS.map((l) => (
                       <SelectItem key={l} value={l}>
-                        {LEVEL_LABELS[l]}
+                        {levelLabel(l)}
                       </SelectItem>
                     ))}
                   </SelectContent>

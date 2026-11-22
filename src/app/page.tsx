@@ -4,6 +4,7 @@ import { Hero } from "@/components/site/hero";
 import { MarqueeStrip } from "@/components/site/marquee";
 import { AboutSection } from "@/components/site/about-section";
 import { ClassesSection } from "@/components/site/classes-section";
+import { ScheduleSection } from "@/components/site/schedule-section";
 import { TrainersSection } from "@/components/site/trainers-section";
 import { PricingSection } from "@/components/site/pricing-section";
 import { GallerySection } from "@/components/site/gallery-section";
@@ -15,6 +16,7 @@ import type {
   GalleryView,
   GymClassView,
   PlanView,
+  ScheduleSlotView,
   TestimonialView,
   TrainerView,
 } from "@/components/site/types";
@@ -31,14 +33,20 @@ async function safe<T>(promise: Promise<T>, fallback: T): Promise<T> {
   }
 }
 
+/** Maps JS getDay() (0=Sun..6=Sat) to the gym week (0=السبت..6=الجمعة). */
+function currentGymDay(): number {
+  return (new Date().getDay() + 1) % 7;
+}
+
 async function loadPageData(): Promise<{
   classes: GymClassView[];
   trainers: TrainerView[];
   plans: PlanView[];
   testimonials: TestimonialView[];
   gallery: GalleryView[];
+  slots: ScheduleSlotView[];
 }> {
-  const [gymClasses, trainers, plans, testimonials, galleryItems] = await Promise.all([
+  const [gymClasses, trainers, plans, testimonials, galleryItems, scheduleSlots] = await Promise.all([
     safe(
       db.gymClass.findMany({
         where: { active: true },
@@ -54,6 +62,17 @@ async function loadPageData(): Promise<{
       []
     ),
     safe(db.galleryItem.findMany({ orderBy: { createdAt: "desc" } }), []),
+    safe(
+      db.scheduleSlot.findMany({
+        where: { active: true },
+        include: {
+          gymClass: { select: { name: true, level: true, duration: true, image: true } },
+          trainer: { select: { name: true } },
+        },
+        orderBy: [{ day: "asc" }, { time: "asc" }],
+      }),
+      []
+    ),
   ]);
 
   return {
@@ -97,11 +116,23 @@ async function loadPageData(): Promise<{
       title: item.title,
       image: item.image,
     })),
+    slots: scheduleSlots.map((slot) => ({
+      id: slot.id,
+      day: slot.day,
+      time: slot.time,
+      gymClass: {
+        name: slot.gymClass.name,
+        level: slot.gymClass.level,
+        duration: slot.gymClass.duration,
+        image: slot.gymClass.image ?? null,
+      },
+      trainer: slot.trainer ? { name: slot.trainer.name } : null,
+    })),
   };
 }
 
 export default async function HomePage() {
-  const { classes, trainers, plans, testimonials, gallery } = await loadPageData();
+  const { classes, trainers, plans, testimonials, gallery, slots } = await loadPageData();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -111,6 +142,7 @@ export default async function HomePage() {
         <MarqueeStrip />
         <AboutSection />
         <ClassesSection classes={classes} />
+        <ScheduleSection slots={slots} initialDay={currentGymDay()} />
         <TrainersSection trainers={trainers} />
         <PricingSection plans={plans} />
         <GallerySection gallery={gallery} />

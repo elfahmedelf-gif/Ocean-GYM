@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import {
+  CalendarDays,
   CreditCard,
   Dumbbell,
   Image as ImageIcon,
@@ -16,6 +17,7 @@ import {
   Star,
   UserCheck,
   Users,
+  UtensilsCrossed,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,8 +36,10 @@ import type { AdminPayload, Message } from "@/components/admin/types";
 const NAV_ITEMS = [
   { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
   { href: "/admin/members", label: "الأعضاء", icon: Users },
+  { href: "/admin/schedule", label: "الجدول الأسبوعي", icon: CalendarDays },
   { href: "/admin/classes", label: "الكلاسات", icon: Dumbbell },
   { href: "/admin/trainers", label: "المدربون", icon: UserCheck },
+  { href: "/admin/nutrition", label: "خطط التغذية", icon: UtensilsCrossed },
   { href: "/admin/plans", label: "الباقات", icon: CreditCard },
   { href: "/admin/messages", label: "الرسائل", icon: Mail, badgeKey: "unread" as const },
   { href: "/admin/testimonials", label: "آراء العملاء", icon: Star },

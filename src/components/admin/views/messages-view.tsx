@@ -36,6 +36,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiFetch, jsonDelete, jsonPut } from "@/components/admin/api";
+import { EmptyState, PageHeader } from "@/components/admin/shared";
 import type { Message } from "@/components/admin/types";
 
 function formatDate(iso: string): string {
@@ -123,21 +124,21 @@ export default function MessagesView() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-          <Mail className="h-7 w-7 text-primary" aria-hidden="true" />
-          صندوق الرسائل
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          رسائل واستفسارات العملاء من الموقع
-          {unreadCount > 0 && (
-            <span className="text-primary font-medium">
-              {" "}
-              — لديك {unreadCount} {unreadCount === 1 ? "رسالة" : "رسائل"} غير مقروءة
-            </span>
-          )}
-        </p>
-      </div>
+      <PageHeader
+        icon={Mail}
+        title="صندوق الرسائل"
+        subtitle={
+          <>
+            رسائل واستفسارات العملاء من الموقع
+            {unreadCount > 0 && (
+              <span className="text-primary font-medium">
+                {" "}
+                — لديك {unreadCount} {unreadCount === 1 ? "رسالة" : "رسائل"} غير مقروءة
+              </span>
+            )}
+          </>
+        }
+      />
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as "all" | "unread")}>
         <TabsList aria-label="تصفية الرسائل">
@@ -163,16 +164,10 @@ export default function MessagesView() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-            <MailOpen className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-muted-foreground">
-              {tab === "unread"
-                ? "لا توجد رسائل غير مقروءة — أحسنت"
-                : "لا توجد رسائل بعد"}
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={MailOpen}
+          title={tab === "unread" ? "لا توجد رسائل غير مقروءة — أحسنت" : "لا توجد رسائل بعد"}
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map((m) => (

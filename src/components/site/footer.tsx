@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { KeyRound, Mail, MapPin, Phone } from "lucide-react";
 import { NAV_LINKS } from "./nav-links";
 
 export function SiteFooter() {
@@ -42,6 +42,15 @@ export function SiteFooter() {
                   </a>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/portal/login"
+                  className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <KeyRound className="size-3.5 text-primary" aria-hidden="true" />
+                  بوابة الأعضاء
+                </Link>
+              </li>
             </ul>
           </nav>
 

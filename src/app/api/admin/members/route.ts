@@ -20,7 +20,10 @@ export async function GET(request: Request) {
             ],
           }
         : undefined,
-      include: { plan: { select: { name: true, price: true } } },
+      include: {
+        plan: { select: { name: true, price: true } },
+        nutritionPlan: { select: { id: true, name: true, goal: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -59,7 +62,10 @@ export async function POST(request: Request) {
         endDate: endDate ? new Date(endDate) : null,
         notes: notes?.trim() || null,
       },
-      include: { plan: { select: { name: true, price: true } } },
+      include: {
+        plan: { select: { name: true, price: true } },
+        nutritionPlan: { select: { id: true, name: true, goal: true } },
+      },
     });
 
     return Response.json(member, { status: 201 });

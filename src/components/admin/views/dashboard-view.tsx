@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Banknote,
+  CalendarDays,
   Dumbbell,
   Mail,
   UserCheck,
   UserPlus,
   Users,
+  UtensilsCrossed,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,21 +26,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { apiFetch } from "@/components/admin/api";
-import type { StatsResponse, MemberStatus } from "@/components/admin/types";
-
-const STATUS_LABELS: Record<MemberStatus, string> = {
-  pending: "قيد المراجعة",
-  active: "نشط",
-  expired: "منتهي",
-  frozen: "مجمّد",
-};
-
-const STATUS_BADGE_CLASS: Record<MemberStatus, string> = {
-  pending: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-  active: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  expired: "bg-red-500/15 text-red-400 border-red-500/30",
-  frozen: "bg-slate-500/15 text-slate-300 border-slate-500/30",
-};
+import { StatusBadge } from "@/components/admin/shared";
+import type { StatsResponse } from "@/components/admin/types";
 
 function formatDate(iso: string): string {
   try {
@@ -96,6 +85,20 @@ const STAT_CARDS = [
     color: "text-blue-400",
     bg: "bg-blue-400/10 border-blue-400/25",
   },
+  {
+    key: "totalSlots" as const,
+    label: "مواعيد الجدول",
+    icon: CalendarDays,
+    color: "text-violet-400",
+    bg: "bg-violet-400/10 border-violet-400/25",
+  },
+  {
+    key: "nutritionPlans" as const,
+    label: "خطط التغذية",
+    icon: UtensilsCrossed,
+    color: "text-amber-400",
+    bg: "bg-amber-400/10 border-amber-400/25",
+  },
 ];
 
 export default function DashboardView() {
@@ -152,7 +155,7 @@ export default function DashboardView() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         {STAT_CARDS.map((card) => {
           const Icon = card.icon;
           const value = stats ? stats[card.key] : null;
@@ -277,12 +280,7 @@ export default function DashboardView() {
                           {m.plan?.name ?? "بدون باقة"}
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={STATUS_BADGE_CLASS[m.status] ?? ""}
-                          >
-                            {STATUS_LABELS[m.status] ?? m.status}
-                          </Badge>
+                          <StatusBadge status={m.status} />
                         </TableCell>
                         <TableCell className="text-muted-foreground text-xs whitespace-nowrap">
                           {formatDate(m.createdAt)}

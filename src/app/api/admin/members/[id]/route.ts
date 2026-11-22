@@ -12,8 +12,18 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, email, phone, planId, status, startDate, endDate, notes } =
-      body ?? {};
+    const {
+      name,
+      email,
+      phone,
+      planId,
+      status,
+      startDate,
+      endDate,
+      notes,
+      nutritionPlanId,
+      accessCode,
+    } = body ?? {};
 
     const existing = await db.member.findUnique({ where: { id } });
     if (!existing) {
@@ -32,10 +42,53 @@ export async function PUT(
       data.endDate = endDate ? new Date(endDate) : null;
     if (notes !== undefined) data.notes = notes?.trim() || null;
 
+    if (nutritionPlanId !== undefined) {
+      if (nutritionPlanId) {
+        const plan = await db.nutritionPlan.findUnique({
+          where: { id: nutritionPlanId },
+          select: { id: true },
+        });
+        if (!plan) {
+          return Response.json({ error: "خطة التغذية غير موجودة" }, { status: 400 });
+        }
+        data.nutritionPlanId = plan.id;
+      } else {
+        data.nutritionPlanId = null;
+      }
+    }
+
+    if (accessCode !== undefined) {
+      const code = accessCode ? String(accessCode).trim() : "";
+      if (code && !/^OC-\d{4}$/.test(code)) {
+        return Response.json(
+          { error: "كود الدخول يجب أن يكون بالصيغة OC-1234" },
+          { status: 400 }
+        );
+      }
+      if (code) {
+        const taken = await db.member.findUnique({
+          where: { accessCode: code },
+          select: { id: true },
+        });
+        if (taken && taken.id !== id) {
+          return Response.json(
+            { error: "كود الدخول مستخدم بالفعل لعضو آخر" },
+            { status: 400 }
+          );
+        }
+        data.accessCode = code;
+      } else {
+        data.accessCode = null;
+      }
+    }
+
     const member = await db.member.update({
       where: { id },
       data,
-      include: { plan: { select: { name: true, price: true } } },
+      include: {
+        plan: { select: { name: true, price: true } },
+        nutritionPlan: { select: { id: true, name: true, goal: true } },
+      },
     });
 
     return Response.json(member);
@@ -60,7 +113,8 @@ export async function DELETE(
       return Response.json({ error: "العضو غير موجود" }, { status: 404 });
     }
 
-    await db.member.delete({ where: { id } });
+    const member = await db.member.delete({ where: { id } });
+    void member;
     return Response.json({ ok: true });
   } catch (error) {
     console.error("DELETE /api/admin/members/[id] error:", error);
