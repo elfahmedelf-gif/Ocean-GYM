@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== Admin & Auth =====
+
+model Admin {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  password  String // hashed (scrypt: salt:hash)
+  name      String
+  createdAt DateTime  @default(now())
+  sessions  Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// ===== Gym Content =====
+
+model Trainer {
+  id        String   @id @default(cuid())
+  name      String
+  role      String // التخصص
+  bio       String?
+  image     String?
+  specialty String?
+  instagram String?
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  classes   GymClass[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GymClass {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  trainerId   String?
+  trainer     Trainer? @relation(fields: [trainerId], references: [id])
+  schedule    String
+  duration    Int      @default(60)
+  capacity    Int      @default(20)
+  level       String   @default("all") // beginner | intermediate | advanced | all
+  image       String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Plan {
+  id        String   @id @default(cuid())
+  name      String
+  price     Float
+  duration  Int      @default(1) // بالشهور
+  features  String // مفصولة بأسطر
+  popular   Boolean  @default(false)
+  active    Boolean  @default(true)
+  members   Member[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  planId    String?
+  plan      Plan?     @relation(fields: [planId], references: [id])
+  status    String    @default("pending") // pending | active | expired | frozen
+  startDate DateTime?
+  endDate   DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  content   String
+  rating    Int      @default(5)
+  image     String?
+  approved  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model GalleryItem {
+  id        String   @id @default(cuid())
+  title     String
+  image     String
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id       String  @id @default(cuid())
+  key      String  @unique
+  value    String
+}

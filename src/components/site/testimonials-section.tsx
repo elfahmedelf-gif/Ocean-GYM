@@ -1,0 +1,89 @@
+"use client";
+
+import { Quote, Star } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { FadeUp } from "./fade-up";
+import { SectionHeading } from "./section-heading";
+import type { TestimonialView } from "./types";
+
+function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
+  const rating = Math.min(5, Math.max(1, testimonial.rating));
+
+  return (
+    <figure className="flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+      <div className="flex items-center justify-between">
+        <div
+          className="flex gap-0.5"
+          role="img"
+          aria-label={`التقييم: ${rating} من 5 نجوم`}
+        >
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              aria-hidden="true"
+              className={cn(
+                "size-4",
+                i < rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"
+              )}
+            />
+          ))}
+        </div>
+        <Quote className="size-6 text-primary/30" aria-hidden="true" />
+      </div>
+
+      <blockquote className="flex-1 text-sm leading-relaxed text-muted-foreground">
+        {testimonial.content}
+      </blockquote>
+
+      <figcaption className="flex items-center gap-3 border-t border-border/60 pt-4">
+        <Avatar className="size-10 border border-primary/30">
+          <AvatarFallback className="bg-primary/15 font-extrabold text-primary">
+            {testimonial.name.trim().charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <div className="text-sm font-extrabold">{testimonial.name}</div>
+          <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+        </div>
+      </figcaption>
+    </figure>
+  );
+}
+
+export function TestimonialsSection({ testimonials }: { testimonials: TestimonialView[] }) {
+  return (
+    <section
+      id="testimonials"
+      aria-labelledby="testimonials-title"
+      className="scroll-mt-24 bg-secondary/25 py-16 md:py-24"
+    >
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <SectionHeading
+          kicker="آراء العملاء"
+          headingId="testimonials-title"
+          title={
+            <>
+              قصص <span className="text-gradient-ocean">نجاح</span> أعضائنا
+            </>
+          }
+          subtitle="أكثر من 1200 عضو اختاروا Ocean GYM — إليك بعض تجاربهم الحقيقية."
+        />
+
+        {testimonials.length === 0 ? (
+          <FadeUp className="glass mx-auto max-w-md rounded-2xl p-10 text-center text-muted-foreground">
+            آراء العملاء ستتوفر قريبًا.
+          </FadeUp>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {testimonials.slice(0, 8).map((testimonial, i) => (
+              <FadeUp key={testimonial.id} delay={(i % 4) * 0.1} className="h-full">
+                <TestimonialCard testimonial={testimonial} />
+              </FadeUp>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
