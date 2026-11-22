@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Counter } from "./counter";
+import { WaveDivider } from "./wave-divider";
 
 /** Slide rotation interval (ms) — drives autoplay, progress bar and Ken Burns zoom. */
 const SLIDE_DURATION = 6000;
@@ -174,7 +175,10 @@ export function Hero() {
             id="hero-title"
             className="text-4xl font-black leading-[1.25] sm:text-5xl md:text-7xl md:leading-[1.2]"
           >
-            <span className="text-gradient-ocean">بحر من القوة</span> يبدأ من هنا
+            <span className="text-gradient-ocean-animated drop-shadow-[0_0_30px_rgba(56,199,232,0.25)]">
+              بحر من القوة
+            </span>{" "}
+            يبدأ من هنا
           </h1>
 
           <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
@@ -186,7 +190,7 @@ export function Hero() {
             <Button
               asChild
               size="lg"
-              className="glow-cyan-strong group h-12 px-8 text-base font-bold"
+              className="glow-cyan-strong shimmer group h-12 px-8 text-base font-bold"
             >
               <a href="#join">
                 <Sparkles
@@ -229,9 +233,11 @@ export function Hero() {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
               }}
-              className="glass rounded-2xl px-4 py-5"
+              className="glass card-sheen rounded-2xl px-4 py-5"
             >
-              <stat.icon className="mx-auto mb-2 size-6 text-primary" aria-hidden="true" />
+              <span className="mx-auto mb-3 flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-inset ring-primary/30">
+                <stat.icon className="size-5 text-primary" aria-hidden="true" />
+              </span>
               <div className="text-3xl font-extrabold text-gradient-ocean md:text-4xl">
                 <Counter to={stat.to} prefix="+" />
               </div>
@@ -240,6 +246,14 @@ export function Hero() {
           ))}
         </motion.div>
       </div>
+
+      {/* Shoreline — the page surface rises over the image with a wavy edge;
+          the 3px slider progress bar stays visible below it */}
+      <WaveDivider
+        flip
+        variant={1}
+        className="top-auto bottom-[3px] z-30 text-background"
+      />
 
       {/* Slider controls — pinned to the hero section bottom (below the header), scrolls away with it */}
       <div

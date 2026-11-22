@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Waves } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
 
@@ -28,7 +29,7 @@ export function SectionHeading({
       )}
     >
       <span className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-xs font-bold text-primary">
-        <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-primary" />
+        <Waves className="size-3.5" aria-hidden="true" />
         <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-transparent to-primary/60" />
         {kicker}
         <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-primary/60 to-transparent" />
@@ -39,6 +40,11 @@ export function SectionHeading({
       >
         {title}
       </h2>
+      {/* Gradient accent bar under the title — symmetric so it reads the same in RTL */}
+      <span
+        aria-hidden="true"
+        className="h-[3px] w-24 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent"
+      />
       {subtitle ? (
         <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
           {subtitle}

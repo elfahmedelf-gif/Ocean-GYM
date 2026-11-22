@@ -90,6 +90,8 @@
   }
   html {
     scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(56, 199, 232, 0.35) #050d1f;
   }
   body {
     @apply bg-background text-foreground;
@@ -159,6 +161,117 @@
       0 0 0 1px rgba(56, 199, 232, 0.35),
       inset 0 0 20px rgba(56, 199, 232, 0.08);
   }
+
+  /* ===== Premium layer (v2 refactor) ===== */
+
+  /* Solid "deep ocean" band — used for alternating sections so wave
+     dividers can match edges EXACTLY (translucent tints can't). */
+  .bg-deep {
+    background-color: #081228;
+  }
+
+  /* Slowly shifting ocean gradient text (hero headline) */
+  .text-gradient-ocean-animated {
+    background: linear-gradient(
+      100deg,
+      #7dd8f0 0%,
+      #38c7e8 25%,
+      #1e6fe8 50%,
+      #38c7e8 75%,
+      #7dd8f0 100%
+    );
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-x 7s ease-in-out infinite;
+  }
+
+  /* One-shot light sweep across primary CTAs on hover */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 42%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 58%
+    );
+    transform: translateX(160%);
+    transition: transform 0.9s ease;
+    pointer-events: none;
+  }
+  .shimmer:hover::after {
+    transform: translateX(-160%);
+  }
+
+  /* Soft diagonal light that fades in over cards on hover */
+  .card-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 30%,
+      rgba(56, 199, 232, 0.1) 48%,
+      rgba(56, 199, 232, 0.02) 52%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .card-sheen:hover::after {
+    opacity: 1;
+  }
+
+  /* Animated gradient border panel (popular plan, forms).
+     Declared AFTER .glass so both classes together keep the blur
+     but use the gradient border + inner fill. */
+  .gradient-border {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--gb-inner, rgba(10, 22, 48, 0.72)), var(--gb-inner, rgba(10, 22, 48, 0.72)))
+        padding-box,
+      linear-gradient(
+          140deg,
+          rgba(125, 216, 240, 0.6),
+          rgba(56, 199, 232, 0.28) 45%,
+          rgba(30, 111, 232, 0.55)
+        )
+        border-box;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  /* Ultra-faint blueprint grid used in the fixed ambient background */
+  .bg-grid-ocean {
+    background-image:
+      linear-gradient(rgba(56, 199, 232, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56, 199, 232, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 20%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 20%, transparent 80%);
+  }
+}
+
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 /* ===== Animations ===== */
@@ -197,7 +310,8 @@
   .animate-float,
   .animate-slider-progress,
   .animate-ping,
-  .animate-marquee {
+  .animate-marquee,
+  .text-gradient-ocean-animated {
     animation: none !important;
   }
   html {
@@ -236,4 +350,4 @@
   animation: ken-burns calc(var(--slide-duration, 6s) * 1.4) ease-out forwards;
 }
 
-/* cache-bust */
+

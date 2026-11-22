@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { WaveDivider } from "./wave-divider";
 import type { GalleryView } from "./types";
 
 export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
@@ -30,8 +31,14 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
   }, [gallery.length]);
 
   return (
-    <section id="gallery" aria-labelledby="gallery-title" className="scroll-mt-24 py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+    <section
+      id="gallery"
+      aria-labelledby="gallery-title"
+      className="bg-deep relative scroll-mt-24 py-16 md:py-24"
+    >
+      {/* Shoreline from the plain pricing section above */}
+      <WaveDivider variant={3} className="text-background" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="المعرض"
           headingId="gallery-title"
@@ -64,7 +71,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 />
                 <span className="absolute inset-x-0 bottom-0 translate-y-2 p-3 text-start text-sm font-bold opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {item.title}
+                  <span className="glass rounded-lg px-2.5 py-1">{item.title}</span>
                 </span>
               </button>
             </FadeUp>

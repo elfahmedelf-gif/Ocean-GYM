@@ -3,6 +3,7 @@ import { SITE } from "@/lib/site";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import { SOCIALS } from "./socials";
+import { WaveDivider } from "./wave-divider";
 
 /** Google Maps embed (no API key needed) centered on the club location. */
 const MAP_EMBED_SRC =
@@ -17,9 +18,11 @@ export function ContactSection() {
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className="scroll-mt-24 bg-secondary/25 py-16 md:py-24"
+      className="relative scroll-mt-24 py-16 md:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      {/* Shoreline from the deep join band above */}
+      <WaveDivider variant={3} className="text-[#081228]" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="تواصل معنا"
           headingId="contact-title"
@@ -33,8 +36,8 @@ export function ContactSection() {
 
         <FadeUp className="flex flex-col gap-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-start gap-3 rounded-2xl border bg-card p-5 transition-colors hover:border-primary/40">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
                 <Phone className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -49,8 +52,8 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-2xl border bg-card p-5 transition-colors hover:border-primary/40">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
                 <MapPin className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -59,8 +62,8 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-2xl border bg-card p-5 transition-colors hover:border-primary/40">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
                 <Clock className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -73,8 +76,8 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-2xl border bg-card p-5 transition-colors hover:border-primary/40">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
                 <Mail className="size-5" aria-hidden="true" />
               </span>
               <div>

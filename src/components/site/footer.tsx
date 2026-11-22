@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { KeyRound, Mail, MapPin, Phone } from "lucide-react";
+import { KeyRound, Mail, MapPin, Phone, Waves } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "./nav-links";
 import { SOCIALS } from "./socials";
+import { WaveDivider } from "./wave-divider";
 
 /** Consistent keyboard focus styling for every footer link. */
 const LINK_FOCUS =
@@ -14,9 +15,17 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-primary/10 bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
-        <div className="grid gap-10 md:grid-cols-3">
+    <footer className="bg-deep relative">
+      {/* Shoreline from the plain contact section above — replaces a flat border */}
+      <WaveDivider variant={2} className="text-background" />
+
+      <div className="relative mx-auto max-w-7xl px-4 pb-12 pt-20 md:px-6 md:pb-16 md:pt-24">
+        {/* Ambient glow behind the brand column */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-10 start-[5%] size-72 rounded-full bg-primary/[0.07] blur-3xl"
+        />
+        <div className="relative grid gap-10 md:grid-cols-3">
           {/* Brand */}
           <div className="flex flex-col items-start gap-4">
             <div className="flex items-center gap-3">
@@ -49,6 +58,10 @@ export function SiteFooter() {
                 </a>
               ))}
             </div>
+            <p className="flex items-center gap-2 text-xs text-muted-foreground/80">
+              <Waves className="size-3.5 text-primary/70" aria-hidden="true" />
+              مدربون معتمدون دوليًا — تجربة تمرين آمنة وممتعة
+            </p>
           </div>
 
           {/* Quick links */}

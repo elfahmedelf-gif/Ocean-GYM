@@ -44,20 +44,29 @@ export function AboutSection() {
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Image with decorative corner frame */}
-          <FadeUp className="relative">
+          <FadeUp className="group relative">
             <div
               aria-hidden="true"
               className="absolute inset-8 -z-10 rounded-full bg-primary/10 blur-3xl"
             />
             <div className="relative">
-              <Image
-                src="/images/about-gym.jpg"
-                alt="من داخل Ocean GYM — منطقة الأوزان والأجهزة الحديثة"
-                width={1344}
-                height={768}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="w-full rounded-2xl object-cover shadow-2xl shadow-black/40"
-              />
+              <div
+                className="relative overflow-hidden rounded-2xl shadow-2xl shadow-black/40"
+              >
+                <Image
+                  src="/images/about-gym.jpg"
+                  alt="من داخل Ocean GYM — منطقة الأوزان والأجهزة الحديثة"
+                  width={1344}
+                  height={768}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                {/* Inner ocean tint that lifts on hover */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-primary/15 via-transparent to-transparent opacity-60 transition-opacity duration-700 group-hover:opacity-100"
+                />
+              </div>
               {/* Cyan corner frames — thin gradient segments fading away from each corner */}
               <div
                 aria-hidden="true"
@@ -100,9 +109,9 @@ export function AboutSection() {
                 {FEATURES.map((feature) => (
                   <div
                     key={feature.title}
-                    className="group flex items-start gap-3 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
+                    className="card-sheen group flex items-start gap-3 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                   >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
                       <feature.icon className="size-5" aria-hidden="true" />
                     </span>
                     <div>

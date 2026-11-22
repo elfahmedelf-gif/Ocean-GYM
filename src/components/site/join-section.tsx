@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SITE } from "@/lib/site";
 import { formatPriceDigits } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
+import { WaveDivider } from "./wave-divider";
 import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
 
@@ -102,7 +103,14 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
   }
 
   return (
-    <section id="join" aria-labelledby="join-title" className="relative scroll-mt-24 overflow-hidden py-16 md:py-24">
+    <section
+      id="join"
+      aria-labelledby="join-title"
+      className="bg-deep relative scroll-mt-24 overflow-hidden py-16 md:py-24"
+    >
+      {/* Shoreline from the plain testimonials section above */}
+      <WaveDivider variant={2} className="text-background" />
+
       {/* Decorative glow */}
       <div
         aria-hidden="true"
@@ -129,8 +137,10 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               </p>
               <ul className="mt-2 space-y-3">
                 {BENEFITS.map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-2 text-sm md:text-base">
-                    <CircleCheckBig className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                  <li key={benefit} className="flex items-center gap-2.5 text-sm md:text-base">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary ring-1 ring-inset ring-primary/25">
+                      <CircleCheckBig className="size-3.5" aria-hidden="true" />
+                    </span>
                     {benefit}
                   </li>
                 ))}
@@ -170,7 +180,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="glass space-y-4 rounded-2xl p-6 md:p-8" aria-labelledby="join-title">
+              <form onSubmit={handleSubmit} noValidate className="gradient-border space-y-4 rounded-2xl p-6 md:p-8" aria-labelledby="join-title">
                 <div className="space-y-2">
                   <Label htmlFor="join-name">الاسم الكامل</Label>
                   <Input
@@ -266,7 +276,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                   />
                 </div>
 
-                <Button type="submit" disabled={loading} className="glow-cyan h-12 w-full text-base font-bold">
+                <Button type="submit" disabled={loading} className="glow-cyan shimmer h-12 w-full text-base font-bold">
                   {loading ? (
                     <>
                       <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />

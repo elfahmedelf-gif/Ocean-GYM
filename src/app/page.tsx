@@ -139,6 +139,15 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Fixed ambient backdrop — faint blueprint grid + drifting ocean glows
+          that give the whole page depth without re-rendering on scroll */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
+        <div className="bg-grid-ocean absolute inset-0" />
+        <div className="absolute -top-32 start-[8%] size-[420px] rounded-full bg-primary/[0.07] blur-3xl" />
+        <div className="absolute top-[45%] end-[4%] size-[380px] rounded-full bg-[#1e6fe8]/[0.08] blur-3xl" />
+        <div className="absolute bottom-[-120px] start-[30%] size-[360px] rounded-full bg-primary/[0.05] blur-3xl" />
+      </div>
+
       {/* Skip-to-content — first focusable element, hidden until keyboard focus */}
       <a
         href="#main"

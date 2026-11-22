@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { GYM_DAYS, formatTime12, levelBadgeClass, levelLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { WaveDivider } from "./wave-divider";
 import type { ScheduleSlotView } from "./types";
 
 /** Arabic plural rules: 1 -> دقيقة واحدة, 2 -> دقيقتين, 3-10 -> دقائق, 11+ -> دقيقة */
@@ -51,7 +52,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
       </div>
 
       {/* Slot card */}
-      <div className="glass mb-1 flex flex-1 items-center gap-3 rounded-2xl border border-primary/15 p-3.5 transition-colors hover:border-primary/45 md:gap-4 md:p-4">
+      <div className="glass card-sheen mb-1 flex flex-1 items-center gap-3 rounded-2xl border border-primary/15 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg hover:shadow-primary/10 md:gap-4 md:p-4">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-extrabold md:text-lg">{slot.gymClass.name}</h3>
@@ -114,9 +115,11 @@ export function ScheduleSection({
     <section
       id="schedule"
       aria-labelledby="schedule-title"
-      className="scroll-mt-24 py-16 md:py-24"
+      className="relative scroll-mt-24 py-16 md:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      {/* Shoreline from the deep classes band above */}
+      <WaveDivider variant={3} className="text-[#081228]" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="الجدول الأسبوعي"
           headingId="schedule-title"
@@ -150,7 +153,7 @@ export function ScheduleSection({
                     "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                     selectedDay === day.index
                       ? "glow-cyan border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                      : "border-primary/20 bg-card text-muted-foreground hover:border-primary/50 hover:text-primary"
+                      : "border-primary/20 bg-card text-muted-foreground hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary"
                   )}
                 >
                   {day.name}

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { formatPriceDigits, durationLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { WaveDivider } from "./wave-divider";
 import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
 
@@ -20,12 +21,19 @@ function PricingCard({ plan }: { plan: PlanView }) {
   return (
     <article
       className={cn(
-        "relative flex h-full flex-col rounded-2xl border bg-card p-6 transition-all duration-300 md:p-8",
+        "relative flex h-full flex-col rounded-2xl p-6 transition-all duration-300 md:p-8",
         plan.popular
-          ? "glow-cyan-strong z-10 border-primary/60 shadow-2xl md:scale-105"
-          : "hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+          ? "gradient-border glow-cyan-strong z-10 shadow-2xl md:scale-105"
+          : "group border bg-card hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
       )}
     >
+      {/* Gradient edge for non-popular cards too — keeps the hover language consistent */}
+      {!plan.popular ? (
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-2xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+        />
+      ) : null}
       {plan.popular ? (
         <span className="glow-cyan absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1.5 text-sm font-extrabold text-primary-foreground shadow-lg">
           الأكثر طلبًا
@@ -54,8 +62,17 @@ function PricingCard({ plan }: { plan: PlanView }) {
           .split("\n")
           .filter(Boolean)
           .map((feature) => (
-            <li key={feature} className="flex items-start gap-2 text-sm">
-              <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+            <li key={feature} className="flex items-start gap-2.5 text-sm">
+              <span
+                className={cn(
+                  "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset",
+                  plan.popular
+                    ? "bg-primary text-primary-foreground ring-primary/60"
+                    : "bg-primary/15 text-primary ring-primary/25"
+                )}
+              >
+                <Check className="size-3" aria-hidden="true" />
+              </span>
               <span className="leading-relaxed text-muted-foreground">{feature}</span>
             </li>
           ))}
@@ -66,6 +83,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
         variant={plan.popular ? "default" : "outline"}
         className={cn(
           "mt-8 h-12 w-full text-base font-bold",
+          plan.popular && "shimmer",
           !plan.popular && "border-primary/40 bg-primary/5 text-primary hover:bg-primary/15 hover:text-primary"
         )}
       >
@@ -80,9 +98,11 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
     <section
       id="pricing"
       aria-labelledby="pricing-title"
-      className="scroll-mt-24 bg-secondary/25 py-16 md:py-24"
+      className="relative scroll-mt-24 py-16 md:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      {/* Shoreline from the deep trainers band above */}
+      <WaveDivider variant={2} className="text-[#081228]" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="الباقات"
           headingId="pricing-title"

@@ -6,13 +6,19 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { WaveDivider } from "./wave-divider";
 import type { TestimonialView } from "./types";
 
 function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
   const rating = Math.min(5, Math.max(1, testimonial.rating));
 
   return (
-    <figure className="flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+    <figure className="card-sheen group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+      {/* Gradient edge sweeps across the top on hover */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-2xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+      />
       <div className="flex items-center justify-between">
         <div
           className="flex gap-0.5"
@@ -77,9 +83,11 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
     <section
       id="testimonials"
       aria-labelledby="testimonials-title"
-      className="scroll-mt-24 bg-secondary/25 py-16 md:py-24"
+      className="relative scroll-mt-24 py-16 md:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      {/* Shoreline from the deep gallery band above */}
+      <WaveDivider variant={1} className="text-[#081228]" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="آراء العملاء"
           headingId="testimonials-title"

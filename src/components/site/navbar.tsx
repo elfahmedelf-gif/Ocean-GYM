@@ -64,6 +64,13 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
+      {/* Gradient hairline that fades in with the scrolled glass bar */}
+      {scrolled ? (
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-l from-transparent via-primary/60 to-transparent"
+        />
+      ) : null}
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-[72px] md:px-6">
         <a
           href="#home"

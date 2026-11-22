@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Instagram, UserRound } from "lucide-react";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { WaveDivider } from "./wave-divider";
 import type { TrainerView } from "./types";
 
 /** Extracts a clean Instagram handle from "@user", "user", or a full profile URL. */
@@ -19,7 +20,12 @@ function instagramHandle(raw: string | null | undefined): string | null {
 
 function TrainerCard({ trainer }: { trainer: TrainerView }) {
   return (
-    <article className="group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
+    <article className="card-sheen group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
+      {/* Gradient edge sweeps across the top on hover */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 z-10 h-[3px] origin-right scale-x-0 bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+      />
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         {trainer.image ? (
           <Image
@@ -64,8 +70,14 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
 
 export function TrainersSection({ trainers }: { trainers: TrainerView[] }) {
   return (
-    <section id="trainers" aria-labelledby="trainers-title" className="scroll-mt-24 py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+    <section
+      id="trainers"
+      aria-labelledby="trainers-title"
+      className="bg-deep relative scroll-mt-24 py-16 md:py-24"
+    >
+      {/* Shoreline from the plain schedule section above */}
+      <WaveDivider variant={1} className="text-background" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="المدربون"
           headingId="trainers-title"

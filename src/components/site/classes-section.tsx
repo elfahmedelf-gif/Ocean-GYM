@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, Timer, User, Users, Waves } from "lucide-react";
 import { levelBadgeClass, levelLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { WaveDivider } from "./wave-divider";
 import type { GymClassView } from "./types";
 
 function ClassCard({ gymClass }: { gymClass: GymClassView }) {
@@ -12,7 +13,12 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
   const levelStyle = levelBadgeClass(gymClass.level);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
+      {/* Gradient edge that sweeps in across the top on hover */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 z-10 h-[3px] origin-right scale-x-0 bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+      />
       <div className="relative h-52 w-full overflow-hidden">
         {gymClass.image ? (
           <Image
@@ -88,9 +94,11 @@ export function ClassesSection({ classes }: { classes: GymClassView[] }) {
     <section
       id="classes"
       aria-labelledby="classes-title"
-      className="scroll-mt-24 bg-secondary/25 py-16 md:py-24"
+      className="bg-deep relative scroll-mt-24 py-16 md:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      {/* Shoreline from the plain section above */}
+      <WaveDivider variant={2} className="text-background" />
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="الكلاسات"
           headingId="classes-title"
