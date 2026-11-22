@@ -50,22 +50,7 @@ export function Hero() {
   const [playing, setPlaying] = useState(true);
   /** Bumped when playback resumes so the progress bar restarts in sync with the timer. */
   const [epoch, setEpoch] = useState(0);
-  const [heroVisible, setHeroVisible] = useState(true);
-  const heroRef = useRef<HTMLElement>(null);
   const touchStartX = useRef<number | null>(null);
-
-  // Slider chrome (controls + progress bar) stays fixed while a meaningful
-  // part of the hero is still on screen, then fades out on scroll.
-  useEffect(() => {
-    const onScroll = () => {
-      const el = heroRef.current;
-      if (!el) return;
-      setHeroVisible(el.getBoundingClientRect().bottom > window.innerHeight * 0.35);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const goTo = useCallback(
     (target: number) => setIndex(((target % SLIDES.length) + SLIDES.length) % SLIDES.length),
@@ -109,7 +94,6 @@ export function Hero() {
   return (
     <section
       id="home"
-      ref={heroRef}
       role="region"
       aria-roledescription="كاروسيل"
       aria-label="صور أجواء Ocean GYM"
@@ -256,13 +240,9 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Slider controls — centered at the bottom, minimal premium style */}
+      {/* Slider controls — pinned to the hero section bottom (below the header), scrolls away with it */}
       <div
-        aria-hidden={!heroVisible}
-        className={cn(
-          "fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center transition-all duration-300",
-          heroVisible ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
-        )}
+        className="absolute bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center"
       >
         <button
           type="button"
@@ -317,13 +297,10 @@ export function Hero() {
         </span>
       </div>
 
-      {/* Slide progress bar — fixed at the viewport edge, fills right-to-left with the timer */}
+      {/* Slide progress bar — pinned to the hero bottom edge, fills right-to-left with the timer */}
       <div
-        aria-hidden={!heroVisible}
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-40 h-[3px] bg-foreground/10 transition-opacity duration-300",
-          heroVisible ? "opacity-100" : "opacity-0"
-        )}
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 z-40 h-[3px] bg-foreground/10"
       >
         <div
           key={`${index}:${epoch}`}
