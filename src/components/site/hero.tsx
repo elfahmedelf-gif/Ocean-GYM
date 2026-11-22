@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   BadgeCheck,
@@ -240,98 +240,72 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Slider controls — premium glass capsule pinned to the hero section bottom */}
-      <div className="absolute bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center">
-        <div className="flex items-center gap-1 rounded-full border border-white/10 bg-[#0a1630]/60 p-1.5 shadow-[0_14px_44px_-10px_rgba(0,0,0,0.75)] backdrop-blur-xl">
-          <button
-            type="button"
-            onClick={goPrev}
-            aria-label="الصورة السابقة"
-            className="flex size-11 items-center justify-center rounded-full text-white/80 transition-all duration-300 hover:bg-primary/15 hover:text-primary hover:shadow-[0_0_18px_rgba(56,199,232,0.28)] active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          >
-            <ChevronRight
-              className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
-              aria-hidden="true"
-            />
-          </button>
-
-          <span aria-hidden="true" className="h-6 w-px bg-white/15" />
-
-          {/* Slide counter — animated vertical roll between numbers */}
-          <div
-            className="flex min-w-[5.5rem] items-center justify-center gap-1.5 px-1"
+      {/* Slider controls — pinned to the hero section bottom (below the header), scrolls away with it */}
+      <div
+        className="absolute bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center"
+      >
+        <button
+          type="button"
+          onClick={goPrev}
+          aria-label="الصورة السابقة"
+          className="flex size-12 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <ChevronRight
+            className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
             aria-hidden="true"
-          >
-            <span className="relative inline-block h-6 w-7 overflow-hidden">
-              <AnimatePresence initial={false}>
-                <motion.span
-                  key={index}
-                  initial={{ y: 16, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -16, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="absolute inset-0 text-center text-base font-extrabold leading-6 tabular-nums text-white"
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </motion.span>
-              </AnimatePresence>
-            </span>
-            <span className="text-sm font-semibold tabular-nums text-white/40">
-              / {String(SLIDES.length).padStart(2, "0")}
-            </span>
-          </div>
+          />
+        </button>
 
-          <span aria-hidden="true" className="h-6 w-px bg-white/15" />
+        <span aria-hidden="true" className="h-7 w-px bg-white/25" />
 
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label="الصورة التالية"
-            className="flex size-11 items-center justify-center rounded-full text-white/80 transition-all duration-300 hover:bg-primary/15 hover:text-primary hover:shadow-[0_0_18px_rgba(56,199,232,0.28)] active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          >
-            <ChevronLeft
+        <button
+          type="button"
+          onClick={playing ? pause : resume}
+          aria-label={playing ? "إيقاف تقليب الصور" : "تشغيل تقليب الصور"}
+          aria-pressed={playing}
+          className="flex size-12 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+        >
+          {playing ? (
+            <Pause
               className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
               aria-hidden="true"
             />
-          </button>
+          ) : (
+            <Play
+              className="size-6 -translate-x-px drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+              aria-hidden="true"
+            />
+          )}
+        </button>
 
-          <span aria-hidden="true" className="h-6 w-px bg-white/15" />
+        <span aria-hidden="true" className="h-7 w-px bg-white/25" />
 
-          <button
-            type="button"
-            onClick={playing ? pause : resume}
-            aria-label={playing ? "إيقاف تقليب الصور" : "تشغيل تقليب الصور"}
-            aria-pressed={playing}
-            className="flex size-11 items-center justify-center rounded-full text-white/70 transition-all duration-300 hover:bg-primary/15 hover:text-primary hover:shadow-[0_0_18px_rgba(56,199,232,0.28)] active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          >
-            {playing ? (
-              <Pause
-                className="size-5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
-                aria-hidden="true"
-              />
-            ) : (
-              <Play
-                className="size-5 -translate-x-px drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
-                aria-hidden="true"
-              />
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={goNext}
+          aria-label="الصورة التالية"
+          className="flex size-12 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <ChevronLeft
+            className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+            aria-hidden="true"
+          />
+        </button>
 
         <span className="sr-only" aria-live="polite">
           الشريحة {index + 1} من {SLIDES.length}: {SLIDES[index].alt}
         </span>
       </div>
 
-      {/* Slide progress bar — glowing rail pinned to the hero bottom edge */}
+      {/* Slide progress bar — pinned to the hero bottom edge, fills right-to-left with the timer */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 z-40 h-[3px] bg-white/10"
+        className="absolute inset-x-0 bottom-0 z-40 h-[3px] bg-foreground/10"
       >
         <div
           key={`${index}:${epoch}`}
           className={cn(
-            "animate-slider-progress h-full w-full origin-right rounded-full bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] shadow-[0_0_14px_rgba(56,199,232,0.55)]",
+            "animate-slider-progress h-full w-full origin-right bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0]",
             !playing && "animate-slider-paused"
           )}
           style={{ "--slide-duration": `${SLIDE_DURATION}ms` } as React.CSSProperties}
