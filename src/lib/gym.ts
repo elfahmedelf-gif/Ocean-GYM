@@ -113,6 +113,9 @@ export function durationLabel(duration: number): string {
 /** Available gym images (for admin selects) */
 export const GYM_IMAGES = [
   "/images/hero-bg.jpg",
+  "/images/hero-boxing.jpg",
+  "/images/hero-pool.jpg",
+  "/images/hero-weights.jpg",
   "/images/about-gym.jpg",
   "/images/trainer-1.jpg",
   "/images/trainer-2.jpg",

@@ -3,6 +3,7 @@ import { Navbar } from "@/components/site/navbar";
 import { Hero } from "@/components/site/hero";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { BackToTop } from "@/components/site/back-to-top";
+import { WhatsAppFloat } from "@/components/site/whatsapp-float";
 import { AboutSection } from "@/components/site/about-section";
 import { ClassesSection } from "@/components/site/classes-section";
 import { ScheduleSection } from "@/components/site/schedule-section";
@@ -153,6 +154,7 @@ export default async function HomePage() {
       </main>
       <SiteFooter />
       <BackToTop />
+      <WhatsAppFloat />
     </div>
   );
 }

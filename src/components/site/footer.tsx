@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Instagram, KeyRound, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import { SITE } from "@/lib/site";
 import { NAV_LINKS } from "./nav-links";
 
 const SOCIALS = [
-  { icon: Facebook, label: "فيسبوك", href: "https://facebook.com" },
-  { icon: Instagram, label: "إنستجرام", href: "https://instagram.com" },
-  { icon: Youtube, label: "يوتيوب", href: "https://youtube.com" },
-  { icon: Twitter, label: "تويتر", href: "https://x.com" },
+  { icon: Facebook, href: SITE.socials[0].href, label: SITE.socials[0].label },
+  { icon: Instagram, href: SITE.socials[1].href, label: SITE.socials[1].label },
+  { icon: Youtube, href: SITE.socials[2].href, label: SITE.socials[2].label },
+  { icon: Twitter, href: SITE.socials[3].href, label: SITE.socials[3].label },
 ] as const;
 
 export function SiteFooter() {
@@ -81,19 +82,19 @@ export function SiteFooter() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                <a href="tel:+201001234567" dir="ltr" className="transition-colors hover:text-primary">
-                  0100 123 4567
+                <a href={SITE.phoneHref} dir="ltr" className="transition-colors hover:text-primary">
+                  {SITE.phoneDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                <a href="mailto:info@oceangym.com" dir="ltr" className="transition-colors hover:text-primary">
-                  info@oceangym.com
+                <a href={SITE.emailHref} dir="ltr" className="transition-colors hover:text-primary">
+                  {SITE.email}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                التجمع الخامس، القاهرة الجديدة
+                {SITE.address}
               </li>
             </ul>
           </div>

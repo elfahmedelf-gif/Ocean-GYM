@@ -1,10 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { animate, motion, useInView } from "framer-motion";
-import { ArrowLeft, BadgeCheck, Calendar, ChevronDown, Sparkles, Trophy, Users, Waves } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  BadgeCheck,
+  Calendar,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  Sparkles,
+  Trophy,
+  Users,
+  Waves,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Counter } from "./counter";
+
+/** Slide rotation interval (ms) — drives autoplay, progress bar and Ken Burns zoom. */
+const SLIDE_DURATION = 6000;
+
+const SLIDES = [
+  {
+    src: "/images/hero-bg.jpg",
+    alt: "صالة Ocean GYM الرئيسية بأحدث الأجهزة الأمريكية",
+  },
+  {
+    src: "/images/hero-boxing.jpg",
+    alt: "كلاس البوكسينج بإشراف مدربين محترفين",
+  },
+  {
+    src: "/images/hero-pool.jpg",
+    alt: "حمام السباحة الأولمبي داخل Ocean GYM",
+  },
+  {
+    src: "/images/hero-weights.jpg",
+    alt: "منطقة الأوزان الحرة بالمعدات المتطورة",
+  },
+] as const;
 
 const STATS = [
   { icon: Users, to: 1200, label: "عضو نشط" },
@@ -13,64 +50,132 @@ const STATS = [
   { icon: Trophy, to: 8, label: "سنوات خبرة" },
 ] as const;
 
-/** Animated counter that counts up once it scrolls into view. */
-function Counter({ to, prefix = "" }: { to: number; prefix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    const controls = animate(0, to, {
-      duration: 1.8,
-      ease: "easeOut",
-      onUpdate: (v) => setValue(Math.round(v)),
-    });
-    return () => controls.stop();
-  }, [inView, to]);
-
-  return (
-    <span ref={ref} dir="ltr" className="tabular-nums">
-      {prefix}
-      {value}
-    </span>
-  );
-}
-
 export function Hero() {
+  const [index, setIndex] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  /** Bumped when playback resumes so the progress bar restarts in sync with the timer. */
+  const [epoch, setEpoch] = useState(0);
+  const [heroVisible, setHeroVisible] = useState(true);
+  const heroRef = useRef<HTMLElement>(null);
+  const touchStartX = useRef<number | null>(null);
+
+  // Slider chrome (controls + progress bar) stays fixed while a meaningful
+  // part of the hero is still on screen, then fades out on scroll.
+  useEffect(() => {
+    const onScroll = () => {
+      const el = heroRef.current;
+      if (!el) return;
+      setHeroVisible(el.getBoundingClientRect().bottom > window.innerHeight * 0.35);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const goTo = useCallback(
+    (target: number) => setIndex(((target % SLIDES.length) + SLIDES.length) % SLIDES.length),
+    []
+  );
+  const goNext = useCallback(() => goTo(index + 1), [goTo, index]);
+  const goPrev = useCallback(() => goTo(index - 1), [goTo, index]);
+
+  // Autoplay — a fresh timer per slide; cleared while paused.
+  useEffect(() => {
+    if (!playing) return;
+    const timer = setTimeout(() => goTo(index + 1), SLIDE_DURATION);
+    return () => clearTimeout(timer);
+  }, [playing, index, epoch, goTo]);
+
+  // Preload the upcoming slide to keep crossfades seamless.
+  useEffect(() => {
+    const img = new window.Image();
+    img.src = SLIDES[(index + 1) % SLIDES.length].src;
+  }, [index]);
+
+  const pause = useCallback(() => setPlaying(false), []);
+  const resume = useCallback(() => {
+    setPlaying(true);
+    setEpoch((e) => e + 1);
+  }, []);
+
+  // Touch swipe: finger left = next, finger right = previous (RTL flow).
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStartX.current;
+    touchStartX.current = null;
+    if (start === null) return;
+    const dx = (e.changedTouches[0]?.clientX ?? start) - start;
+    if (dx < -50) goNext();
+    else if (dx > 50) goPrev();
+  };
+
   return (
     <section
       id="home"
-      aria-labelledby="hero-title"
+      ref={heroRef}
+      role="region"
+      aria-roledescription="كاروسيل"
+      aria-label="صور أجواء Ocean GYM"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
     >
-      {/* Background image + dark navy overlay */}
-      <Image
-        src="/images/hero-bg.jpg"
-        alt="أجواء التمرين داخل Ocean GYM بإضاءة سماوية"
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover"
+      {/* Slides — crossfade + slow cinematic zoom */}
+      {SLIDES.map((slide, i) => {
+        const active = i === index;
+        return (
+          <div
+            key={slide.src}
+            aria-hidden={!active}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-1000 ease-out",
+              active ? "opacity-100" : "opacity-0"
+            )}
+          >
+            <div
+              className={cn("absolute inset-0", active && "animate-ken-burns")}
+              style={
+                {
+                  "--slide-duration": `${SLIDE_DURATION}ms`,
+                  animationPlayState: playing ? "running" : "paused",
+                } as React.CSSProperties
+              }
+            >
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                priority={i === 0}
+                loading={i === 0 ? undefined : "eager"}
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Dark navy overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 bg-gradient-to-b from-[#050d1f] via-[#050d1f]/55 to-[#050d1f]"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-b from-[#050d1f] via-[#050d1f]/55 to-[#050d1f]"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,13,31,0.7)_100%)]"
+        className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,13,31,0.7)_100%)]"
       />
 
       {/* Floating glow orbs */}
       <div
         aria-hidden="true"
-        className="animate-pulse-glow pointer-events-none absolute -top-20 start-[8%] size-96 rounded-full bg-primary/20 blur-3xl"
+        className="animate-pulse-glow pointer-events-none absolute -top-20 start-[8%] z-0 size-96 rounded-full bg-primary/20 blur-3xl"
       />
       <div
         aria-hidden="true"
         style={{ animationDelay: "1.6s" }}
-        className="animate-pulse-glow pointer-events-none absolute bottom-4 end-[6%] size-80 rounded-full bg-[#1e6fe8]/25 blur-3xl"
+        className="animate-pulse-glow pointer-events-none absolute bottom-4 end-[6%] z-0 size-80 rounded-full bg-[#1e6fe8]/25 blur-3xl"
       />
 
       <div className="relative z-10 mx-auto w-full max-w-5xl px-4 py-32 text-center md:px-6">
@@ -104,9 +209,15 @@ export function Hero() {
               className="glow-cyan-strong group h-12 px-8 text-base font-bold"
             >
               <a href="#join">
-                <Sparkles className="size-5 transition-transform duration-300 group-hover:-rotate-12" aria-hidden="true" />
+                <Sparkles
+                  className="size-5 transition-transform duration-300 group-hover:-rotate-12"
+                  aria-hidden="true"
+                />
                 انضم الآن
-                <ArrowLeft className="size-5 transition-transform duration-300 group-hover:-translate-x-1" aria-hidden="true" />
+                <ArrowLeft
+                  className="size-5 transition-transform duration-300 group-hover:-translate-x-1"
+                  aria-hidden="true"
+                />
               </a>
             </Button>
             <Button
@@ -150,15 +261,87 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Slider chrome — fixed to the viewport while the hero is in view */}
+      <div
+        aria-hidden={!heroVisible}
+        className={cn(
+          "fixed bottom-5 left-[4.75rem] z-40 flex items-center gap-1 rounded-full border border-primary/25 bg-background/70 p-1.5 shadow-lg shadow-black/40 backdrop-blur-md transition-all duration-300 md:bottom-6",
+          heroVisible ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+        )}
+      >
+        <button
+          type="button"
+          onClick={goPrev}
+          aria-label="الصورة السابقة"
+          className="flex size-10 items-center justify-center rounded-full text-foreground/90 transition-colors hover:bg-primary/15 hover:text-primary"
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={playing ? pause : resume}
+          aria-label={playing ? "إيقاف تقليب الصور" : "تشغيل تقليب الصور"}
+          aria-pressed={playing}
+          className="flex size-10 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15"
+        >
+          {playing ? (
+            <Pause className="size-5" aria-hidden="true" />
+          ) : (
+            <Play className="size-5 -translate-x-px" aria-hidden="true" />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={goNext}
+          aria-label="الصورة التالية"
+          className="flex size-10 items-center justify-center rounded-full text-foreground/90 transition-colors hover:bg-primary/15 hover:text-primary"
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+
+        <span aria-hidden="true" className="mx-1 h-5 w-px bg-primary/25" />
+
+        <span
+          dir="ltr"
+          className="px-2 text-xs font-extrabold tabular-nums text-muted-foreground"
+        >
+          {index + 1} / {SLIDES.length}
+        </span>
+        <span className="sr-only" aria-live="polite">
+          الشريحة {index + 1} من {SLIDES.length}: {SLIDES[index].alt}
+        </span>
+      </div>
+
+      {/* Scroll indicator — fixed while the hero is in view */}
       <a
         href="#about"
         aria-label="انتقل إلى قسم عن الجيم"
-        className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-primary"
+        className={cn(
+          "fixed bottom-6 left-1/2 z-40 hidden -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground transition-all duration-300 hover:text-primary sm:flex",
+          heroVisible ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+        )}
       >
         <span className="text-xs font-semibold">اكتشف المزيد</span>
         <ChevronDown className="size-6 animate-bounce" aria-hidden="true" />
       </a>
+
+      {/* Slide progress bar — fixed at the viewport edge, fills right-to-left with the timer */}
+      <div
+        aria-hidden={!heroVisible}
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-40 h-[3px] bg-foreground/10 transition-opacity duration-300",
+          heroVisible ? "opacity-100" : "opacity-0"
+        )}
+      >
+        <div
+          key={`${index}:${epoch}`}
+          className={cn(
+            "animate-slider-progress h-full w-full origin-right bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0]",
+            !playing && "[animation-play-state:paused]"
+          )}
+          style={{ "--slide-duration": `${SLIDE_DURATION}ms` } as React.CSSProperties}
+        />
+      </div>
     </section>
   );
 }

@@ -206,18 +206,6 @@
   animation: float-y 6s ease-in-out infinite;
 }
 
-@keyframes marquee-x {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(50%);
-  }
-}
-.animate-marquee {
-  animation: marquee-x 30s linear infinite;
-}
-
 @keyframes pulse-glow {
   0%,
   100% {
@@ -233,11 +221,29 @@
   animation: pulse-glow 4s ease-in-out infinite;
 }
 
-@keyframes wave-shift {
+/* ===== Hero slider ===== */
+/* Per-slide progress bar (fills along the inline direction, paused via animation-play-state) */
+@keyframes slider-progress-x {
   from {
-    background-position: 0 0;
+    transform: scaleX(0);
   }
   to {
-    background-position: 1200px 0;
+    transform: scaleX(1);
   }
+}
+.animate-slider-progress {
+  animation: slider-progress-x var(--slide-duration, 6s) linear forwards;
+}
+
+/* Slow cinematic zoom on the active slide */
+@keyframes ken-burns {
+  from {
+    transform: scale(1.03);
+  }
+  to {
+    transform: scale(1.13);
+  }
+}
+.animate-ken-burns {
+  animation: ken-burns calc(var(--slide-duration, 6s) * 1.4) ease-out forwards;
 }

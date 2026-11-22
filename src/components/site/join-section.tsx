@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { SITE } from "@/lib/site";
 import { formatPriceDigits } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { useJoinStore } from "./store";
@@ -129,8 +130,12 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="size-4 text-primary" aria-hidden="true" />
                 أو اتصل بنا مباشرة:
-                <a href="tel:+201001234567" dir="ltr" className="font-bold text-foreground transition-colors hover:text-primary">
-                  0100 123 4567
+                <a
+                  href={SITE.phoneHref}
+                  dir="ltr"
+                  className="font-bold text-foreground transition-colors hover:text-primary"
+                >
+                  {SITE.phoneDisplay}
                 </a>
               </p>
             </FadeUp>

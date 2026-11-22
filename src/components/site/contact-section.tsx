@@ -1,12 +1,13 @@
 import { Clock, Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import { SITE } from "@/lib/site";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 
 const SOCIALS = [
-  { icon: Facebook, label: "فيسبوك", href: "https://facebook.com" },
-  { icon: Instagram, label: "إنستجرام", href: "https://instagram.com" },
-  { icon: Youtube, label: "يوتيوب", href: "https://youtube.com" },
-  { icon: Twitter, label: "تويتر", href: "https://x.com" },
+  { icon: Facebook, href: SITE.socials[0].href, label: SITE.socials[0].label },
+  { icon: Instagram, href: SITE.socials[1].href, label: SITE.socials[1].label },
+  { icon: Youtube, href: SITE.socials[2].href, label: SITE.socials[2].label },
+  { icon: Twitter, href: SITE.socials[3].href, label: SITE.socials[3].label },
 ] as const;
 
 export function ContactSection() {
@@ -37,11 +38,11 @@ export function ContactSection() {
               <div>
                 <div className="text-xs text-muted-foreground">الهاتف</div>
                 <a
-                  href="tel:+201001234567"
+                  href={SITE.phoneHref}
                   dir="ltr"
                   className="mt-1 block font-bold transition-colors hover:text-primary"
                 >
-                  0100 123 4567
+                  {SITE.phoneDisplay}
                 </a>
               </div>
             </div>
@@ -52,7 +53,7 @@ export function ContactSection() {
               </span>
               <div>
                 <div className="text-xs text-muted-foreground">العنوان</div>
-                <div className="mt-1 font-bold">التجمع الخامس، القاهرة الجديدة</div>
+                <div className="mt-1 font-bold">{SITE.address}</div>
               </div>
             </div>
 
@@ -77,11 +78,11 @@ export function ContactSection() {
               <div>
                 <div className="text-xs text-muted-foreground">البريد الإلكتروني</div>
                 <a
-                  href="mailto:info@oceangym.com"
+                  href={SITE.emailHref}
                   dir="ltr"
                   className="mt-1 block font-bold transition-colors hover:text-primary"
                 >
-                  info@oceangym.com
+                  {SITE.email}
                 </a>
               </div>
             </div>
