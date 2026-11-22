@@ -1,0 +1,749 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useMemo, useState } from "react";
+     4→import { toast } from "sonner";
+     5→import {
+     6→  Flame,
+     7→  Loader2,
+     8→  Pencil,
+     9→  Plus,
+    10→  Trash2,
+    11→  UtensilsCrossed,
+    12→} from "lucide-react";
+    13→
+    14→import { Badge } from "@/components/ui/badge";
+    15→import { Button } from "@/components/ui/button";
+    16→import { Card, CardContent } from "@/components/ui/card";
+    17→import {
+    18→  AlertDialog,
+    19→  AlertDialogAction,
+    20→  AlertDialogCancel,
+    21→  AlertDialogContent,
+    22→  AlertDialogDescription,
+    23→  AlertDialogFooter,
+    24→  AlertDialogHeader,
+    25→  AlertDialogTitle,
+    26→} from "@/components/ui/alert-dialog";
+    27→import {
+    28→  Dialog,
+    29→  DialogContent,
+    30→  DialogDescription,
+    31→  DialogFooter,
+    32→  DialogHeader,
+    33→  DialogTitle,
+    34→} from "@/components/ui/dialog";
+    35→import { Input } from "@/components/ui/input";
+    36→import {
+    37→  Select,
+    38→  SelectContent,
+    39→  SelectItem,
+    40→  SelectTrigger,
+    41→  SelectValue,
+    42→} from "@/components/ui/select";
+    43→import { Skeleton } from "@/components/ui/skeleton";
+    44→import { Switch } from "@/components/ui/switch";
+    45→import { Textarea } from "@/components/ui/textarea";
+    46→import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
+    47→import { EmptyState, Field, PageHeader } from "@/components/admin/shared";
+    48→import { GYM_DAYS, MEAL_TYPES, NUTRITION_GOALS, goalLabel } from "@/lib/gym";
+    49→import type { NutritionMeal, NutritionPlanItem } from "@/components/admin/types";
+    50→
+    51→const GOAL_BADGE_CLASS: Record<string, string> = {
+    52→  bulk: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+    53→  cut: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+    54→  maintain: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+    55→  healthy: "bg-violet-500/15 text-violet-400 border-violet-500/30",
+    56→};
+    57→
+    58→interface PlanFormState {
+    59→  name: string;
+    60→  goal: string;
+    61→  calories: string;
+    62→  protein: string;
+    63→  carbs: string;
+    64→  fats: string;
+    65→  description: string;
+    66→  notes: string;
+    67→  active: boolean;
+    68→}
+    69→
+    70→const EMPTY_PLAN_FORM: PlanFormState = {
+    71→  name: "",
+    72→  goal: "maintain",
+    73→  calories: "2000",
+    74→  protein: "",
+    75→  carbs: "",
+    76→  fats: "",
+    77→  description: "",
+    78→  notes: "",
+    79→  active: true,
+    80→};
+    81→
+    82→/** Local editable meal row (no id yet for new rows) */
+    83→interface EditableMeal {
+    84→  rowId: string;
+    85→  day: number;
+    86→  mealType: string;
+    87→  content: string;
+    88→  calories: string;
+    89→}
+    90→
+    91→function toEditableMeals(meals: NutritionMeal[]): EditableMeal[] {
+    92→  return meals.map((m, i) => ({
+    93→    rowId: `${m.id}-${i}`,
+    94→    day: m.day,
+    95→    mealType: m.mealType,
+    96→    content: m.content,
+    97→    calories: m.calories !== null ? String(m.calories) : "",
+    98→  }));
+    99→}
+   100→
+   101→export default function NutritionView() {
+   102→  const [plans, setPlans] = useState<NutritionPlanItem[]>([]);
+   103→  const [loading, setLoading] = useState(true);
+   104→
+   105→  // Plan form dialog
+   106→  const [formOpen, setFormOpen] = useState(false);
+   107→  const [editing, setEditing] = useState<NutritionPlanItem | null>(null);
+   108→  const [form, setForm] = useState<PlanFormState>(EMPTY_PLAN_FORM);
+   109→  const [saving, setSaving] = useState(false);
+   110→
+   111→  // Meals manager dialog
+   112→  const [mealsPlan, setMealsPlan] = useState<NutritionPlanItem | null>(null);
+   113→  const [meals, setMeals] = useState<EditableMeal[]>([]);
+   114→  const [mealsDay, setMealsDay] = useState(0);
+   115→  const [savingMeals, setSavingMeals] = useState(false);
+   116→
+   117→  // Delete confirm
+   118→  const [deleteTarget, setDeleteTarget] = useState<NutritionPlanItem | null>(null);
+   119→  const [deleting, setDeleting] = useState(false);
+   120→
+   121→  async function loadPlans() {
+   122→    try {
+   123→      const data = await apiFetch<NutritionPlanItem[]>("/api/admin/nutrition");
+   124→      setPlans(data);
+   125→    } catch (err) {
+   126→      toast.error(err instanceof Error ? err.message : "تعذر تحميل الخطط");
+   127→    } finally {
+   128→      setLoading(false);
+   129→    }
+   130→  }
+   131→
+   132→  useEffect(() => {
+   133→    loadPlans();
+   134→  }, []);
+   135→
+   136→  function openAdd() {
+   137→    setEditing(null);
+   138→    setForm(EMPTY_PLAN_FORM);
+   139→    setFormOpen(true);
+   140→  }
+   141→
+   142→  function openEdit(plan: NutritionPlanItem) {
+   143→    setEditing(plan);
+   144→    setForm({
+   145→      name: plan.name,
+   146→      goal: plan.goal,
+   147→      calories: String(plan.calories),
+   148→      protein: plan.protein !== null ? String(plan.protein) : "",
+   149→      carbs: plan.carbs !== null ? String(plan.carbs) : "",
+   150→      fats: plan.fats !== null ? String(plan.fats) : "",
+   151→      description: plan.description ?? "",
+   152→      notes: plan.notes ?? "",
+   153→      active: plan.active,
+   154→    });
+   155→    setFormOpen(true);
+   156→  }
+   157→
+   158→  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
+   159→    e.preventDefault();
+   160→
+   161→    if (!form.name.trim()) {
+   162→      toast.error("اسم الخطة مطلوب");
+   163→      return;
+   164→    }
+   165→    if (!form.calories || Number(form.calories) <= 0) {
+   166→      toast.error("عدد السعرات مطلوب ويجب أن يكون أكبر من صفر");
+   167→      return;
+   168→    }
+   169→
+   170→    setSaving(true);
+   171→    const payload = {
+   172→      name: form.name.trim(),
+   173→      goal: form.goal,
+   174→      calories: Number(form.calories),
+   175→      protein: form.protein ? Number(form.protein) : null,
+   176→      carbs: form.carbs ? Number(form.carbs) : null,
+   177→      fats: form.fats ? Number(form.fats) : null,
+   178→      description: form.description.trim() || null,
+   179→      notes: form.notes.trim() || null,
+   180→      active: form.active,
+   181→    };
+   182→
+   183→    try {
+   184→      if (editing) {
+   185→        await jsonPut(`/api/admin/nutrition/${editing.id}`, payload);
+   186→        toast.success("تم تحديث الخطة بنجاح");
+   187→      } else {
+   188→        await jsonPost("/api/admin/nutrition", payload);
+   189→        toast.success("تم إضافة الخطة بنجاح");
+   190→      }
+   191→      setFormOpen(false);
+   192→      await loadPlans();
+   193→    } catch (err) {
+   194→      toast.error(err instanceof Error ? err.message : "تعذر الحفظ");
+   195→    } finally {
+   196→      setSaving(false);
+   197→    }
+   198→  }
+   199→
+   200→  function openMeals(plan: NutritionPlanItem) {
+   201→    setMealsPlan(plan);
+   202→    setMeals(toEditableMeals(plan.meals ?? []));
+   203→    setMealsDay(0);
+   204→  }
+   205→
+   206→  function addMealRow() {
+   207→    setMeals((prev) => [
+   208→      ...prev,
+   209→      {
+   210→        rowId: `new-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+   211→        day: mealsDay,
+   212→        mealType: "breakfast",
+   213→        content: "",
+   214→        calories: "",
+   215→      },
+   216→    ]);
+   217→  }
+   218→
+   219→  function updateMealRow(rowId: string, patch: Partial<EditableMeal>) {
+   220→    setMeals((prev) =>
+   221→      prev.map((m) => (m.rowId === rowId ? { ...m, ...patch } : m))
+   222→    );
+   223→  }
+   224→
+   225→  function removeMealRow(rowId: string) {
+   226→    setMeals((prev) => prev.filter((m) => m.rowId !== rowId));
+   227→  }
+   228→
+   229→  const dayMeals = useMemo(
+   230→    () => meals.filter((m) => m.day === mealsDay),
+   231→    [meals, mealsDay]
+   232→  );
+   233→
+   234→  const dayCalories = useMemo(() => {
+   235→    return dayMeals.reduce((sum, m) => {
+   236→      const c = Number(m.calories);
+   237→      return sum + (Number.isFinite(c) && c > 0 ? c : 0);
+   238→    }, 0);
+   239→  }, [dayMeals]);
+   240→
+   241→  async function saveMeals() {
+   242→    if (!mealsPlan) return;
+   243→
+   244→    const invalid = meals.find((m) => !m.content.trim());
+   245→    if (invalid) {
+   246→      toast.error("أكمل محتوى كل الوجبات قبل الحفظ أو احذف الصفوف الفارغة");
+   247→      return;
+   248→    }
+   249→
+   250→    setSavingMeals(true);
+   251→    try {
+   252→      await jsonPut(`/api/admin/nutrition/${mealsPlan.id}/meals`, {
+   253→        meals: meals.map((m) => ({
+   254→          day: m.day,
+   255→          mealType: m.mealType,
+   256→          content: m.content.trim(),
+   257→          calories: m.calories ? Number(m.calories) : null,
+   258→        })),
+   259→      });
+   260→      toast.success("تم حفظ الوجبات");
+   261→      setMealsPlan(null);
+   262→      await loadPlans();
+   263→    } catch (err) {
+   264→      toast.error(err instanceof Error ? err.message : "تعذر حفظ الوجبات");
+   265→    } finally {
+   266→      setSavingMeals(false);
+   267→    }
+   268→  }
+   269→
+   270→  async function handleDelete() {
+   271→    if (!deleteTarget) return;
+   272→    setDeleting(true);
+   273→    try {
+   274→      await jsonDelete(`/api/admin/nutrition/${deleteTarget.id}`);
+   275→      toast.success("تم حذف الخطة بنجاح");
+   276→      setDeleteTarget(null);
+   277→      await loadPlans();
+   278→    } catch (err) {
+   279→      toast.error(err instanceof Error ? err.message : "تعذر الحذف");
+   280→    } finally {
+   281→      setDeleting(false);
+   282→    }
+   283→  }
+   284→
+   285→  return (
+   286→    <div className="space-y-6">
+   287→      <PageHeader
+   288→        icon={UtensilsCrossed}
+   289→        title="خطط التغذية"
+   290→        subtitle="إدارة برامج التغذية وخطط الوجبات التي تُسند للأعضاء"
+   291→      >
+   292→        <Button onClick={openAdd} className="w-full md:w-auto">
+   293→          <Plus className="h-4 w-4" aria-hidden="true" />
+   294→          إضافة خطة
+   295→        </Button>
+   296→      </PageHeader>
+   297→
+   298→      {loading ? (
+   299→        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+   300→          {Array.from({ length: 3 }).map((_, i) => (
+   301→            <Skeleton key={i} className="h-52 w-full rounded-xl" />
+   302→          ))}
+   303→        </div>
+   304→      ) : plans.length === 0 ? (
+   305→        <EmptyState
+   306→          icon={UtensilsCrossed}
+   307→          title="لا توجد خطط تغذية بعد"
+   308→          description="ابدأ بإضافة أول خطة تغذية للأعضاء"
+   309→        >
+   310→          <Button variant="outline" onClick={openAdd}>
+   311→            <Plus className="h-4 w-4" aria-hidden="true" />
+   312→            إضافة خطة
+   313→          </Button>
+   314→        </EmptyState>
+   315→      ) : (
+   316→        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+   317→          {plans.map((plan) => (
+   318→            <Card
+   319→              key={plan.id}
+   320→              className={`p-0 flex flex-col ${plan.active ? "" : "opacity-60"}`}
+   321→            >
+   322→              <CardContent className="p-4 flex-1 flex flex-col gap-3">
+   323→                <div className="flex items-start justify-between gap-2">
+   324→                  <div className="min-w-0">
+   325→                    <h3 className="font-bold text-base truncate">{plan.name}</h3>
+   326→                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+   327→                      <Badge
+   328→                        variant="outline"
+   329→                        className={GOAL_BADGE_CLASS[plan.goal] ?? ""}
+   330→                      >
+   331→                        {goalLabel(plan.goal)}
+   332→                      </Badge>
+   333→                      <Badge variant="outline" className="bg-muted">
+   334→                        {(plan.meals ?? []).length} وجبة
+   335→                      </Badge>
+   336→                    </div>
+   337→                  </div>
+   338→                  <Switch
+   339→                    checked={plan.active}
+   340→                    onCheckedChange={async (v) => {
+   341→                      try {
+   342→                        await jsonPut(`/api/admin/nutrition/${plan.id}`, {
+   343→                          active: v,
+   344→                        });
+   345→                        toast.success(v ? "تم تفعيل الخطة" : "تم إيقاف الخطة");
+   346→                        await loadPlans();
+   347→                      } catch (err) {
+   348→                        toast.error(
+   349→                          err instanceof Error ? err.message : "تعذر التغيير"
+   350→                        );
+   351→                      }
+   352→                    }}
+   353→                    aria-label={`تفعيل خطة ${plan.name}`}
+   354→                  />
+   355→                </div>
+   356→
+   357→                <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-400">
+   358→                  <Flame className="h-4 w-4" aria-hidden="true" />
+   359→                  <span className="tabular-nums">{plan.calories} سعرة</span>
+   360→                </div>
+   361→
+   362→                {(plan.protein || plan.carbs || plan.fats) && (
+   363→                  <div className="flex flex-wrap gap-1.5 text-xs">
+   364→                    {plan.protein !== null && (
+   365→                      <Badge
+   366→                        variant="outline"
+   367→                        className="bg-emerald-500/10 text-emerald-400 border-emerald-500/25"
+   368→                      >
+   369→                        بروتين {plan.protein}جم
+   370→                      </Badge>
+   371→                    )}
+   372→                    {plan.carbs !== null && (
+   373→                      <Badge
+   374→                        variant="outline"
+   375→                        className="bg-amber-500/10 text-amber-400 border-amber-500/25"
+   376→                      >
+   377→                        كارب {plan.carbs}جم
+   378→                      </Badge>
+   379→                    )}
+   380→                    {plan.fats !== null && (
+   381→                      <Badge
+   382→                        variant="outline"
+   383→                        className="bg-violet-500/10 text-violet-400 border-violet-500/25"
+   384→                      >
+   385→                        دهون {plan.fats}جم
+   386→                      </Badge>
+   387→                    )}
+   388→                  </div>
+   389→                )}
+   390→
+   391→                {plan.description && (
+   392→                  <p className="text-xs text-muted-foreground line-clamp-2 flex-1">
+   393→                    {plan.description}
+   394→                  </p>
+   395→                )}
+   396→
+   397→                <div className="flex gap-1.5 border-t border-border pt-3">
+   398→                  <Button
+   399→                    size="sm"
+   400→                    variant="outline"
+   401→                    className="flex-1 h-8 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+   402→                    onClick={() => openMeals(plan)}
+   403→                    aria-label={`إدارة وجبات ${plan.name}`}
+   404→                  >
+   405→                    <UtensilsCrossed className="h-3.5 w-3.5" aria-hidden="true" />
+   406→                    الوجبات
+   407→                  </Button>
+   408→                  <Button
+   409→                    size="sm"
+   410→                    variant="outline"
+   411→                    className="flex-1 h-8"
+   412→                    onClick={() => openEdit(plan)}
+   413→                    aria-label={`تعديل ${plan.name}`}
+   414→                  >
+   415→                    <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+   416→                    تعديل
+   417→                  </Button>
+   418→                  <Button
+   419→                    size="sm"
+   420→                    variant="outline"
+   421→                    className="flex-1 h-8 text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10"
+   422→                    onClick={() => setDeleteTarget(plan)}
+   423→                    aria-label={`حذف ${plan.name}`}
+   424→                  >
+   425→                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+   426→                    حذف
+   427→                  </Button>
+   428→                </div>
+   429→              </CardContent>
+   430→            </Card>
+   431→          ))}
+   432→        </div>
+   433→      )}
+   434→
+   435→      {/* Add/Edit plan dialog */}
+   436→      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+   437→        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-lg">
+   438→          <DialogHeader>
+   439→            <DialogTitle>{editing ? "تعديل الخطة" : "إضافة خطة جديدة"}</DialogTitle>
+   440→            <DialogDescription>الحقول المميزة بـ * مطلوبة</DialogDescription>
+   441→          </DialogHeader>
+   442→          <form onSubmit={handleSave} className="space-y-4">
+   443→            <Field label="اسم الخطة" required htmlFor="plan-name">
+   444→              <Input
+   445→                id="plan-name"
+   446→                value={form.name}
+   447→                onChange={(e) => setForm({ ...form, name: e.target.value })}
+   448→                placeholder="مثال: خطة التضخيم"
+   449→                required
+   450→              />
+   451→            </Field>
+   452→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   453→              <Field label="الهدف" required htmlFor="plan-goal">
+   454→                <Select
+   455→                  value={form.goal}
+   456→                  onValueChange={(v) => setForm({ ...form, goal: v })}
+   457→                >
+   458→                  <SelectTrigger id="plan-goal" className="w-full">
+   459→                    <SelectValue placeholder="اختر الهدف" />
+   460→                  </SelectTrigger>
+   461→                  <SelectContent>
+   462→                    {NUTRITION_GOALS.map((g) => (
+   463→                      <SelectItem key={g.value} value={g.value}>
+   464→                        {g.label}
+   465→                      </SelectItem>
+   466→                    ))}
+   467→                  </SelectContent>
+   468→                </Select>
+   469→              </Field>
+   470→              <Field label="السعرات الحرارية" required htmlFor="plan-calories">
+   471→                <Input
+   472→                  id="plan-calories"
+   473→                  type="number"
+   474→                  min="200"
+   475→                  max="8000"
+   476→                  dir="ltr"
+   477→                  value={form.calories}
+   478→                  onChange={(e) => setForm({ ...form, calories: e.target.value })}
+   479→                  placeholder="3000"
+   480→                  required
+   481→                />
+   482→              </Field>
+   483→            </div>
+   484→            <div className="grid grid-cols-3 gap-4">
+   485→              <Field label="بروتين (جم)" htmlFor="plan-protein">
+   486→                <Input
+   487→                  id="plan-protein"
+   488→                  type="number"
+   489→                  min="0"
+   490→                  dir="ltr"
+   491→                  value={form.protein}
+   492→                  onChange={(e) => setForm({ ...form, protein: e.target.value })}
+   493→                  placeholder="180"
+   494→                />
+   495→              </Field>
+   496→              <Field label="كارب (جم)" htmlFor="plan-carbs">
+   497→                <Input
+   498→                  id="plan-carbs"
+   499→                  type="number"
+   500→                  min="0"
+   501→                  dir="ltr"
+   502→                  value={form.carbs}
+   503→                  onChange={(e) => setForm({ ...form, carbs: e.target.value })}
+   504→                  placeholder="380"
+   505→                />
+   506→              </Field>
+   507→              <Field label="دهون (جم)" htmlFor="plan-fats">
+   508→                <Input
+   509→                  id="plan-fats"
+   510→                  type="number"
+   511→                  min="0"
+   512→                  dir="ltr"
+   513→                  value={form.fats}
+   514→                  onChange={(e) => setForm({ ...form, fats: e.target.value })}
+   515→                  placeholder="95"
+   516→                />
+   517→              </Field>
+   518→            </div>
+   519→            <Field label="الوصف" htmlFor="plan-description">
+   520→              <Textarea
+   521→                id="plan-description"
+   522→                value={form.description}
+   523→                onChange={(e) =>
+   524→                  setForm({ ...form, description: e.target.value })
+   525→                }
+   526→                placeholder="وصف مختصر للخطة ومناسب لمن..."
+   527→                rows={3}
+   528→              />
+   529→            </Field>
+   530→            <Field label="ملاحظات" htmlFor="plan-notes">
+   531→              <Textarea
+   532→                id="plan-notes"
+   533→                value={form.notes}
+   534→                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+   535→                placeholder="ملاحظات مهمة تظهر للعضو..."
+   536→                rows={2}
+   537→              />
+   538→            </Field>
+   539→            <div className="flex items-center justify-between rounded-lg border border-border p-3">
+   540→              <span className="text-sm">نشطة ويمكن إسنادها للأعضاء</span>
+   541→              <Switch
+   542→                checked={form.active}
+   543→                onCheckedChange={(v) => setForm({ ...form, active: v })}
+   544→                aria-label="تفعيل الخطة"
+   545→              />
+   546→            </div>
+   547→            <DialogFooter className="gap-2">
+   548→              <Button
+   549→                type="button"
+   550→                variant="outline"
+   551→                onClick={() => setFormOpen(false)}
+   552→                disabled={saving}
+   553→              >
+   554→                إلغاء
+   555→              </Button>
+   556→              <Button type="submit" disabled={saving}>
+   557→                {saving && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+   558→                {editing ? "حفظ التعديلات" : "إضافة الخطة"}
+   559→              </Button>
+   560→            </DialogFooter>
+   561→          </form>
+   562→        </DialogContent>
+   563→      </Dialog>
+   564→
+   565→      {/* Meals manager dialog */}
+   566→      <Dialog
+   567→        open={!!mealsPlan}
+   568→        onOpenChange={(open) => !open && setMealsPlan(null)}
+   569→      >
+   570→        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-3xl">
+   571→          <DialogHeader>
+   572→            <DialogTitle>
+   573→              إدارة الوجبات — {mealsPlan?.name}
+   574→            </DialogTitle>
+   575→            <DialogDescription>
+   576→              نظّم وجبات الأسبوع لكل يوم — احفظ بعد الانتهاء
+   577→            </DialogDescription>
+   578→          </DialogHeader>
+   579→
+   580→          <div className="space-y-4">
+   581→            {/* Day tabs */}
+   582→            <div
+   583→              role="tablist"
+   584→              aria-label="أيام الأسبوع"
+   585→              className="flex gap-2 overflow-x-auto custom-scrollbar pb-1"
+   586→            >
+   587→              {GYM_DAYS.map((d) => {
+   588→                const active = mealsDay === d.index;
+   589→                const count = meals.filter((m) => m.day === d.index).length;
+   590→                return (
+   591→                  <button
+   592→                    key={d.index}
+   593→                    role="tab"
+   594→                    aria-selected={active}
+   595→                    onClick={() => setMealsDay(d.index)}
+   596→                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium border transition-colors ${
+   597→                      active
+   598→                        ? "bg-primary text-primary-foreground border-primary"
+   599→                        : "bg-card text-muted-foreground border-border hover:bg-accent hover:text-foreground"
+   600→                    }`}
+   601→                  >
+   602→                    {d.name}
+   603→                    <span
+   604→                      className={`mr-2 text-xs tabular-nums rounded-full px-1.5 ${
+   605→                        active ? "bg-background/20" : "bg-muted"
+   606→                      }`}
+   607→                    >
+   608→                      {count}
+   609→                    </span>
+   610→                  </button>
+   611→                );
+   612→              })}
+   613→            </div>
+   614→
+   615→            {/* Meal rows */}
+   616→            <div className="space-y-3 max-h-[45vh] overflow-y-auto custom-scrollbar pr-1">
+   617→              {dayMeals.length === 0 ? (
+   618→                <p className="py-6 text-center text-sm text-muted-foreground">
+   619→                  لا توجد وجبات في هذا اليوم — أضف أول وجبة
+   620→                </p>
+   621→              ) : (
+   622→                dayMeals.map((meal) => (
+   623→                  <div
+   624→                    key={meal.rowId}
+   625→                    className="rounded-lg border border-border p-3 space-y-2"
+   626→                  >
+   627→                    <div className="flex items-center gap-2">
+   628→                      <Select
+   629→                        value={meal.mealType}
+   630→                        onValueChange={(v) =>
+   631→                          updateMealRow(meal.rowId, { mealType: v })
+   632→                        }
+   633→                      >
+   634→                        <SelectTrigger className="w-36 shrink-0 h-9">
+   635→                          <SelectValue placeholder="نوع الوجبة" />
+   636→                        </SelectTrigger>
+   637→                        <SelectContent>
+   638→                          {MEAL_TYPES.map((mt) => (
+   639→                            <SelectItem key={mt.value} value={mt.value}>
+   640→                              {mt.label}
+   641→                            </SelectItem>
+   642→                          ))}
+   643→                        </SelectContent>
+   644→                      </Select>
+   645→                      <Input
+   646→                        type="number"
+   647→                        min="0"
+   648→                        dir="ltr"
+   649→                        className="w-28 shrink-0 h-9"
+   650→                        placeholder="سعرات"
+   651→                        aria-label="سعرات الوجبة"
+   652→                        value={meal.calories}
+   653→                        onChange={(e) =>
+   654→                          updateMealRow(meal.rowId, { calories: e.target.value })
+   655→                        }
+   656→                      />
+   657→                      <Button
+   658→                        size="icon"
+   659→                        variant="ghost"
+   660→                        className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+   661→                        onClick={() => removeMealRow(meal.rowId)}
+   662→                        aria-label="حذف الوجبة"
+   663→                      >
+   664→                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+   665→                      </Button>
+   666→                    </div>
+   667→                    <Textarea
+   668→                      rows={2}
+   669→                      placeholder="محتوى الوجبة — مثال: 4 بياض بيض + شوفان 80جم + موزة"
+   670→                      aria-label="محتوى الوجبة"
+   671→                      value={meal.content}
+   672→                      onChange={(e) =>
+   673→                        updateMealRow(meal.rowId, { content: e.target.value })
+   674→                      }
+   675→                    />
+   676→                  </div>
+   677→                ))
+   678→              )}
+   679→            </div>
+   680→
+   681→            <div className="flex items-center justify-between gap-3 flex-wrap">
+   682→              <Button
+   683→                type="button"
+   684→                variant="outline"
+   685→                onClick={addMealRow}
+   686→                className="text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+   687→              >
+   688→                <Plus className="h-4 w-4" aria-hidden="true" />
+   689→                إضافة وجبة لهذا اليوم
+   690→              </Button>
+   691→              <p className="text-sm text-muted-foreground tabular-nums">
+   692→                إجمالي سعرات اليوم:{" "}
+   693→                <span className="font-semibold text-amber-400">{dayCalories}</span> سعرة
+   694→              </p>
+   695→            </div>
+   696→          </div>
+   697→
+   698→          <DialogFooter className="gap-2">
+   699→            <Button
+   700→              type="button"
+   701→              variant="outline"
+   702→              onClick={() => setMealsPlan(null)}
+   703→              disabled={savingMeals}
+   704→            >
+   705→              إلغاء
+   706→            </Button>
+   707→            <Button type="button" onClick={saveMeals} disabled={savingMeals}>
+   708→              {savingMeals && (
+   709→                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   710→              )}
+   711→              حفظ الوجبات
+   712→            </Button>
+   713→          </DialogFooter>
+   714→        </DialogContent>
+   715→      </Dialog>
+   716→
+   717→      {/* Delete confirm */}
+   718→      <AlertDialog
+   719→        open={!!deleteTarget}
+   720→        onOpenChange={(open) => !open && setDeleteTarget(null)}
+   721→      >
+   722→        <AlertDialogContent>
+   723→          <AlertDialogHeader>
+   724→            <AlertDialogTitle>تأكيد حذف الخطة</AlertDialogTitle>
+   725→            <AlertDialogDescription>
+   726→              هل أنت متأكد من حذف خطة &quot;{deleteTarget?.name}&quot; وكل وجباتها؟ لا يمكن
+   727→              التراجع عن هذا الإجراء.
+   728→            </AlertDialogDescription>
+   729→          </AlertDialogHeader>
+   730→          <AlertDialogFooter className="gap-2">
+   731→            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
+   732→            <AlertDialogAction
+   733→              onClick={(e) => {
+   734→                e.preventDefault();
+   735→                handleDelete();
+   736→              }}
+   737→              disabled={deleting}
+   738→              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+   739→            >
+   740→              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+   741→              حذف نهائي
+   742→            </AlertDialogAction>
+   743→          </AlertDialogFooter>
+   744→        </AlertDialogContent>
+   745→      </AlertDialog>
+   746→    </div>
+   747→  );
+   748→}
+   749→

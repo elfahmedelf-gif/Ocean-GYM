@@ -16,16 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -46,8 +36,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
-import { IMAGE_OPTIONS } from "@/components/admin/image-options";
+import { IMAGE_OPTIONS, imageOptionLabel } from "@/components/admin/image-options";
 import { EmptyState, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import type { Testimonial } from "@/components/admin/types";
 
 interface TestimonialFormState {
@@ -277,7 +268,7 @@ export default function TestimonialsView() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-8"
+                      className="h-9"
                       onClick={() => toggleApproved(t)}
                       aria-label={
                         t.approved ? `إخفاء رأي ${t.name}` : `نشر رأي ${t.name}`
@@ -288,7 +279,7 @@ export default function TestimonialsView() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-8 text-muted-foreground hover:text-primary"
+                      className="h-9 text-muted-foreground hover:text-primary"
                       onClick={() => openEdit(t)}
                       aria-label={`تعديل رأي ${t.name}`}
                     >
@@ -298,7 +289,7 @@ export default function TestimonialsView() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-8 text-muted-foreground hover:text-destructive"
+                      className="h-9 text-muted-foreground hover:text-destructive"
                       onClick={() => setDeleteTarget(t)}
                       aria-label={`حذف رأي ${t.name}`}
                     >
@@ -385,8 +376,8 @@ export default function TestimonialsView() {
                   <SelectContent>
                     <SelectItem value="none">بدون صورة</SelectItem>
                     {IMAGE_OPTIONS.map((path) => (
-                      <SelectItem key={path} value={path} dir="ltr">
-                        {path}
+                      <SelectItem key={path} value={path}>
+                        {imageOptionLabel(path)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -428,33 +419,14 @@ export default function TestimonialsView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف الرأي</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف رأي &quot;{deleteTarget?.name}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف الرأي"
+        description={`هل أنت متأكد من حذف رأي "${deleteTarget?.name}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

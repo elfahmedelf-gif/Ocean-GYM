@@ -1,10 +1,13 @@
 export interface NavLink {
   href: string;
   label: string;
-  /** Secondary links are hidden in the desktop bar below xl to avoid crowding. */
-  secondary?: boolean;
 }
 
+/**
+ * Landing page section links. Every link is always rendered in the desktop
+ * bar (from lg up, with tighter sizing at lg) and in the mobile sheet —
+ * no link is ever hidden based on viewport width.
+ */
 export const NAV_LINKS: NavLink[] = [
   { href: "#home", label: "الرئيسية" },
   { href: "#about", label: "عن الجيم" },
@@ -13,6 +16,6 @@ export const NAV_LINKS: NavLink[] = [
   { href: "#trainers", label: "المدربون" },
   { href: "#pricing", label: "الباقات" },
   { href: "#gallery", label: "المعرض" },
-  { href: "#testimonials", label: "آراء العملاء", secondary: true },
-  { href: "#contact", label: "تواصل معنا", secondary: true },
+  { href: "#testimonials", label: "آراء العملاء" },
+  { href: "#contact", label: "تواصل معنا" },
 ];

@@ -5,6 +5,7 @@ import { animate, useInView } from "framer-motion";
 
 interface CounterProps {
   to: number;
+  /** Rendered AFTER the digits (e.g. "1200+") so it stays correct inside RTL layouts. */
   prefix?: string;
   /** Animation duration in seconds. */
   duration?: number;
@@ -28,8 +29,8 @@ export function Counter({ to, prefix = "", duration = 1.8 }: CounterProps) {
 
   return (
     <span ref={ref} dir="ltr" className="tabular-nums">
-      {prefix}
       {value}
+      {prefix}
     </span>
   );
 }

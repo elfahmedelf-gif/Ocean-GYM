@@ -97,6 +97,20 @@ export function formatPrice(price: number): string {
   return `${formatted} ج.م`;
 }
 
+/** Format an ISO date as a long Arabic date (e.g. "١٢ يناير ٢٠٢٥"). Null → em dash. */
+export function formatDate(iso: string | null): string {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString("ar-EG", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
+
 /** Digits-only price (cards render the currency label separately). */
 export function formatPriceDigits(price: number): string {
   return Number.isInteger(price) ? price.toLocaleString("en-US") : price.toFixed(2);

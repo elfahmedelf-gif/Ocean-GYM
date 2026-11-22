@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { statusLabel } from "@/lib/gym";
+import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "border-amber-500/40 bg-amber-500/10 text-amber-400",
@@ -11,7 +12,7 @@ const STATUS_STYLES: Record<string, string> = {
 export default function StatusBadge({ status }: { status: string }) {
   const style = STATUS_STYLES[status] ?? "border-border bg-muted text-muted-foreground";
   return (
-    <Badge variant="outline" className={`${style} font-semibold`}>
+    <Badge variant="outline" className={cn(style, "rounded-full font-semibold")}>
       {statusLabel(status)}
     </Badge>
   );

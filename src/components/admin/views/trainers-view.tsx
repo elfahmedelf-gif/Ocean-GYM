@@ -16,16 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -46,8 +36,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
-import { TRAINER_IMAGE_OPTIONS } from "@/components/admin/image-options";
-import { EmptyState, PageHeader } from "@/components/admin/shared";
+import { TRAINER_IMAGE_OPTIONS, imageOptionLabel } from "@/components/admin/image-options";
+import { DANGER_BUTTON_CLASS, EmptyState, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import type { Trainer } from "@/components/admin/types";
 
 interface TrainerFormState {
@@ -223,7 +214,7 @@ export default function TrainersView() {
                 {!t.active && (
                   <Badge
                     variant="outline"
-                    className="absolute top-2 left-2 bg-slate-900/80 text-slate-300 border-slate-500/40"
+                    className="absolute top-2 start-2 bg-slate-900/80 text-slate-300 border-slate-500/40"
                   >
                     غير مفعّل
                   </Badge>
@@ -258,7 +249,7 @@ export default function TrainersView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8"
+                    className="flex-1 h-9"
                     onClick={() => openEdit(t)}
                     aria-label={`تعديل ${t.name}`}
                   >
@@ -268,7 +259,7 @@ export default function TrainersView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8 text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10"
+                    className={`flex-1 h-9 ${DANGER_BUTTON_CLASS}`}
                     onClick={() => setDeleteTarget(t)}
                     aria-label={`حذف ${t.name}`}
                   >
@@ -334,8 +325,8 @@ export default function TrainersView() {
                 <SelectContent>
                   <SelectItem value="none">بدون صورة</SelectItem>
                   {TRAINER_IMAGE_OPTIONS.map((path) => (
-                    <SelectItem key={path} value={path} dir="ltr">
-                      {path}
+                    <SelectItem key={path} value={path}>
+                      {imageOptionLabel(path)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -413,33 +404,14 @@ export default function TrainersView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف المدرب</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف المدرب &quot;{deleteTarget?.name}&quot;؟ الكلاسات المرتبطة به ستفقد المدرب. لا يمكن التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف المدرب"
+        description={`هل أنت متأكد من حذف المدرب "${deleteTarget?.name}"؟ الكلاسات المرتبطة به ستفقد المدرب. لا يمكن التراجع عن هذا الإجراء.`}
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

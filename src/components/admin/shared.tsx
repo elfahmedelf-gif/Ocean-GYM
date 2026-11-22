@@ -10,8 +10,18 @@ import type { MemberStatus } from "@/components/admin/types";
 
 /**
  * Shared building blocks for admin views:
- * PageHeader, StatusBadge, EmptyState, Field.
+ * PageHeader, StatusBadge, EmptyState, Field, plus shared class constants.
  */
+
+// ===== Shared class constants =====
+
+/** Destructive outline button (delete triggers in tables/cards). */
+export const DANGER_BUTTON_CLASS =
+  "text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10";
+
+/** Destructive solid confirm button (AlertDialogAction inside ConfirmDialog). */
+export const DANGER_CONFIRM_CLASS =
+  "bg-destructive text-destructive-foreground hover:bg-destructive/90";
 
 // ===== Page header =====
 
@@ -30,7 +40,7 @@ export function PageHeader({
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div className="flex items-start gap-3">
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-400/10 border border-cyan-400/25 text-cyan-400"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/25 text-primary"
           aria-hidden="true"
         >
           <Icon className="h-6 w-6" />
@@ -63,7 +73,7 @@ const STATUS_BADGE_CLASS: Record<MemberStatus, string> = {
 export function StatusBadge({ status }: { status: string }) {
   const cls = STATUS_BADGE_CLASS[status as MemberStatus] ?? "bg-muted text-muted-foreground border-border";
   return (
-    <Badge variant="outline" className={cls}>
+    <Badge variant="outline" className={cn("rounded-full px-2.5", cls)}>
       {statusLabel(status)}
     </Badge>
   );

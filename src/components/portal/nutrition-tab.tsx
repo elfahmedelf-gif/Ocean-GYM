@@ -99,17 +99,16 @@ export default function NutritionTab({ plan }: { plan: NutritionPlanDetail }) {
       {/* Day pills */}
       <div
         className="grid grid-cols-4 gap-2 sm:flex sm:flex-wrap"
-        role="tablist"
+        role="group"
         aria-label="أيام الأسبوع"
       >
         {GYM_DAYS.map((d) => (
           <button
             key={d.index}
             type="button"
-            role="tab"
-            aria-selected={selectedDay === d.index}
+            aria-pressed={selectedDay === d.index}
             onClick={() => setSelectedDay(d.index)}
-            className={`h-9 rounded-full border px-3 text-sm font-medium transition-colors ${
+            className={`h-10 rounded-full border px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               selectedDay === d.index
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border/70 bg-card/60 text-muted-foreground hover:border-primary/40 hover:text-foreground"
@@ -129,7 +128,7 @@ export default function NutritionTab({ plan }: { plan: NutritionPlanDetail }) {
         <div className="relative space-y-4">
           <div
             aria-hidden="true"
-            className="absolute inset-y-6 right-[22px] w-px bg-gradient-to-b from-primary/40 via-border to-transparent"
+            className="absolute inset-y-6 start-[22px] w-px bg-gradient-to-b from-primary/40 via-border to-transparent"
           />
           {dayMeals.map((meal: NutritionMealItem) => {
             const Icon = MEAL_ICONS[meal.mealType] ?? UtensilsCrossed;

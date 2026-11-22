@@ -81,38 +81,7 @@
 }
 
 .dark {
-  --background: #050d1f;
-  --foreground: #e8f1f8;
-  --card: #0a1630;
-  --card-foreground: #e8f1f8;
-  --popover: #0b1a38;
-  --popover-foreground: #e8f1f8;
-  --primary: #38c7e8;
-  --primary-foreground: #04101f;
-  --secondary: #10203e;
-  --secondary-foreground: #d7e9f5;
-  --muted: #0e1b36;
-  --muted-foreground: #8fa6bf;
-  --accent: #12294e;
-  --accent-foreground: #7dd8f0;
-  --destructive: #e5484d;
-  --destructive-foreground: #ffffff;
-  --border: rgba(56, 199, 232, 0.14);
-  --input: rgba(56, 199, 232, 0.18);
-  --ring: #38c7e8;
-  --chart-1: #38c7e8;
-  --chart-2: #1e6fe8;
-  --chart-3: #7dd8f0;
-  --chart-4: #2ea3c9;
-  --chart-5: #5a8de8;
-  --sidebar: #061024;
-  --sidebar-foreground: #d7e9f5;
-  --sidebar-primary: #38c7e8;
-  --sidebar-primary-foreground: #04101f;
-  --sidebar-accent: #12294e;
-  --sidebar-accent-foreground: #7dd8f0;
-  --sidebar-border: rgba(56, 199, 232, 0.14);
-  --sidebar-ring: #38c7e8;
+  /* Values intentionally mirror :root — the site ships dark-only (html.dark). */
 }
 
 @layer base {
@@ -219,6 +188,21 @@
 }
 .animate-pulse-glow {
   animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Respect users who prefer reduced motion — kill decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns,
+  .animate-pulse-glow,
+  .animate-float,
+  .animate-slider-progress,
+  .animate-ping,
+  .animate-marquee {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* ===== Hero slider ===== */

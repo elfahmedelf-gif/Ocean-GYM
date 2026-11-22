@@ -99,7 +99,15 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
             سيتم إعلان الباقات قريبًا — تواصل معنا لمعرفة التفاصيل.
           </FadeUp>
         ) : (
-          <div className="grid items-stretch gap-6 md:grid-cols-3 lg:gap-8">
+          <div
+            className={cn(
+              "grid items-stretch gap-6 lg:gap-8",
+              // Resilient to any plan count: lone/small sets stay centered, full sets use the 3-col layout.
+              plans.length === 1 && "mx-auto max-w-md",
+              plans.length === 2 && "mx-auto max-w-3xl sm:grid-cols-2",
+              plans.length >= 3 && "sm:grid-cols-2 lg:grid-cols-3"
+            )}
+          >
             {plans.map((plan, i) => (
               <FadeUp key={plan.id} delay={i * 0.1} className="h-full">
                 <PricingCard plan={plan} />

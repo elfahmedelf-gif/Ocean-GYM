@@ -1,0 +1,1043 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useMemo, useRef, useState } from "react";
+     4→import { toast } from "sonner";
+     5→import {
+     6→  Copy,
+     7→  Loader2,
+     8→  Pencil,
+     9→  Plus,
+    10→  Search,
+    11→  Trash2,
+    12→  TrendingUp,
+    13→  UserCheck,
+    14→  Users,
+    15→} from "lucide-react";
+    16→
+    17→import { Button } from "@/components/ui/button";
+    18→import {
+    19→  AlertDialog,
+    20→  AlertDialogAction,
+    21→  AlertDialogCancel,
+    22→  AlertDialogContent,
+    23→  AlertDialogDescription,
+    24→  AlertDialogFooter,
+    25→  AlertDialogHeader,
+    26→  AlertDialogTitle,
+    27→} from "@/components/ui/alert-dialog";
+    28→import {
+    29→  Dialog,
+    30→  DialogContent,
+    31→  DialogDescription,
+    32→  DialogFooter,
+    33→  DialogHeader,
+    34→  DialogTitle,
+    35→} from "@/components/ui/dialog";
+    36→import { Input } from "@/components/ui/input";
+    37→import { Label } from "@/components/ui/label";
+    38→import {
+    39→  Select,
+    40→  SelectContent,
+    41→  SelectItem,
+    42→  SelectTrigger,
+    43→  SelectValue,
+    44→} from "@/components/ui/select";
+    45→import { Skeleton } from "@/components/ui/skeleton";
+    46→import { Textarea } from "@/components/ui/textarea";
+    47→import {
+    48→  Table,
+    49→  TableBody,
+    50→  TableCell,
+    51→  TableHead,
+    52→  TableHeader,
+    53→  TableRow,
+    54→} from "@/components/ui/table";
+    55→import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
+    56→import { EmptyState, Field, PageHeader, StatusBadge } from "@/components/admin/shared";
+    57→import { MEMBER_STATUSES } from "@/lib/gym";
+    58→import type {
+    59→  Member,
+    60→  MemberStatus,
+    61→  NutritionPlanItem,
+    62→  Plan,
+    63→  ProgressLogItem,
+    64→} from "@/components/admin/types";
+    65→
+    66→interface MemberFormState {
+    67→  name: string;
+    68→  email: string;
+    69→  phone: string;
+    70→  planId: string;
+    71→  status: MemberStatus;
+    72→  startDate: string;
+    73→  endDate: string;
+    74→  notes: string;
+    75→  nutritionPlanId: string;
+    76→  accessCode: string;
+    77→}
+    78→
+    79→const EMPTY_FORM: MemberFormState = {
+    80→  name: "",
+    81→  email: "",
+    82→  phone: "",
+    83→  planId: "none",
+    84→  status: "pending",
+    85→  startDate: "",
+    86→  endDate: "",
+    87→  notes: "",
+    88→  nutritionPlanId: "none",
+    89→  accessCode: "",
+    90→};
+    91→
+    92→interface ProgressFormState {
+    93→  date: string;
+    94→  weight: string;
+    95→  fatPercent: string;
+    96→  muscleMass: string;
+    97→  waist: string;
+    98→  chest: string;
+    99→  arm: string;
+   100→  notes: string;
+   101→}
+   102→
+   103→function todayDateInput(): string {
+   104→  const d = new Date();
+   105→  const offset = d.getTimezoneOffset();
+   106→  const local = new Date(d.getTime() - offset * 60 * 1000);
+   107→  return local.toISOString().slice(0, 10);
+   108→}
+   109→
+   110→const EMPTY_PROGRESS: ProgressFormState = {
+   111→  date: "",
+   112→  weight: "",
+   113→  fatPercent: "",
+   114→  muscleMass: "",
+   115→  waist: "",
+   116→  chest: "",
+   117→  arm: "",
+   118→  notes: "",
+   119→};
+   120→
+   121→function toDateInputValue(iso: string | null): string {
+   122→  if (!iso) return "";
+   123→  const d = new Date(iso);
+   124→  if (Number.isNaN(d.getTime())) return "";
+   125→  return d.toISOString().slice(0, 10);
+   126→}
+   127→
+   128→function formatDate(iso: string | null): string {
+   129→  if (!iso) return "—";
+   130→  try {
+   131→    return new Date(iso).toLocaleDateString("ar-EG", {
+   132→      year: "numeric",
+   133→      month: "long",
+   134→      day: "numeric",
+   135→    });
+   136→  } catch {
+   137→    return iso;
+   138→  }
+   139→}
+   140→
+   141→function formatLogDate(iso: string): string {
+   142→  try {
+   143→    return new Date(iso).toLocaleDateString("ar-EG", {
+   144→      year: "numeric",
+   145→      month: "short",
+   146→      day: "numeric",
+   147→    });
+   148→  } catch {
+   149→    return iso;
+   150→  }
+   151→}
+   152→
+   153→function fmtNum(v: number | null): string {
+   154→  if (v === null || v === undefined) return "—";
+   155→  return String(v);
+   156→}
+   157→
+   158→export default function MembersView() {
+   159→  const [members, setMembers] = useState<Member[]>([]);
+   160→  const [plans, setPlans] = useState<Plan[]>([]);
+   161→  const [nutritionPlans, setNutritionPlans] = useState<NutritionPlanItem[]>([]);
+   162→  const [loading, setLoading] = useState(true);
+   163→  const [search, setSearch] = useState("");
+   164→
+   165→  const [formOpen, setFormOpen] = useState(false);
+   166→  const [editing, setEditing] = useState<Member | null>(null);
+   167→  const [form, setForm] = useState<MemberFormState>(EMPTY_FORM);
+   168→  const [saving, setSaving] = useState(false);
+   169→  const [generatingCode, setGeneratingCode] = useState(false);
+   170→
+   171→  const [deleteTarget, setDeleteTarget] = useState<Member | null>(null);
+   172→  const [deleting, setDeleting] = useState(false);
+   173→  const [activatingId, setActivatingId] = useState<string | null>(null);
+   174→
+   175→  // Progress dialog
+   176→  const [progressMember, setProgressMember] = useState<Member | null>(null);
+   177→  const [progressLogs, setProgressLogs] = useState<ProgressLogItem[]>([]);
+   178→  const [progressLoading, setProgressLoading] = useState(false);
+   179→  const [progressForm, setProgressForm] = useState<ProgressFormState>(EMPTY_PROGRESS);
+   180→  const [progressSaving, setProgressSaving] = useState(false);
+   181→  const [logDeleteTarget, setLogDeleteTarget] = useState<ProgressLogItem | null>(null);
+   182→  const [logDeleting, setLogDeleting] = useState(false);
+   183→
+   184→  const plansLoaded = useRef(false);
+   185→  const nutritionLoaded = useRef(false);
+   186→
+   187→  async function loadMembers() {
+   188→    try {
+   189→      const data = await apiFetch<Member[]>("/api/admin/members");
+   190→      setMembers(data);
+   191→    } catch (err) {
+   192→      toast.error(err instanceof Error ? err.message : "تعذر تحميل الأعضاء");
+   193→    } finally {
+   194→      setLoading(false);
+   195→    }
+   196→  }
+   197→
+   198→  useEffect(() => {
+   199→    loadMembers();
+   200→    if (!plansLoaded.current) {
+   201→      plansLoaded.current = true;
+   202→      apiFetch<Plan[]>("/api/admin/plans")
+   203→        .then(setPlans)
+   204→        .catch(() => {});
+   205→    }
+   206→    if (!nutritionLoaded.current) {
+   207→      nutritionLoaded.current = true;
+   208→      apiFetch<NutritionPlanItem[]>("/api/admin/nutrition")
+   209→        .then(setNutritionPlans)
+   210→        .catch(() => {});
+   211→    }
+   212→  }, []);
+   213→
+   214→  const filtered = useMemo(() => {
+   215→    const q = search.trim().toLowerCase();
+   216→    if (!q) return members;
+   217→    return members.filter(
+   218→      (m) =>
+   219→        m.name.toLowerCase().includes(q) ||
+   220→        m.email.toLowerCase().includes(q) ||
+   221→        m.phone.toLowerCase().includes(q) ||
+   222→        (m.accessCode ?? "").toLowerCase().includes(q)
+   223→    );
+   224→  }, [members, search]);
+   225→
+   226→  const lastWeight = useMemo(() => {
+   227→    if (progressLogs.length === 0) return null;
+   228→    return progressLogs[0].weight;
+   229→  }, [progressLogs]);
+   230→
+   231→  function openAdd() {
+   232→    setEditing(null);
+   233→    setForm(EMPTY_FORM);
+   234→    setFormOpen(true);
+   235→  }
+   236→
+   237→  function openEdit(m: Member) {
+   238→    setEditing(m);
+   239→    setForm({
+   240→      name: m.name,
+   241→      email: m.email,
+   242→      phone: m.phone,
+   243→      planId: m.planId ?? "none",
+   244→      status: m.status,
+   245→      startDate: toDateInputValue(m.startDate),
+   246→      endDate: toDateInputValue(m.endDate),
+   247→      notes: m.notes ?? "",
+   248→      nutritionPlanId: m.nutritionPlanId ?? "none",
+   249→      accessCode: m.accessCode ?? "",
+   250→    });
+   251→    setFormOpen(true);
+   252→  }
+   253→
+   254→  async function handleGenerateCode() {
+   255→    setGeneratingCode(true);
+   256→    try {
+   257→      const res = await apiFetch<{ accessCode: string | null }>(
+   258→        `/api/admin/members/${editing?.id}/access-code`,
+   259→        { method: "POST" }
+   260→      );
+   261→      if (res.accessCode) {
+   262→        setForm((f) => ({ ...f, accessCode: res.accessCode as string }));
+   263→        toast.success(`تم توليد كود جديد: ${res.accessCode}`);
+   264→      }
+   265→    } catch (err) {
+   266→      toast.error(err instanceof Error ? err.message : "تعذر توليد الكود");
+   267→    } finally {
+   268→      setGeneratingCode(false);
+   269→    }
+   270→  }
+   271→
+   272→  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
+   273→    e.preventDefault();
+   274→
+   275→    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
+   276→      toast.error("الاسم والبريد الإلكتروني ورقم الهاتف مطلوبة");
+   277→      return;
+   278→    }
+   279→
+   280→    setSaving(true);
+   281→    const payload = {
+   282→      name: form.name.trim(),
+   283→      email: form.email.trim(),
+   284→      phone: form.phone.trim(),
+   285→      planId: form.planId === "none" ? null : form.planId,
+   286→      status: form.status,
+   287→      startDate: form.startDate || null,
+   288→      endDate: form.endDate || null,
+   289→      notes: form.notes.trim() || null,
+   290→      nutritionPlanId: form.nutritionPlanId === "none" ? null : form.nutritionPlanId,
+   291→      accessCode: form.accessCode.trim() || null,
+   292→    };
+   293→
+   294→    try {
+   295→      if (editing) {
+   296→        await jsonPut(`/api/admin/members/${editing.id}`, payload);
+   297→        toast.success("تم تحديث بيانات العضو بنجاح");
+   298→      } else {
+   299→        await jsonPost("/api/admin/members", payload);
+   300→        toast.success("تم إضافة العضو بنجاح");
+   301→      }
+   302→      setFormOpen(false);
+   303→      await loadMembers();
+   304→    } catch (err) {
+   305→      toast.error(err instanceof Error ? err.message : "تعذر الحفظ");
+   306→    } finally {
+   307→      setSaving(false);
+   308→    }
+   309→  }
+   310→
+   311→  async function handleActivate(m: Member) {
+   312→    setActivatingId(m.id);
+   313→    try {
+   314→      await jsonPost(`/api/admin/members/${m.id}/activate`, {});
+   315→      toast.success(`تم تنشيط اشتراك ${m.name} بنجاح`);
+   316→      await loadMembers();
+   317→    } catch (err) {
+   318→      toast.error(err instanceof Error ? err.message : "تعذر التنشيط");
+   319→    } finally {
+   320→      setActivatingId(null);
+   321→    }
+   322→  }
+   323→
+   324→  async function handleDelete() {
+   325→    if (!deleteTarget) return;
+   326→    setDeleting(true);
+   327→    try {
+   328→      await jsonDelete(`/api/admin/members/${deleteTarget.id}`);
+   329→      toast.success("تم حذف العضو بنجاح");
+   330→      setDeleteTarget(null);
+   331→      await loadMembers();
+   332→    } catch (err) {
+   333→      toast.error(err instanceof Error ? err.message : "تعذر الحذف");
+   334→    } finally {
+   335→      setDeleting(false);
+   336→    }
+   337→  }
+   338→
+   339→  function handleCopyCode(code: string) {
+   340→    navigator.clipboard
+   341→      .writeText(code)
+   342→      .then(() => toast.success(`تم نسخ الكود ${code}`))
+   343→      .catch(() => toast.error("تعذر نسخ الكود"));
+   344→  }
+   345→
+   346→  // ===== Progress dialog handlers =====
+   347→
+   348→  async function openProgress(m: Member) {
+   349→    setProgressMember(m);
+   350→    setProgressLogs([]);
+   351→    setProgressForm({ ...EMPTY_PROGRESS, date: todayDateInput() });
+   352→    setProgressLoading(true);
+   353→    try {
+   354→      const logs = await apiFetch<ProgressLogItem[]>(`/api/admin/members/${m.id}/progress`);
+   355→      setProgressLogs(logs);
+   356→    } catch (err) {
+   357→      toast.error(err instanceof Error ? err.message : "تعذر تحميل سجلات المتابعة");
+   358→    } finally {
+   359→      setProgressLoading(false);
+   360→    }
+   361→  }
+   362→
+   363→  async function handleSaveProgress(e: React.FormEvent<HTMLFormElement>) {
+   364→    e.preventDefault();
+   365→    if (!progressMember) return;
+   366→
+   367→    if (!progressForm.date) {
+   368→      toast.error("تاريخ القياس مطلوب");
+   369→      return;
+   370→    }
+   371→    const weight = Number(progressForm.weight);
+   372→    if (!progressForm.weight || Number.isNaN(weight) || weight <= 0) {
+   373→      toast.error("الوزن مطلوب ويجب أن يكون أكبر من صفر");
+   374→      return;
+   375→    }
+   376→
+   377→    setProgressSaving(true);
+   378→    const payload = {
+   379→      date: new Date(`${progressForm.date}T12:00:00`).toISOString(),
+   380→      weight,
+   381→      fatPercent: progressForm.fatPercent ? Number(progressForm.fatPercent) : null,
+   382→      muscleMass: progressForm.muscleMass ? Number(progressForm.muscleMass) : null,
+   383→      waist: progressForm.waist ? Number(progressForm.waist) : null,
+   384→      chest: progressForm.chest ? Number(progressForm.chest) : null,
+   385→      arm: progressForm.arm ? Number(progressForm.arm) : null,
+   386→      notes: progressForm.notes.trim() || null,
+   387→    };
+   388→
+   389→    try {
+   390→      await jsonPost(`/api/admin/members/${progressMember.id}/progress`, payload);
+   391→      toast.success("تم إضافة سجل المتابعة بنجاح");
+   392→      setProgressForm({ ...EMPTY_PROGRESS, date: todayDateInput() });
+   393→      const logs = await apiFetch<ProgressLogItem[]>(
+   394→        `/api/admin/members/${progressMember.id}/progress`
+   395→      );
+   396→      setProgressLogs(logs);
+   397→      await loadMembers();
+   398→    } catch (err) {
+   399→      toast.error(err instanceof Error ? err.message : "تعذر حفظ السجل");
+   400→    } finally {
+   401→      setProgressSaving(false);
+   402→    }
+   403→  }
+   404→
+   405→  async function handleDeleteLog() {
+   406→    if (!logDeleteTarget) return;
+   407→    setLogDeleting(true);
+   408→    try {
+   409→      await jsonDelete(`/api/admin/progress/${logDeleteTarget.id}`);
+   410→      toast.success("تم حذف السجل بنجاح");
+   411→      setLogDeleteTarget(null);
+   412→      if (progressMember) {
+   413→        const logs = await apiFetch<ProgressLogItem[]>(
+   414→          `/api/admin/members/${progressMember.id}/progress`
+   415→        );
+   416→        setProgressLogs(logs);
+   417→      }
+   418→    } catch (err) {
+   419→      toast.error(err instanceof Error ? err.message : "تعذر حذف السجل");
+   420→    } finally {
+   421→      setLogDeleting(false);
+   422→    }
+   423→  }
+   424→
+   425→  return (
+   426→    <div className="space-y-6">
+   427→      <PageHeader
+   428→        icon={Users}
+   429→        title="إدارة الأعضاء"
+   430→        subtitle="متابعة الأعضاء وتنشيط الاشتراكات والخطط الغذائية وأكواد الدخول"
+   431→      >
+   432→        <Button onClick={openAdd} className="w-full md:w-auto">
+   433→          <Plus className="h-4 w-4" aria-hidden="true" />
+   434→          إضافة عضو
+   435→        </Button>
+   436→      </PageHeader>
+   437→
+   438→      {/* Search */}
+   439→      <div className="relative max-w-md">
+   440→        <Search
+   441→          className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+   442→          aria-hidden="true"
+   443→        />
+   444→        <Input
+   445→          type="search"
+   446→          placeholder="بحث بالاسم أو الهاتف أو البريد أو الكود"
+   447→          aria-label="بحث في الأعضاء"
+   448→          className="pr-9"
+   449→          value={search}
+   450→          onChange={(e) => setSearch(e.target.value)}
+   451→        />
+   452→      </div>
+   453→
+   454→      {/* Table */}
+   455→      <div className="rounded-xl border bg-card overflow-hidden">
+   456→        {loading ? (
+   457→          <div className="p-4 space-y-3">
+   458→            {Array.from({ length: 5 }).map((_, i) => (
+   459→              <Skeleton key={i} className="h-12 w-full" />
+   460→            ))}
+   461→          </div>
+   462→        ) : filtered.length === 0 ? (
+   463→          <EmptyState
+   464→            icon={Users}
+   465→            title={search ? "لا توجد نتائج مطابقة للبحث" : "لا يوجد أعضاء بعد"}
+   466→            description={search ? undefined : "ابدأ بإضافة أول عضو"}
+   467→            className="border-0"
+   468→          >
+   469→            {!search && (
+   470→              <Button variant="outline" onClick={openAdd}>
+   471→                <Plus className="h-4 w-4" aria-hidden="true" />
+   472→                إضافة عضو
+   473→              </Button>
+   474→            )}
+   475→          </EmptyState>
+   476→        ) : (
+   477→          <div className="overflow-x-auto custom-scrollbar">
+   478→            <Table>
+   479→              <TableHeader>
+   480→                <TableRow>
+   481→                  <TableHead>الاسم</TableHead>
+   482→                  <TableHead>الهاتف</TableHead>
+   483→                  <TableHead>الباقة</TableHead>
+   484→                  <TableHead>الخطة الغذائية</TableHead>
+   485→                  <TableHead>الحالة</TableHead>
+   486→                  <TableHead>كود الدخول</TableHead>
+   487→                  <TableHead className="text-left">إجراءات</TableHead>
+   488→                </TableRow>
+   489→              </TableHeader>
+   490→              <TableBody>
+   491→                {filtered.map((m) => (
+   492→                  <TableRow key={m.id}>
+   493→                    <TableCell>
+   494→                      <div>
+   495→                        <p className="font-medium">{m.name}</p>
+   496→                        <p className="text-xs text-muted-foreground">{m.email}</p>
+   497→                      </div>
+   498→                    </TableCell>
+   499→                    <TableCell dir="ltr" className="tabular-nums text-sm">
+   500→                      {m.phone}
+   501→                    </TableCell>
+   502→                    <TableCell className="text-muted-foreground text-sm">
+   503→                      {m.plan?.name ?? "بدون باقة"}
+   504→                    </TableCell>
+   505→                    <TableCell className="text-muted-foreground text-sm">
+   506→                      {m.nutritionPlan?.name ?? "—"}
+   507→                    </TableCell>
+   508→                    <TableCell>
+   509→                      <StatusBadge status={m.status} />
+   510→                    </TableCell>
+   511→                    <TableCell>
+   512→                      {m.accessCode ? (
+   513→                        <span className="inline-flex items-center gap-1.5">
+   514→                          <code
+   515→                            dir="ltr"
+   516→                            className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-xs font-mono text-cyan-300 tabular-nums"
+   517→                          >
+   518→                            {m.accessCode}
+   519→                          </code>
+   520→                          <Button
+   521→                            size="icon"
+   522→                            variant="ghost"
+   523→                            className="h-7 w-7 text-muted-foreground hover:text-primary"
+   524→                            onClick={() => handleCopyCode(m.accessCode as string)}
+   525→                            aria-label={`نسخ كود ${m.name}`}
+   526→                          >
+   527→                            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+   528→                          </Button>
+   529→                        </span>
+   530→                      ) : (
+   531→                        <span className="text-muted-foreground text-sm">—</span>
+   532→                      )}
+   533→                    </TableCell>
+   534→                    <TableCell>
+   535→                      <div className="flex items-center gap-1 justify-start md:justify-end">
+   536→                        <Button
+   537→                          size="sm"
+   538→                          variant="outline"
+   539→                          className="h-8 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+   540→                          onClick={() => openProgress(m)}
+   541→                          aria-label={`متابعة ${m.name}`}
+   542→                        >
+   543→                          <TrendingUp className="h-4 w-4" aria-hidden="true" />
+   544→                          المتابعة
+   545→                        </Button>
+   546→                        {m.status === "pending" && (
+   547→                          <Button
+   548→                            size="sm"
+   549→                            variant="outline"
+   550→                            className="h-8 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/10"
+   551→                            onClick={() => handleActivate(m)}
+   552→                            disabled={activatingId === m.id}
+   553→                            aria-label={`تنشيط اشتراك ${m.name}`}
+   554→                          >
+   555→                            {activatingId === m.id ? (
+   556→                              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   557→                            ) : (
+   558→                              <UserCheck className="h-4 w-4" aria-hidden="true" />
+   559→                            )}
+   560→                            تنشيط
+   561→                          </Button>
+   562→                        )}
+   563→                        <Button
+   564→                          size="sm"
+   565→                          variant="ghost"
+   566→                          className="h-8 text-muted-foreground hover:text-primary"
+   567→                          onClick={() => openEdit(m)}
+   568→                          aria-label={`تعديل ${m.name}`}
+   569→                        >
+   570→                          <Pencil className="h-4 w-4" aria-hidden="true" />
+   571→                          تعديل
+   572→                        </Button>
+   573→                        <Button
+   574→                          size="sm"
+   575→                          variant="ghost"
+   576→                          className="h-8 text-muted-foreground hover:text-destructive"
+   577→                          onClick={() => setDeleteTarget(m)}
+   578→                          aria-label={`حذف ${m.name}`}
+   579→                        >
+   580→                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+   581→                          حذف
+   582→                        </Button>
+   583→                      </div>
+   584→                    </TableCell>
+   585→                  </TableRow>
+   586→                ))}
+   587→              </TableBody>
+   588→            </Table>
+   589→          </div>
+   590→        )}
+   591→      </div>
+   592→
+   593→      {/* Add/Edit dialog */}
+   594→      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+   595→        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-lg">
+   596→          <DialogHeader>
+   597→            <DialogTitle>{editing ? "تعديل بيانات العضو" : "إضافة عضو جديد"}</DialogTitle>
+   598→            <DialogDescription>
+   599→              الحقول المميزة بـ * مطلوبة
+   600→            </DialogDescription>
+   601→          </DialogHeader>
+   602→          <form onSubmit={handleSave} className="space-y-4">
+   603→            <Field label="الاسم" required htmlFor="member-name">
+   604→              <Input
+   605→                id="member-name"
+   606→                value={form.name}
+   607→                onChange={(e) => setForm({ ...form, name: e.target.value })}
+   608→                placeholder="اسم العضو"
+   609→                required
+   610→              />
+   611→            </Field>
+   612→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   613→              <Field label="البريد الإلكتروني" required htmlFor="member-email">
+   614→                <Input
+   615→                  id="member-email"
+   616→                  type="email"
+   617→                  dir="ltr"
+   618→                  value={form.email}
+   619→                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+   620→                  placeholder="name@example.com"
+   621→                  required
+   622→                />
+   623→              </Field>
+   624→              <Field label="الهاتف" required htmlFor="member-phone">
+   625→                <Input
+   626→                  id="member-phone"
+   627→                  type="tel"
+   628→                  dir="ltr"
+   629→                  value={form.phone}
+   630→                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+   631→                  placeholder="01012345678"
+   632→                  required
+   633→                />
+   634→              </Field>
+   635→            </div>
+   636→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   637→              <Field label="الباقة" htmlFor="member-plan">
+   638→                <Select
+   639→                  value={form.planId}
+   640→                  onValueChange={(v) => setForm({ ...form, planId: v })}
+   641→                >
+   642→                  <SelectTrigger id="member-plan" className="w-full">
+   643→                    <SelectValue placeholder="اختر الباقة" />
+   644→                  </SelectTrigger>
+   645→                  <SelectContent>
+   646→                    <SelectItem value="none">بدون باقة</SelectItem>
+   647→                    {plans.map((p) => (
+   648→                      <SelectItem key={p.id} value={p.id}>
+   649→                        {p.name} — {p.price} ج.م
+   650→                      </SelectItem>
+   651→                    ))}
+   652→                  </SelectContent>
+   653→                </Select>
+   654→              </Field>
+   655→              <Field label="الحالة" htmlFor="member-status">
+   656→                <Select
+   657→                  value={form.status}
+   658→                  onValueChange={(v) => setForm({ ...form, status: v as MemberStatus })}
+   659→                >
+   660→                  <SelectTrigger id="member-status" className="w-full">
+   661→                    <SelectValue placeholder="اختر الحالة" />
+   662→                  </SelectTrigger>
+   663→                  <SelectContent>
+   664→                    {MEMBER_STATUSES.map((s) => (
+   665→                      <SelectItem key={s.value} value={s.value}>
+   666→                        {s.label}
+   667→                      </SelectItem>
+   668→                    ))}
+   669→                  </SelectContent>
+   670→                </Select>
+   671→              </Field>
+   672→            </div>
+   673→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   674→              <Field label="تاريخ البدء" htmlFor="member-start">
+   675→                <Input
+   676→                  id="member-start"
+   677→                  type="date"
+   678→                  dir="ltr"
+   679→                  value={form.startDate}
+   680→                  onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+   681→                />
+   682→              </Field>
+   683→              <Field label="تاريخ الانتهاء" htmlFor="member-end">
+   684→                <Input
+   685→                  id="member-end"
+   686→                  type="date"
+   687→                  dir="ltr"
+   688→                  value={form.endDate}
+   689→                  onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+   690→                />
+   691→              </Field>
+   692→            </div>
+   693→            <Field label="الخطة الغذائية" htmlFor="member-nutrition">
+   694→              <Select
+   695→                value={form.nutritionPlanId}
+   696→                onValueChange={(v) => setForm({ ...form, nutritionPlanId: v })}
+   697→              >
+   698→                <SelectTrigger id="member-nutrition" className="w-full">
+   699→                  <SelectValue placeholder="اختر الخطة الغذائية" />
+   700→                </SelectTrigger>
+   701→                <SelectContent>
+   702→                  <SelectItem value="none">بدون خطة</SelectItem>
+   703→                  {nutritionPlans.map((np) => (
+   704→                    <SelectItem key={np.id} value={np.id}>
+   705→                      {np.name} — {np.calories} سعرة
+   706→                    </SelectItem>
+   707→                  ))}
+   708→                </SelectContent>
+   709→              </Select>
+   710→            </Field>
+   711→            <Field label="كود الدخول (بوابة الأعضاء)" htmlFor="member-access-code">
+   712→              <div className="flex gap-2">
+   713→                <Input
+   714→                  id="member-access-code"
+   715→                  dir="ltr"
+   716→                  className="font-mono tabular-nums"
+   717→                  value={form.accessCode}
+   718→                  onChange={(e) => setForm({ ...form, accessCode: e.target.value })}
+   719→                  placeholder="OC-1234"
+   720→                />
+   721→                {editing && (
+   722→                  <Button
+   723→                    type="button"
+   724→                    variant="outline"
+   725→                    className="shrink-0 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+   726→                    onClick={handleGenerateCode}
+   727→                    disabled={generatingCode}
+   728→                  >
+   729→                    {generatingCode ? (
+   730→                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   731→                    ) : (
+   732→                      <Plus className="h-4 w-4" aria-hidden="true" />
+   733→                    )}
+   734→                    توليد كود جديد
+   735→                  </Button>
+   736→                )}
+   737→              </div>
+   738→            </Field>
+   739→            <Field label="ملاحظات" htmlFor="member-notes">
+   740→              <Textarea
+   741→                id="member-notes"
+   742→                value={form.notes}
+   743→                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+   744→                placeholder="أي ملاحظات إضافية عن العضو..."
+   745→                rows={3}
+   746→              />
+   747→            </Field>
+   748→            <DialogFooter className="gap-2">
+   749→              <Button
+   750→                type="button"
+   751→                variant="outline"
+   752→                onClick={() => setFormOpen(false)}
+   753→                disabled={saving}
+   754→              >
+   755→                إلغاء
+   756→              </Button>
+   757→              <Button type="submit" disabled={saving}>
+   758→                {saving && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+   759→                {editing ? "حفظ التعديلات" : "إضافة العضو"}
+   760→              </Button>
+   761→            </DialogFooter>
+   762→          </form>
+   763→        </DialogContent>
+   764→      </Dialog>
+   765→
+   766→      {/* Delete confirm */}
+   767→      <AlertDialog
+   768→        open={!!deleteTarget}
+   769→        onOpenChange={(open) => !open && setDeleteTarget(null)}
+   770→      >
+   771→        <AlertDialogContent>
+   772→          <AlertDialogHeader>
+   773→            <AlertDialogTitle>تأكيد حذف العضو</AlertDialogTitle>
+   774→            <AlertDialogDescription>
+   775→              هل أنت متأكد من حذف العضو &quot;{deleteTarget?.name}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
+   776→            </AlertDialogDescription>
+   777→          </AlertDialogHeader>
+   778→          <AlertDialogFooter className="gap-2">
+   779→            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
+   780→            <AlertDialogAction
+   781→              onClick={(e) => {
+   782→                e.preventDefault();
+   783→                handleDelete();
+   784→              }}
+   785→              disabled={deleting}
+   786→              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+   787→            >
+   788→              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+   789→              حذف نهائي
+   790→            </AlertDialogAction>
+   791→          </AlertDialogFooter>
+   792→        </AlertDialogContent>
+   793→      </AlertDialog>
+   794→
+   795→      {/* Progress dialog */}
+   796→      <Dialog
+   797→        open={!!progressMember}
+   798→        onOpenChange={(open) => !open && setProgressMember(null)}
+   799→      >
+   800→        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-2xl">
+   801→          <DialogHeader>
+   802→            <DialogTitle>متابعة العضو — {progressMember?.name}</DialogTitle>
+   803→            <DialogDescription>
+   804→              الوزن الحالي:{" "}
+   805→              <span className="font-bold text-cyan-400 tabular-nums">
+   806→                {lastWeight !== null ? `${fmtNum(lastWeight)} كجم` : "لا يوجد قياس بعد"}
+   807→              </span>
+   808→            </DialogDescription>
+   809→          </DialogHeader>
+   810→
+   811→          {/* Add log form */}
+   812→          <form onSubmit={handleSaveProgress} className="space-y-4">
+   813→            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+   814→              <Field label="التاريخ" required htmlFor="progress-date">
+   815→                <Input
+   816→                  id="progress-date"
+   817→                  type="date"
+   818→                  dir="ltr"
+   819→                  value={progressForm.date}
+   820→                  onChange={(e) =>
+   821→                    setProgressForm({ ...progressForm, date: e.target.value })
+   822→                  }
+   823→                  required
+   824→                />
+   825→              </Field>
+   826→              <Field label="الوزن (كجم)" required htmlFor="progress-weight">
+   827→                <Input
+   828→                  id="progress-weight"
+   829→                  type="number"
+   830→                  step="0.1"
+   831→                  min="20"
+   832→                  max="300"
+   833→                  dir="ltr"
+   834→                  value={progressForm.weight}
+   835→                  onChange={(e) =>
+   836→                    setProgressForm({ ...progressForm, weight: e.target.value })
+   837→                  }
+   838→                  placeholder="78.5"
+   839→                  required
+   840→                />
+   841→              </Field>
+   842→              <Field label="نسبة الدهون %" htmlFor="progress-fat">
+   843→                <Input
+   844→                  id="progress-fat"
+   845→                  type="number"
+   846→                  step="0.1"
+   847→                  min="0"
+   848→                  max="70"
+   849→                  dir="ltr"
+   850→                  value={progressForm.fatPercent}
+   851→                  onChange={(e) =>
+   852→                    setProgressForm({ ...progressForm, fatPercent: e.target.value })
+   853→                  }
+   854→                  placeholder="18"
+   855→                />
+   856→              </Field>
+   857→              <Field label="الكتلة العضلية" htmlFor="progress-muscle">
+   858→                <Input
+   859→                  id="progress-muscle"
+   860→                  type="number"
+   861→                  step="0.1"
+   862→                  min="0"
+   863→                  dir="ltr"
+   864→                  value={progressForm.muscleMass}
+   865→                  onChange={(e) =>
+   866→                    setProgressForm({ ...progressForm, muscleMass: e.target.value })
+   867→                  }
+   868→                  placeholder="32"
+   869→                />
+   870→              </Field>
+   871→              <Field label="الخصر (سم)" htmlFor="progress-waist">
+   872→                <Input
+   873→                  id="progress-waist"
+   874→                  type="number"
+   875→                  step="0.1"
+   876→                  min="0"
+   877→                  dir="ltr"
+   878→                  value={progressForm.waist}
+   879→                  onChange={(e) =>
+   880→                    setProgressForm({ ...progressForm, waist: e.target.value })
+   881→                  }
+   882→                  placeholder="82"
+   883→                />
+   884→              </Field>
+   885→              <Field label="الصدر (سم)" htmlFor="progress-chest">
+   886→                <Input
+   887→                  id="progress-chest"
+   888→                  type="number"
+   889→                  step="0.1"
+   890→                  min="0"
+   891→                  dir="ltr"
+   892→                  value={progressForm.chest}
+   893→                  onChange={(e) =>
+   894→                    setProgressForm({ ...progressForm, chest: e.target.value })
+   895→                  }
+   896→                  placeholder="98"
+   897→                />
+   898→              </Field>
+   899→              <Field label="الذراع (سم)" htmlFor="progress-arm">
+   900→                <Input
+   901→                  id="progress-arm"
+   902→                  type="number"
+   903→                  step="0.1"
+   904→                  min="0"
+   905→                  dir="ltr"
+   906→                  value={progressForm.arm}
+   907→                  onChange={(e) =>
+   908→                    setProgressForm({ ...progressForm, arm: e.target.value })
+   909→                  }
+   910→                  placeholder="34"
+   911→                />
+   912→              </Field>
+   913→              <Field label="ملاحظات" htmlFor="progress-notes">
+   914→                <Input
+   915→                  id="progress-notes"
+   916→                  value={progressForm.notes}
+   917→                  onChange={(e) =>
+   918→                    setProgressForm({ ...progressForm, notes: e.target.value })
+   919→                  }
+   920→                  placeholder="ملاحظة سريعة..."
+   921→                />
+   922→              </Field>
+   923→            </div>
+   924→            <div className="flex justify-end">
+   925→              <Button type="submit" disabled={progressSaving}>
+   926→                {progressSaving && (
+   927→                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   928→                )}
+   929→                إضافة سجل
+   930→              </Button>
+   931→            </div>
+   932→          </form>
+   933→
+   934→          {/* Logs table */}
+   935→          <div className="space-y-2">
+   936→            <h3 className="text-sm font-semibold text-muted-foreground">
+   937→              سجلات المتابعة
+   938→            </h3>
+   939→            {progressLoading ? (
+   940→              <div className="space-y-2">
+   941→                {Array.from({ length: 3 }).map((_, i) => (
+   942→                  <Skeleton key={i} className="h-10 w-full" />
+   943→                ))}
+   944→              </div>
+   945→            ) : progressLogs.length === 0 ? (
+   946→              <p className="py-6 text-center text-sm text-muted-foreground">
+   947→                لا توجد سجلات متابعة بعد — أضف أول قياس
+   948→              </p>
+   949→            ) : (
+   950→              <div className="rounded-lg border overflow-hidden">
+   951→                <div className="overflow-x-auto custom-scrollbar">
+   952→                  <Table>
+   953→                    <TableHeader>
+   954→                      <TableRow>
+   955→                        <TableHead>التاريخ</TableHead>
+   956→                        <TableHead>الوزن</TableHead>
+   957→                        <TableHead>الدهون %</TableHead>
+   958→                        <TableHead>العضلات</TableHead>
+   959→                        <TableHead>الخصر</TableHead>
+   960→                        <TableHead>ملاحظات</TableHead>
+   961→                        <TableHead className="text-left">حذف</TableHead>
+   962→                      </TableRow>
+   963→                    </TableHeader>
+   964→                    <TableBody>
+   965→                      {progressLogs.map((log) => (
+   966→                        <TableRow key={log.id}>
+   967→                          <TableCell className="text-xs whitespace-nowrap text-muted-foreground">
+   968→                            {formatLogDate(log.date)}
+   969→                          </TableCell>
+   970→                          <TableCell className="font-bold text-cyan-400 tabular-nums">
+   971→                            {fmtNum(log.weight)}
+   972→                          </TableCell>
+   973→                          <TableCell className="tabular-nums">
+   974→                            {fmtNum(log.fatPercent)}
+   975→                          </TableCell>
+   976→                          <TableCell className="tabular-nums">
+   977→                            {fmtNum(log.muscleMass)}
+   978→                          </TableCell>
+   979→                          <TableCell className="tabular-nums">
+   980→                            {fmtNum(log.waist)}
+   981→                          </TableCell>
+   982→                          <TableCell className="max-w-40">
+   983→                            <p className="text-xs text-muted-foreground line-clamp-1">
+   984→                              {log.notes ?? "—"}
+   985→                            </p>
+   986→                          </TableCell>
+   987→                          <TableCell>
+   988→                            <div className="flex justify-end">
+   989→                              <Button
+   990→                                size="icon"
+   991→                                variant="ghost"
+   992→                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+   993→                                onClick={() => setLogDeleteTarget(log)}
+   994→                                aria-label="حذف السجل"
+   995→                              >
+   996→                                <Trash2 className="h-4 w-4" aria-hidden="true" />
+   997→                              </Button>
+   998→                            </div>
+   999→                          </TableCell>
+  1000→                        </TableRow>
+  1001→                      ))}
+  1002→                    </TableBody>
+  1003→                  </Table>
+  1004→                </div>
+  1005→              </div>
+  1006→            )}
+  1007→          </div>
+  1008→        </DialogContent>
+  1009→      </Dialog>
+  1010→
+  1011→      {/* Log delete confirm */}
+  1012→      <AlertDialog
+  1013→        open={!!logDeleteTarget}
+  1014→        onOpenChange={(open) => !open && setLogDeleteTarget(null)}
+  1015→      >
+  1016→        <AlertDialogContent>
+  1017→          <AlertDialogHeader>
+  1018→            <AlertDialogTitle>تأكيد حذف السجل</AlertDialogTitle>
+  1019→            <AlertDialogDescription>
+  1020→              هل أنت متأكد من حذف سجل المتابعة بتاريخ{" "}
+  1021→              {logDeleteTarget ? formatLogDate(logDeleteTarget.date) : ""}؟
+  1022→            </AlertDialogDescription>
+  1023→          </AlertDialogHeader>
+  1024→          <AlertDialogFooter className="gap-2">
+  1025→            <AlertDialogCancel disabled={logDeleting}>إلغاء</AlertDialogCancel>
+  1026→            <AlertDialogAction
+  1027→              onClick={(e) => {
+  1028→                e.preventDefault();
+  1029→                handleDeleteLog();
+  1030→              }}
+  1031→              disabled={logDeleting}
+  1032→              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+  1033→            >
+  1034→              {logDeleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+  1035→              حذف نهائي
+  1036→            </AlertDialogAction>
+  1037→          </AlertDialogFooter>
+  1038→        </AlertDialogContent>
+  1039→      </AlertDialog>
+  1040→    </div>
+  1041→  );
+  1042→}
+  1043→

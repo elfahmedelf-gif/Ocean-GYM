@@ -112,6 +112,7 @@ async function loadPageData(): Promise<{
       role: item.role,
       content: item.content,
       rating: item.rating,
+      image: item.image,
     })),
     gallery: galleryItems.map((item) => ({
       id: item.id,
@@ -138,9 +139,16 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Skip-to-content — first focusable element, hidden until keyboard focus */}
+      <a
+        href="#main"
+        className="pointer-events-none fixed top-2 start-2 z-[60] rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground opacity-0 transition-opacity focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+      >
+        تجاوز إلى المحتوى
+      </a>
       <ScrollProgress />
       <Navbar />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <Hero />
         <AboutSection />
         <ClassesSection classes={classes} />

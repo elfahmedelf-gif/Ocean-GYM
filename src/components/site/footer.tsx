@@ -1,17 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram, KeyRound, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import { KeyRound, Mail, MapPin, Phone } from "lucide-react";
 import { SITE } from "@/lib/site";
+import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "./nav-links";
+import { SOCIALS } from "./socials";
 
-const SOCIALS = [
-  { icon: Facebook, href: SITE.socials[0].href, label: SITE.socials[0].label },
-  { icon: Instagram, href: SITE.socials[1].href, label: SITE.socials[1].label },
-  { icon: Youtube, href: SITE.socials[2].href, label: SITE.socials[2].label },
-  { icon: Twitter, href: SITE.socials[3].href, label: SITE.socials[3].label },
-] as const;
+/** Consistent keyboard focus styling for every footer link. */
+const LINK_FOCUS =
+  "rounded-sm focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none";
 
 export function SiteFooter() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="border-t border-primary/10 bg-secondary/40">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
@@ -37,12 +38,12 @@ export function SiteFooter() {
             <div className="flex items-center gap-2">
               {SOCIALS.map((social) => (
                 <a
-                  key={social.label}
+                  key={social.name}
                   href={social.href}
                   target="_blank"
-                  rel="noreferrer"
-                  aria-label={social.label}
-                  className="flex size-10 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
                 >
                   <social.icon className="size-4" aria-hidden="true" />
                 </a>
@@ -58,7 +59,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-muted-foreground transition-colors hover:text-primary"
+                    className={cn(LINK_FOCUS, "text-muted-foreground transition-colors hover:text-primary")}
                   >
                     {link.label}
                   </a>
@@ -67,7 +68,7 @@ export function SiteFooter() {
               <li>
                 <Link
                   href="/portal/login"
-                  className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
+                  className={cn(LINK_FOCUS, "flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary")}
                 >
                   <KeyRound className="size-3.5 text-primary" aria-hidden="true" />
                   بوابة الأعضاء
@@ -82,13 +83,21 @@ export function SiteFooter() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                <a href={SITE.phoneHref} dir="ltr" className="transition-colors hover:text-primary">
+                <a
+                  href={SITE.phoneHref}
+                  dir="ltr"
+                  className={cn(LINK_FOCUS, "transition-colors hover:text-primary")}
+                >
                   {SITE.phoneDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                <a href={SITE.emailHref} dir="ltr" className="transition-colors hover:text-primary">
+                <a
+                  href={SITE.emailHref}
+                  dir="ltr"
+                  className={cn(LINK_FOCUS, "transition-colors hover:text-primary")}
+                >
                   {SITE.email}
                 </a>
               </li>
@@ -103,8 +112,8 @@ export function SiteFooter() {
 
       <div className="border-t border-primary/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row md:px-6">
-          <p>© 2025 Ocean GYM — جميع الحقوق محفوظة</p>
-          <Link href="/admin" className="transition-colors hover:text-primary">
+          <p>© {year} Ocean GYM — جميع الحقوق محفوظة</p>
+          <Link href="/admin" className={cn(LINK_FOCUS, "transition-colors hover:text-primary")}>
             لوحة التحكم
           </Link>
         </div>

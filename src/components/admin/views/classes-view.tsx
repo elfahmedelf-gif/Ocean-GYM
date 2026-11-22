@@ -17,16 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -47,8 +37,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
-import { CLASS_IMAGE_OPTIONS } from "@/components/admin/image-options";
-import { EmptyState, PageHeader } from "@/components/admin/shared";
+import { CLASS_IMAGE_OPTIONS, imageOptionLabel } from "@/components/admin/image-options";
+import { DANGER_BUTTON_CLASS, EmptyState, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import { CLASS_LEVELS, levelLabel } from "@/lib/gym";
 import type { ClassLevel, GymClass, Trainer } from "@/components/admin/types";
 
@@ -56,7 +47,7 @@ const LEVEL_BADGE_CLASS: Record<ClassLevel, string> = {
   beginner: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
   intermediate: "bg-amber-500/15 text-amber-400 border-amber-500/30",
   advanced: "bg-red-500/15 text-red-400 border-red-500/30",
-  all: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+  all: "bg-primary/15 text-primary border-primary/30",
 };
 
 const ALL_LEVELS: ClassLevel[] = CLASS_LEVELS.map((l) => l.value);
@@ -239,7 +230,7 @@ export default function ClassesView() {
                     <Dumbbell className="h-10 w-10 text-muted-foreground/40" aria-hidden="true" />
                   </div>
                 )}
-                <div className="absolute top-2 left-2 flex gap-2">
+                <div className="absolute top-2 start-2 flex gap-2">
                   <Badge
                     variant="outline"
                     className={LEVEL_BADGE_CLASS[c.level] ?? "bg-background/80"}
@@ -278,7 +269,7 @@ export default function ClassesView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8"
+                    className="flex-1 h-9"
                     onClick={() => openEdit(c)}
                     aria-label={`تعديل ${c.name}`}
                   >
@@ -288,7 +279,7 @@ export default function ClassesView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8 text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10"
+                    className={`flex-1 h-9 ${DANGER_BUTTON_CLASS}`}
                     onClick={() => setDeleteTarget(c)}
                     aria-label={`حذف ${c.name}`}
                   >
@@ -414,8 +405,8 @@ export default function ClassesView() {
                 <SelectContent>
                   <SelectItem value="none">بدون صورة</SelectItem>
                   {CLASS_IMAGE_OPTIONS.map((path) => (
-                    <SelectItem key={path} value={path} dir="ltr">
-                      {path}
+                    <SelectItem key={path} value={path}>
+                      {imageOptionLabel(path)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -462,33 +453,14 @@ export default function ClassesView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف الكلاس</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف الكلاس &quot;{deleteTarget?.name}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف الكلاس"
+        description={`هل أنت متأكد من حذف الكلاس "${deleteTarget?.name}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

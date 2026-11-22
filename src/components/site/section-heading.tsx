@@ -27,9 +27,11 @@ export function SectionHeading({
         align === "center" ? "items-center text-center" : "items-start text-start"
       )}
     >
-      <span className="ocean-ring inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
-        <span className="size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />
+      <span className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-xs font-bold text-primary">
+        <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-primary" />
+        <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-transparent to-primary/60" />
         {kicker}
+        <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-primary/60 to-transparent" />
       </span>
       <h2
         id={headingId}

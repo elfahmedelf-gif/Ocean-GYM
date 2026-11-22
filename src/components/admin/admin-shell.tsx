@@ -159,7 +159,7 @@ export default function AdminShell({
 
       {/* ===== Desktop sidebar (right in RTL) ===== */}
       <aside
-        className="hidden md:flex fixed inset-y-0 right-0 w-64 flex-col border-l border-sidebar-border bg-sidebar z-40"
+        className="hidden md:flex fixed inset-y-0 start-0 w-64 flex-col border-e border-sidebar-border bg-sidebar z-40"
         aria-label="الشريط الجانبي"
       >
         <Brand />
@@ -183,14 +183,14 @@ export default function AdminShell({
             </div>
             <Button
               variant="ghost"
-              size="icon"
               onClick={handleLogout}
               disabled={loggingOut}
               aria-label="تسجيل الخروج"
               title="تسجيل الخروج"
-              className="text-muted-foreground hover:text-destructive shrink-0"
+              className="shrink-0 text-muted-foreground hover:text-destructive"
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden xl:inline">خروج</span>
             </Button>
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function AdminShell({
             </SheetTrigger>
             <SheetContent side="right" className="bg-sidebar w-72 p-0 overflow-y-auto custom-scrollbar">
               <SheetHeader className="border-b border-sidebar-border">
-                <SheetTitle className="text-right">
+                <SheetTitle className="text-start">
                   <Brand />
                 </SheetTitle>
               </SheetHeader>
@@ -265,7 +265,7 @@ export default function AdminShell({
       </header>
 
       {/* ===== Main content ===== */}
-      <main className="md:mr-64 min-h-screen p-4 md:p-6">{children}</main>
+      <main className="md:ms-64 min-h-screen p-4 md:p-6">{children}</main>
     </div>
   );
 }

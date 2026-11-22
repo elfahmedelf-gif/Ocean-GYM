@@ -14,16 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -47,6 +37,7 @@ import {
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
 import { durationLabel } from "@/lib/gym";
 import { EmptyState, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import type { Plan } from "@/components/admin/types";
 
 interface PlanFormState {
@@ -205,7 +196,7 @@ export default function PlansView() {
                   <TableHead>المدة</TableHead>
                   <TableHead>المزايا</TableHead>
                   <TableHead>الحالة</TableHead>
-                  <TableHead className="text-left">إجراءات</TableHead>
+                  <TableHead className="text-end">إجراءات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -215,8 +206,8 @@ export default function PlansView() {
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{p.name}</span>
                         {p.popular && (
-                          <Badge className="bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">
-                            <Crown className="h-3 w-3 ml-1" aria-hidden="true" />
+                          <Badge className="bg-primary/15 text-primary border border-primary/30">
+                            <Crown className="h-3 w-3 me-1" aria-hidden="true" />
                             الأكثر شيوعًا
                           </Badge>
                         )}
@@ -249,7 +240,7 @@ export default function PlansView() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 text-muted-foreground hover:text-primary"
+                          className="h-9 text-muted-foreground hover:text-primary"
                           onClick={() => openEdit(p)}
                           aria-label={`تعديل ${p.name}`}
                         >
@@ -259,7 +250,7 @@ export default function PlansView() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 text-muted-foreground hover:text-destructive"
+                          className="h-9 text-muted-foreground hover:text-destructive"
                           onClick={() => setDeleteTarget(p)}
                           aria-label={`حذف ${p.name}`}
                         >
@@ -381,33 +372,14 @@ export default function PlansView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف الباقة</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف الباقة &quot;{deleteTarget?.name}&quot;؟ لا يمكن الحذف إذا كان هناك أعضاء مشتركون فيها.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف الباقة"
+        description={`هل أنت متأكد من حذف الباقة "${deleteTarget?.name}"؟ لا يمكن الحذف إذا كان هناك أعضاء مشتركون فيها.`}
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default async function PortalLoginPage() {
         <div className="mt-4 flex justify-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/40 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border/60 bg-background/40 px-5 py-2.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
             العودة للموقع

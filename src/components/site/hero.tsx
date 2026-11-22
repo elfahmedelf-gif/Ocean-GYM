@@ -127,7 +127,7 @@ export function Hero() {
                 alt={slide.alt}
                 fill
                 priority={i === 0}
-                loading={i === 0 ? undefined : "eager"}
+                loading={i === 0 ? undefined : "lazy"}
                 sizes="100vw"
                 className="object-cover"
               />
@@ -139,7 +139,7 @@ export function Hero() {
       {/* Dark navy overlay */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 z-0 bg-gradient-to-b from-[#050d1f] via-[#050d1f]/55 to-[#050d1f]"
+        className="absolute inset-0 z-0 bg-gradient-to-b from-background via-background/55 to-background"
       />
       <div
         aria-hidden="true"
@@ -157,7 +157,8 @@ export function Hero() {
         className="animate-pulse-glow pointer-events-none absolute bottom-4 end-[6%] z-0 size-80 rounded-full bg-[#1e6fe8]/25 blur-3xl"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-5xl px-4 py-32 text-center md:px-6">
+      {/* Extra bottom padding keeps the stats clear of the slider controls (absolute bottom-6) */}
+      <div className="relative z-10 mx-auto w-full max-w-5xl px-4 pb-40 pt-32 text-center md:px-6 md:pb-48 md:pt-36">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

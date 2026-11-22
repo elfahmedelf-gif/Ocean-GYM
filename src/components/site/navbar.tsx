@@ -18,6 +18,10 @@ import { NAV_LINKS } from "./nav-links";
 /** Sections observed for scroll-spy (desktop nav only). */
 const SPY_IDS = NAV_LINKS.map((l) => l.href.slice(1));
 
+/** Shared keyboard-focus styling for nav links. */
+const NAV_FOCUS =
+  "focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none";
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -61,7 +65,14 @@ export function Navbar() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-[72px] md:px-6">
-        <a href="#home" className="flex items-center gap-3" aria-label="Ocean GYM — الرئيسية">
+        <a
+          href="#home"
+          className={cn(
+            "flex items-center gap-3 rounded-lg",
+            NAV_FOCUS
+          )}
+          aria-label="Ocean GYM — الرئيسية"
+        >
           <Image
             src="/images/logo.png"
             alt="شعار Ocean GYM"
@@ -75,6 +86,7 @@ export function Navbar() {
           </span>
         </a>
 
+        {/* All links visible from lg up — tighter sizing at lg, roomier from xl. */}
         <nav aria-label="التنقل الرئيسي" className="hidden items-center gap-0.5 lg:flex">
           {NAV_LINKS.map((link) => {
             const id = link.href.slice(1);
@@ -83,11 +95,13 @@ export function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                aria-current={isActive ? "true" : undefined}
+                aria-current={isActive ? "location" : undefined}
                 className={cn(
-                  "relative rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
-                  isActive ? "text-primary" : "text-foreground/85 hover:bg-primary/10 hover:text-primary",
-                  link.secondary && "hidden xl:inline"
+                  "relative whitespace-nowrap rounded-lg px-1.5 py-2 text-xs font-semibold transition-colors xl:px-3 xl:text-sm",
+                  isActive
+                    ? "text-primary"
+                    : "text-foreground/85 hover:bg-primary/10 hover:text-primary",
+                  NAV_FOCUS
                 )}
               >
                 {isActive ? (
@@ -121,10 +135,10 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent
-              side="left"
+              side="right"
               className="w-[300px] border-primary/20 bg-background/95 backdrop-blur-xl"
             >
-              <SheetHeader className="border-b border-primary/10 pr-14">
+              <SheetHeader className="border-b border-primary/10 pe-14">
                 <SheetTitle className="flex items-center gap-3">
                   <Image
                     src="/images/logo.png"
@@ -150,7 +164,7 @@ export function Navbar() {
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
+                        "rounded-xl px-4 py-3 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                         isActive
                           ? "border border-primary/25 bg-primary/10 text-primary"
                           : "text-foreground/90 hover:bg-primary/10 hover:text-primary"

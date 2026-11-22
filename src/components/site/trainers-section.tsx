@@ -6,6 +6,17 @@ import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import type { TrainerView } from "./types";
 
+/** Extracts a clean Instagram handle from "@user", "user", or a full profile URL. */
+function instagramHandle(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const handle = raw
+    .trim()
+    .replace(/^https?:\/\/(www\.)?instagram\.com\/?/i, "")
+    .replace(/^@+/, "")
+    .replace(/\/+$/, "");
+  return handle || null;
+}
+
 function TrainerCard({ trainer }: { trainer: TrainerView }) {
   return (
     <article className="group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
@@ -25,7 +36,7 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
         )}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-[#050d1f] via-[#050d1f]/25 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100"
         />
 
         <div className="absolute inset-x-0 bottom-0 p-5">
@@ -34,11 +45,16 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
           {trainer.specialty ? (
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
           ) : null}
-          {trainer.instagram ? (
-            <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          {instagramHandle(trainer.instagram) ? (
+            <a
+              href={`https://instagram.com/${instagramHandle(trainer.instagram)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-full text-xs text-muted-foreground transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
+            >
               <Instagram className="size-3.5 text-primary" aria-hidden="true" />
-              <span dir="ltr">@{trainer.instagram}</span>
-            </p>
+              <span dir="ltr">@{instagramHandle(trainer.instagram)}</span>
+            </a>
           ) : null}
         </div>
       </div>
@@ -67,8 +83,8 @@ export function TrainersSection({ trainers }: { trainers: TrainerView[] }) {
           </FadeUp>
         ) : (
           <div className="grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {trainers.slice(0, 3).map((trainer, i) => (
-              <FadeUp key={trainer.id} delay={i * 0.12}>
+            {trainers.slice(0, 6).map((trainer, i) => (
+              <FadeUp key={trainer.id} delay={(i % 3) * 0.12}>
                 <TrainerCard trainer={trainer} />
               </FadeUp>
             ))}

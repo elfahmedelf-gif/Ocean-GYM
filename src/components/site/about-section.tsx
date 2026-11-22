@@ -58,17 +58,23 @@ export function AboutSection() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="w-full rounded-2xl object-cover shadow-2xl shadow-black/40"
               />
-              {/* Cyan corner frame */}
+              {/* Cyan corner frames — thin gradient segments fading away from each corner */}
               <div
                 aria-hidden="true"
-                className="absolute -right-4 -top-4 h-24 w-24 rounded-tr-3xl border-r-2 border-t-2 border-primary/60"
-              />
+                className="absolute -top-4 -start-4 size-24"
+              >
+                <span className="absolute start-0 top-0 h-24 w-0.5 rounded-full bg-gradient-to-b from-primary/80 to-primary/0" />
+                <span className="absolute start-0 top-0 h-0.5 w-24 rounded-full bg-gradient-to-l from-primary/80 to-primary/0" />
+              </div>
               <div
                 aria-hidden="true"
-                className="absolute -bottom-4 -left-4 h-24 w-24 rounded-bl-3xl border-b-2 border-l-2 border-primary/60"
-              />
+                className="absolute -bottom-4 -end-4 size-24"
+              >
+                <span className="absolute bottom-0 end-0 h-24 w-0.5 rounded-full bg-gradient-to-b from-primary/0 to-primary/80" />
+                <span className="absolute bottom-0 end-0 h-0.5 w-24 rounded-full bg-gradient-to-l from-primary/0 to-primary/80" />
+              </div>
               {/* Since-2017 badge */}
-              <div className="glass ocean-ring absolute bottom-6 right-6 flex items-center gap-2 rounded-2xl px-5 py-3">
+              <div className="glass ocean-ring absolute bottom-6 start-6 flex items-center gap-2 rounded-2xl px-5 py-3">
                 <Waves className="size-5 text-primary" aria-hidden="true" />
                 <span className="text-lg font-extrabold text-gradient-ocean">منذ 2017</span>
               </div>
@@ -101,7 +107,7 @@ export function AboutSection() {
                     </span>
                     <div>
                       <h3 className="font-bold">{feature.title}</h3>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         {feature.desc}
                       </p>
                     </div>

@@ -18,16 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -46,7 +36,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
-import { EmptyState, Field, PageHeader } from "@/components/admin/shared";
+import { DANGER_BUTTON_CLASS, EmptyState, Field, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import { GYM_DAYS, dayName, formatTime12, levelLabel } from "@/lib/gym";
 import type { GymClass, ScheduleSlot, Trainer } from "@/components/admin/types";
 
@@ -76,7 +67,7 @@ const LEVEL_BADGE_CLASS: Record<string, string> = {
   beginner: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
   intermediate: "bg-amber-500/15 text-amber-400 border-amber-500/30",
   advanced: "bg-red-500/15 text-red-400 border-red-500/30",
-  all: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+  all: "bg-primary/15 text-primary border-primary/30",
 };
 
 export default function ScheduleView() {
@@ -249,7 +240,7 @@ export default function ScheduleView() {
             >
               {d.name}
               <span
-                className={`mr-2 text-xs tabular-nums rounded-full px-1.5 py-0.5 ${
+                className={`ms-2 text-xs tabular-nums rounded-full px-1.5 py-0.5 ${
                   active ? "bg-background/20" : "bg-muted"
                 }`}
               >
@@ -291,13 +282,13 @@ export default function ScheduleView() {
                 <CardContent className="p-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
                   {/* Time */}
                   <div className="flex items-center gap-2 md:w-44 shrink-0">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-400/10 border border-cyan-400/25 text-cyan-400">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/25 text-primary">
                       <Clock className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <div>
                       <p
                         dir="ltr"
-                        className="text-lg font-bold tabular-nums leading-tight text-right"
+                        className="text-lg font-bold tabular-nums leading-tight"
                       >
                         {formatTime12(slot.time)}
                       </p>
@@ -308,7 +299,7 @@ export default function ScheduleView() {
                   </div>
 
                   {/* Class info */}
-                  <div className="flex-1 min-w-0 md:border-r md:border-border md:pr-4">
+                  <div className="flex-1 min-w-0 md:border-s md:border-border md:ps-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-bold">{slot.gymClass.name}</h3>
                       <Badge
@@ -365,7 +356,7 @@ export default function ScheduleView() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10"
+                      className={`h-9 ${DANGER_BUTTON_CLASS}`}
                       onClick={() => setDeleteTarget(slot)}
                       aria-label={`حذف موعد ${slot.gymClass.name}`}
                     >
@@ -479,35 +470,20 @@ export default function ScheduleView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف الموعد</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف موعد &quot;{deleteTarget?.gymClass.name}&quot; يوم{" "}
-              {deleteTarget ? dayName(deleteTarget.day) : ""} على الساعة{" "}
-              {deleteTarget ? formatTime12(deleteTarget.time) : ""}؟ لا يمكن التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف الموعد"
+        description={
+          <>
+            هل أنت متأكد من حذف موعد &quot;{deleteTarget?.gymClass.name}&quot; يوم{" "}
+            {deleteTarget ? dayName(deleteTarget.day) : ""} على الساعة{" "}
+            {deleteTarget ? formatTime12(deleteTarget.time) : ""}؟ لا يمكن التراجع عن هذا الإجراء.
+          </>
+        }
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

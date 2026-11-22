@@ -15,16 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -44,14 +34,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, jsonDelete, jsonPost, jsonPut } from "@/components/admin/api";
-import { EmptyState, Field, PageHeader } from "@/components/admin/shared";
+import { DANGER_BUTTON_CLASS, EmptyState, Field, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import { GYM_DAYS, MEAL_TYPES, NUTRITION_GOALS, goalLabel } from "@/lib/gym";
 import type { NutritionMeal, NutritionPlanItem } from "@/components/admin/types";
 
 const GOAL_BADGE_CLASS: Record<string, string> = {
   bulk: "bg-amber-500/15 text-amber-400 border-amber-500/30",
   cut: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  maintain: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+  maintain: "bg-primary/15 text-primary border-primary/30",
   healthy: "bg-violet-500/15 text-violet-400 border-violet-500/30",
 };
 
@@ -398,7 +389,7 @@ export default function NutritionView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+                    className="flex-1 h-9 text-primary border-primary/40 hover:bg-primary/10"
                     onClick={() => openMeals(plan)}
                     aria-label={`إدارة وجبات ${plan.name}`}
                   >
@@ -408,7 +399,7 @@ export default function NutritionView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8"
+                    className="flex-1 h-9"
                     onClick={() => openEdit(plan)}
                     aria-label={`تعديل ${plan.name}`}
                   >
@@ -418,7 +409,7 @@ export default function NutritionView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 h-8 text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10"
+                    className={`flex-1 h-9 ${DANGER_BUTTON_CLASS}`}
                     onClick={() => setDeleteTarget(plan)}
                     aria-label={`حذف ${plan.name}`}
                   >
@@ -601,7 +592,7 @@ export default function NutritionView() {
                   >
                     {d.name}
                     <span
-                      className={`mr-2 text-xs tabular-nums rounded-full px-1.5 ${
+                      className={`ms-2 text-xs tabular-nums rounded-full px-1.5 ${
                         active ? "bg-background/20" : "bg-muted"
                       }`}
                     >
@@ -613,7 +604,7 @@ export default function NutritionView() {
             </div>
 
             {/* Meal rows */}
-            <div className="space-y-3 max-h-[45vh] overflow-y-auto custom-scrollbar pr-1">
+            <div className="space-y-3 max-h-[45vh] overflow-y-auto custom-scrollbar ps-1">
               {dayMeals.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
                   لا توجد وجبات في هذا اليوم — أضف أول وجبة
@@ -683,7 +674,7 @@ export default function NutritionView() {
                 type="button"
                 variant="outline"
                 onClick={addMealRow}
-                className="text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+                className="text-primary border-primary/40 hover:bg-primary/10"
               >
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 إضافة وجبة لهذا اليوم
@@ -715,34 +706,14 @@ export default function NutritionView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف الخطة</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف خطة &quot;{deleteTarget?.name}&quot; وكل وجباتها؟ لا يمكن
-              التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف الخطة"
+        description={`هل أنت متأكد من حذف خطة "${deleteTarget?.name}" وكل وجباتها؟ لا يمكن التراجع عن هذا الإجراء.`}
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

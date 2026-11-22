@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import {
   CheckCheck,
   Eye,
-  Loader2,
   Mail,
   MailOpen,
   Phone,
@@ -15,16 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -36,7 +25,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiFetch, jsonDelete, jsonPut } from "@/components/admin/api";
-import { EmptyState, PageHeader } from "@/components/admin/shared";
+import { DANGER_BUTTON_CLASS, EmptyState, PageHeader } from "@/components/admin/shared";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import type { Message } from "@/components/admin/types";
 
 function formatDate(iso: string): string {
@@ -144,13 +134,13 @@ export default function MessagesView() {
         <TabsList aria-label="تصفية الرسائل">
           <TabsTrigger value="all">
             الكل
-            <Badge variant="outline" className="mr-2 tabular-nums">
+            <Badge variant="outline" className="ms-2 tabular-nums">
               {messages.length}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="unread">
             غير مقروءة
-            <Badge className="mr-2 bg-cyan-400/15 text-cyan-300 border border-cyan-400/30 tabular-nums">
+            <Badge className="ms-2 bg-primary/15 text-primary border border-primary/30 tabular-nums">
               {unreadCount}
             </Badge>
           </TabsTrigger>
@@ -175,7 +165,7 @@ export default function MessagesView() {
               key={m.id}
               className={`p-0 transition-colors ${
                 !m.read
-                  ? "border-cyan-400/40 bg-cyan-400/[0.04] hover:bg-cyan-400/[0.07]"
+                  ? "border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.07]"
                   : "hover:border-primary/25"
               }`}
             >
@@ -183,14 +173,14 @@ export default function MessagesView() {
                 <div className="flex items-start gap-3">
                   <span
                     className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${
-                      m.read ? "bg-muted-foreground/40" : "bg-cyan-400 animate-pulse"
+                      m.read ? "bg-muted-foreground/40" : "bg-primary animate-pulse"
                     }`}
                     aria-label={m.read ? "مقروءة" : "غير مقروءة"}
                   />
                   <button
                     type="button"
                     onClick={() => openMessage(m)}
-                    className="flex-1 min-w-0 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+                    className="flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
                     aria-label={`فتح رسالة من ${m.name}`}
                   >
                     <div className="flex flex-wrap items-center gap-2">
@@ -202,7 +192,7 @@ export default function MessagesView() {
                         {m.subject || "بدون عنوان"}
                       </p>
                       {!m.read && (
-                        <Badge className="bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">
+                        <Badge className="bg-primary/15 text-primary border border-primary/30">
                           جديدة
                         </Badge>
                       )}
@@ -220,12 +210,12 @@ export default function MessagesView() {
                       {formatDate(m.createdAt)}
                     </p>
                   </button>
-                  <div className="flex flex-col gap-1.5 shrink-0">
+                  <div className="flex flex-row flex-wrap justify-end gap-1.5 shrink-0">
                     {!m.read && (
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-8 text-muted-foreground hover:text-primary"
+                        className="h-9 text-muted-foreground hover:text-primary"
                         onClick={() => markRead(m, true)}
                         aria-label={`تحديد رسالة ${m.name} كمقروءة`}
                       >
@@ -236,7 +226,7 @@ export default function MessagesView() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-8 text-muted-foreground hover:text-destructive"
+                      className="h-9 text-muted-foreground hover:text-destructive"
                       onClick={() => setDeleteTarget(m)}
                       aria-label={`حذف رسالة ${m.name}`}
                     >
@@ -258,7 +248,7 @@ export default function MessagesView() {
             <DialogTitle className="flex items-center gap-2">
               {viewing?.subject || "بدون عنوان"}
               {viewing && !viewing.read && (
-                <Badge className="bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">
+                <Badge className="bg-primary/15 text-primary border border-primary/30">
                   جديدة
                 </Badge>
               )}
@@ -289,7 +279,7 @@ export default function MessagesView() {
               type="button"
               variant="outline"
               onClick={() => setDeleteTarget(viewing)}
-              className="text-destructive hover:text-destructive border-destructive/40 hover:bg-destructive/10"
+              className={DANGER_BUTTON_CLASS}
             >
               <Trash2 className="h-4 w-4" aria-hidden="true" />
               حذف الرسالة
@@ -316,33 +306,14 @@ export default function MessagesView() {
       </Dialog>
 
       {/* Delete confirm */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف الرسالة</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف الرسالة من &quot;{deleteTarget?.name}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                handleDelete();
-              }}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              حذف نهائي
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="تأكيد حذف الرسالة"
+        description={`هل أنت متأكد من حذف الرسالة من "${deleteTarget?.name}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+        busy={deleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

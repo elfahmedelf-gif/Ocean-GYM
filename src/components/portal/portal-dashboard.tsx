@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import {
   Activity,
@@ -24,6 +26,25 @@ import type {
   PortalMemberDetail,
   PortalMeResponse,
 } from "@/components/portal/types";
+
+/** Shared active-state styling for the three tab triggers (single source of truth). */
+const TRIGGER_CLASS =
+  "min-h-11 gap-2 py-2.5 sm:min-h-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-primary data-[state=active]:text-primary-foreground";
+
+/** Subtle fade-up on tab content mount — skipped when reduced motion is preferred. */
+function TabFadeIn({ children }: { children: ReactNode }) {
+  const prefersReducedMotion = useReducedMotion();
+  if (prefersReducedMotion) return <div>{children}</div>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function DashboardSkeleton() {
   return (
@@ -97,48 +118,50 @@ export default function PortalDashboard() {
 
   return (
     <Tabs defaultValue="overview" dir="rtl" className="space-y-6">
+      <h1 className="sr-only">بوابة أعضاء Ocean GYM</h1>
+
       <TabsList className="grid h-auto w-full grid-cols-3 bg-card/60 p-1">
-        <TabsTrigger
-          value="overview"
-          className="gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-        >
+        <TabsTrigger value="overview" className={TRIGGER_CLASS}>
           <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
           نظرة عامة
         </TabsTrigger>
-        <TabsTrigger
-          value="nutrition"
-          className="gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-        >
+        <TabsTrigger value="nutrition" className={TRIGGER_CLASS}>
           <Apple className="h-4 w-4" aria-hidden="true" />
           نظامي الغذائي
         </TabsTrigger>
-        <TabsTrigger
-          value="progress"
-          className="gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-        >
+        <TabsTrigger value="progress" className={TRIGGER_CLASS}>
           <Activity className="h-4 w-4" aria-hidden="true" />
           متابعتي
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview">
-        <OverviewTab member={member} />
+        <TabFadeIn>
+          <OverviewTab member={member} />
+        </TabFadeIn>
       </TabsContent>
 
       <TabsContent value="nutrition">
-        {member.nutritionPlan ? (
-          <NutritionTab plan={member.nutritionPlan} />
-        ) : (
-          <EmptyState
-            icon={Apple}
-            title="لم يتم إسناد خطة غذائية لك بعد"
-            description="اطلبها من الكابتن في الجيم"
-          />
-        )}
+        <TabFadeIn>
+          {member.nutritionPlan ? (
+            <NutritionTab plan={member.nutritionPlan} />
+          ) : (
+            <EmptyState
+              icon={Apple}
+              title="لم يتم إسناد خطة غذائية لك بعد"
+              description="اطلبها من الكابتن في الجيم"
+            />
+          )}
+        </TabFadeIn>
       </TabsContent>
 
       <TabsContent value="progress">
-        <ProgressTab logs={member.progressLogs} />
+        <TabFadeIn>
+          <ProgressTab
+            logs={member.progressLogs}
+            goal={member.nutritionPlan?.goal ?? null}
+          />
+        </TabFadeIn>
       </TabsContent>
     </Tabs>
   );

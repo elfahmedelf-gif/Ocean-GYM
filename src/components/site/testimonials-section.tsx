@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Quote, Star } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -37,11 +38,21 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
       </blockquote>
 
       <figcaption className="flex items-center gap-3 border-t border-border/60 pt-4">
-        <Avatar className="size-10 border border-primary/30">
-          <AvatarFallback className="bg-primary/15 font-extrabold text-primary">
-            {testimonial.name.trim().charAt(0)}
-          </AvatarFallback>
-        </Avatar>
+        {testimonial.image ? (
+          <Image
+            src={testimonial.image}
+            alt={`صورة ${testimonial.name}`}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-full border border-primary/30 object-cover"
+          />
+        ) : (
+          <Avatar className="size-10 border border-primary/30">
+            <AvatarFallback className="bg-primary/15 font-extrabold text-primary">
+              {testimonial.name.trim().charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+        )}
         <div>
           <div className="text-sm font-extrabold">{testimonial.name}</div>
           <div className="text-xs text-muted-foreground">{testimonial.role}</div>

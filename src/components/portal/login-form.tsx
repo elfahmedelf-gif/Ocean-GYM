@@ -59,7 +59,7 @@ export default function LoginForm() {
         </Label>
         <div className="relative">
           <Mail
-            className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -70,7 +70,7 @@ export default function LoginForm() {
             dir="ltr"
             autoComplete="email"
             placeholder="you@example.com"
-            className="h-11 bg-background/60 pl-3 pr-9 text-left"
+            className="h-11 bg-background/60 ps-3 pe-9 text-start"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
@@ -85,7 +85,7 @@ export default function LoginForm() {
         </Label>
         <div className="relative">
           <KeyRound
-            className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -94,7 +94,7 @@ export default function LoginForm() {
             dir="ltr"
             autoComplete="off"
             placeholder="OC-0000"
-            className="h-11 bg-background/60 pl-3 pr-9 font-mono text-left tracking-widest"
+            className="h-11 bg-background/60 ps-3 pe-9 font-mono text-start tracking-widest"
             value={accessCode}
             onChange={(e) => setAccessCode(e.target.value)}
             disabled={loading}

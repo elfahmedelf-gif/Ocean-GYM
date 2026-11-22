@@ -1,0 +1,558 @@
+   486→   486→                  <TableHead>كود الدخول</TableHead>
+   487→   487→                  <TableHead className="text-left">إجراءات</TableHead>
+   488→   488→                </TableRow>
+   489→   489→              </TableHeader>
+   490→   490→              <TableBody>
+   491→   491→                {filtered.map((m) => (
+   492→   492→                  <TableRow key={m.id}>
+   493→   493→                    <TableCell>
+   494→   494→                      <div>
+   495→   495→                        <p className="font-medium">{m.name}</p>
+   496→   496→                        <p className="text-xs text-muted-foreground">{m.email}</p>
+   497→   497→                      </div>
+   498→   498→                    </TableCell>
+   499→   499→                    <TableCell dir="ltr" className="tabular-nums text-sm">
+   500→   500→                      {m.phone}
+   501→   501→                    </TableCell>
+   502→   502→                    <TableCell className="text-muted-foreground text-sm">
+   503→   503→                      {m.plan?.name ?? "بدون باقة"}
+   504→   504→                    </TableCell>
+   505→   505→                    <TableCell className="text-muted-foreground text-sm">
+   506→   506→                      {m.nutritionPlan?.name ?? "—"}
+   507→   507→                    </TableCell>
+   508→   508→                    <TableCell>
+   509→   509→                      <StatusBadge status={m.status} />
+   510→   510→                    </TableCell>
+   511→   511→                    <TableCell>
+   512→   512→                      {m.accessCode ? (
+   513→   513→                        <span className="inline-flex items-center gap-1.5">
+   514→   514→                          <code
+   515→   515→                            dir="ltr"
+   516→   516→                            className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-xs font-mono text-cyan-300 tabular-nums"
+   517→   517→                          >
+   518→   518→                            {m.accessCode}
+   519→   519→                          </code>
+   520→   520→                          <Button
+   521→   521→                            size="icon"
+   522→   522→                            variant="ghost"
+   523→   523→                            className="h-7 w-7 text-muted-foreground hover:text-primary"
+   524→   524→                            onClick={() => handleCopyCode(m.accessCode as string)}
+   525→   525→                            aria-label={`نسخ كود ${m.name}`}
+   526→   526→                          >
+   527→   527→                            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+   528→   528→                          </Button>
+   529→   529→                        </span>
+   530→   530→                      ) : (
+   531→   531→                        <span className="text-muted-foreground text-sm">—</span>
+   532→   532→                      )}
+   533→   533→                    </TableCell>
+   534→   534→                    <TableCell>
+   535→   535→                      <div className="flex items-center gap-1 justify-start md:justify-end">
+   536→   536→                        <Button
+   537→   537→                          size="sm"
+   538→   538→                          variant="outline"
+   539→   539→                          className="h-8 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+   540→   540→                          onClick={() => openProgress(m)}
+   541→   541→                          aria-label={`متابعة ${m.name}`}
+   542→   542→                        >
+   543→   543→                          <TrendingUp className="h-4 w-4" aria-hidden="true" />
+   544→   544→                          المتابعة
+   545→   545→                        </Button>
+   546→   546→                        {m.status === "pending" && (
+   547→   547→                          <Button
+   548→   548→                            size="sm"
+   549→   549→                            variant="outline"
+   550→   550→                            className="h-8 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/10"
+   551→   551→                            onClick={() => handleActivate(m)}
+   552→   552→                            disabled={activatingId === m.id}
+   553→   553→                            aria-label={`تنشيط اشتراك ${m.name}`}
+   554→   554→                          >
+   555→   555→                            {activatingId === m.id ? (
+   556→   556→                              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   557→   557→                            ) : (
+   558→   558→                              <UserCheck className="h-4 w-4" aria-hidden="true" />
+   559→   559→                            )}
+   560→   560→                            تنشيط
+   561→   561→                          </Button>
+   562→   562→                        )}
+   563→   563→                        <Button
+   564→   564→                          size="sm"
+   565→   565→                          variant="ghost"
+   566→   566→                          className="h-8 text-muted-foreground hover:text-primary"
+   567→   567→                          onClick={() => openEdit(m)}
+   568→   568→                          aria-label={`تعديل ${m.name}`}
+   569→   569→                        >
+   570→   570→                          <Pencil className="h-4 w-4" aria-hidden="true" />
+   571→   571→                          تعديل
+   572→   572→                        </Button>
+   573→   573→                        <Button
+   574→   574→                          size="sm"
+   575→   575→                          variant="ghost"
+   576→   576→                          className="h-8 text-muted-foreground hover:text-destructive"
+   577→   577→                          onClick={() => setDeleteTarget(m)}
+   578→   578→                          aria-label={`حذف ${m.name}`}
+   579→   579→                        >
+   580→   580→                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+   581→   581→                          حذف
+   582→   582→                        </Button>
+   583→   583→                      </div>
+   584→   584→                    </TableCell>
+   585→   585→                  </TableRow>
+   586→   586→                ))}
+   587→   587→              </TableBody>
+   588→   588→            </Table>
+   589→   589→          </div>
+   590→   590→        )}
+   591→   591→      </div>
+   592→   592→
+   593→   593→      {/* Add/Edit dialog */}
+   594→   594→      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+   595→   595→        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-lg">
+   596→   596→          <DialogHeader>
+   597→   597→            <DialogTitle>{editing ? "تعديل بيانات العضو" : "إضافة عضو جديد"}</DialogTitle>
+   598→   598→            <DialogDescription>
+   599→   599→              الحقول المميزة بـ * مطلوبة
+   600→   600→            </DialogDescription>
+   601→   601→          </DialogHeader>
+   602→   602→          <form onSubmit={handleSave} className="space-y-4">
+   603→   603→            <Field label="الاسم" required htmlFor="member-name">
+   604→   604→              <Input
+   605→   605→                id="member-name"
+   606→   606→                value={form.name}
+   607→   607→                onChange={(e) => setForm({ ...form, name: e.target.value })}
+   608→   608→                placeholder="اسم العضو"
+   609→   609→                required
+   610→   610→              />
+   611→   611→            </Field>
+   612→   612→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   613→   613→              <Field label="البريد الإلكتروني" required htmlFor="member-email">
+   614→   614→                <Input
+   615→   615→                  id="member-email"
+   616→   616→                  type="email"
+   617→   617→                  dir="ltr"
+   618→   618→                  value={form.email}
+   619→   619→                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+   620→   620→                  placeholder="name@example.com"
+   621→   621→                  required
+   622→   622→                />
+   623→   623→              </Field>
+   624→   624→              <Field label="الهاتف" required htmlFor="member-phone">
+   625→   625→                <Input
+   626→   626→                  id="member-phone"
+   627→   627→                  type="tel"
+   628→   628→                  dir="ltr"
+   629→   629→                  value={form.phone}
+   630→   630→                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+   631→   631→                  placeholder="01012345678"
+   632→   632→                  required
+   633→   633→                />
+   634→   634→              </Field>
+   635→   635→            </div>
+   636→   636→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   637→   637→              <Field label="الباقة" htmlFor="member-plan">
+   638→   638→                <Select
+   639→   639→                  value={form.planId}
+   640→   640→                  onValueChange={(v) => setForm({ ...form, planId: v })}
+   641→   641→                >
+   642→   642→                  <SelectTrigger id="member-plan" className="w-full">
+   643→   643→                    <SelectValue placeholder="اختر الباقة" />
+   644→   644→                  </SelectTrigger>
+   645→   645→                  <SelectContent>
+   646→   646→                    <SelectItem value="none">بدون باقة</SelectItem>
+   647→   647→                    {plans.map((p) => (
+   648→   648→                      <SelectItem key={p.id} value={p.id}>
+   649→   649→                        {p.name} — {p.price} ج.م
+   650→   650→                      </SelectItem>
+   651→   651→                    ))}
+   652→   652→                  </SelectContent>
+   653→   653→                </Select>
+   654→   654→              </Field>
+   655→   655→              <Field label="الحالة" htmlFor="member-status">
+   656→   656→                <Select
+   657→   657→                  value={form.status}
+   658→   658→                  onValueChange={(v) => setForm({ ...form, status: v as MemberStatus })}
+   659→   659→                >
+   660→   660→                  <SelectTrigger id="member-status" className="w-full">
+   661→   661→                    <SelectValue placeholder="اختر الحالة" />
+   662→   662→                  </SelectTrigger>
+   663→   663→                  <SelectContent>
+   664→   664→                    {MEMBER_STATUSES.map((s) => (
+   665→   665→                      <SelectItem key={s.value} value={s.value}>
+   666→   666→                        {s.label}
+   667→   667→                      </SelectItem>
+   668→   668→                    ))}
+   669→   669→                  </SelectContent>
+   670→   670→                </Select>
+   671→   671→              </Field>
+   672→   672→            </div>
+   673→   673→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   674→   674→              <Field label="تاريخ البدء" htmlFor="member-start">
+   675→   675→                <Input
+   676→   676→                  id="member-start"
+   677→   677→                  type="date"
+   678→   678→                  dir="ltr"
+   679→   679→                  value={form.startDate}
+   680→   680→                  onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+   681→   681→                />
+   682→   682→              </Field>
+   683→   683→              <Field label="تاريخ الانتهاء" htmlFor="member-end">
+   684→   684→                <Input
+   685→   685→                  id="member-end"
+   686→   686→                  type="date"
+   687→   687→                  dir="ltr"
+   688→   688→                  value={form.endDate}
+   689→   689→                  onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+   690→   690→                />
+   691→   691→              </Field>
+   692→   692→            </div>
+   693→   693→            <Field label="الخطة الغذائية" htmlFor="member-nutrition">
+   694→   694→              <Select
+   695→   695→                value={form.nutritionPlanId}
+   696→   696→                onValueChange={(v) => setForm({ ...form, nutritionPlanId: v })}
+   697→   697→              >
+   698→   698→                <SelectTrigger id="member-nutrition" className="w-full">
+   699→   699→                  <SelectValue placeholder="اختر الخطة الغذائية" />
+   700→   700→                </SelectTrigger>
+   701→   701→                <SelectContent>
+   702→   702→                  <SelectItem value="none">بدون خطة</SelectItem>
+   703→   703→                  {nutritionPlans.map((np) => (
+   704→   704→                    <SelectItem key={np.id} value={np.id}>
+   705→   705→                      {np.name} — {np.calories} سعرة
+   706→   706→                    </SelectItem>
+   707→   707→                  ))}
+   708→   708→                </SelectContent>
+   709→   709→              </Select>
+   710→   710→            </Field>
+   711→   711→            <Field label="كود الدخول (بوابة الأعضاء)" htmlFor="member-access-code">
+   712→   712→              <div className="flex gap-2">
+   713→   713→                <Input
+   714→   714→                  id="member-access-code"
+   715→   715→                  dir="ltr"
+   716→   716→                  className="font-mono tabular-nums"
+   717→   717→                  value={form.accessCode}
+   718→   718→                  onChange={(e) => setForm({ ...form, accessCode: e.target.value })}
+   719→   719→                  placeholder="OC-1234"
+   720→   720→                />
+   721→   721→                {editing && (
+   722→   722→                  <Button
+   723→   723→                    type="button"
+   724→   724→                    variant="outline"
+   725→   725→                    className="shrink-0 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-300"
+   726→   726→                    onClick={handleGenerateCode}
+   727→   727→                    disabled={generatingCode}
+   728→   728→                  >
+   729→   729→                    {generatingCode ? (
+   730→   730→                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   731→   731→                    ) : (
+   732→   732→                      <Plus className="h-4 w-4" aria-hidden="true" />
+   733→   733→                    )}
+   734→   734→                    توليد كود جديد
+   735→   735→                  </Button>
+   736→   736→                )}
+   737→   737→              </div>
+   738→   738→            </Field>
+   739→   739→            <Field label="ملاحظات" htmlFor="member-notes">
+   740→   740→              <Textarea
+   741→   741→                id="member-notes"
+   742→   742→                value={form.notes}
+   743→   743→                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+   744→   744→                placeholder="أي ملاحظات إضافية عن العضو..."
+   745→   745→                rows={3}
+   746→   746→              />
+   747→   747→            </Field>
+   748→   748→            <DialogFooter className="gap-2">
+   749→   749→              <Button
+   750→   750→                type="button"
+   751→   751→                variant="outline"
+   752→   752→                onClick={() => setFormOpen(false)}
+   753→   753→                disabled={saving}
+   754→   754→              >
+   755→   755→                إلغاء
+   756→   756→              </Button>
+   757→   757→              <Button type="submit" disabled={saving}>
+   758→   758→                {saving && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+   759→   759→                {editing ? "حفظ التعديلات" : "إضافة العضو"}
+   760→   760→              </Button>
+   761→   761→            </DialogFooter>
+   762→   762→          </form>
+   763→   763→        </DialogContent>
+   764→   764→      </Dialog>
+   765→   765→
+   766→   766→      {/* Delete confirm */}
+   767→   767→      <AlertDialog
+   768→   768→        open={!!deleteTarget}
+   769→   769→        onOpenChange={(open) => !open && setDeleteTarget(null)}
+   770→   770→      >
+   771→   771→        <AlertDialogContent>
+   772→   772→          <AlertDialogHeader>
+   773→   773→            <AlertDialogTitle>تأكيد حذف العضو</AlertDialogTitle>
+   774→   774→            <AlertDialogDescription>
+   775→   775→              هل أنت متأكد من حذف العضو &quot;{deleteTarget?.name}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
+   776→   776→            </AlertDialogDescription>
+   777→   777→          </AlertDialogHeader>
+   778→   778→          <AlertDialogFooter className="gap-2">
+   779→   779→            <AlertDialogCancel disabled={deleting}>إلغاء</AlertDialogCancel>
+   780→   780→            <AlertDialogAction
+   781→   781→              onClick={(e) => {
+   782→   782→                e.preventDefault();
+   783→   783→                handleDelete();
+   784→   784→              }}
+   785→   785→              disabled={deleting}
+   786→   786→              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+   787→   787→            >
+   788→   788→              {deleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+   789→   789→              حذف نهائي
+   790→   790→            </AlertDialogAction>
+   791→   791→          </AlertDialogFooter>
+   792→   792→        </AlertDialogContent>
+   793→   793→      </AlertDialog>
+   794→   794→
+   795→   795→      {/* Progress dialog */}
+   796→   796→      <Dialog
+   797→   797→        open={!!progressMember}
+   798→   798→        onOpenChange={(open) => !open && setProgressMember(null)}
+   799→   799→      >
+   800→   800→        <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-2xl">
+   801→   801→          <DialogHeader>
+   802→   802→            <DialogTitle>متابعة العضو — {progressMember?.name}</DialogTitle>
+   803→   803→            <DialogDescription>
+   804→   804→              الوزن الحالي:{" "}
+   805→   805→              <span className="font-bold text-cyan-400 tabular-nums">
+   806→   806→                {lastWeight !== null ? `${fmtNum(lastWeight)} كجم` : "لا يوجد قياس بعد"}
+   807→   807→              </span>
+   808→   808→            </DialogDescription>
+   809→   809→          </DialogHeader>
+   810→   810→
+   811→   811→          {/* Add log form */}
+   812→   812→          <form onSubmit={handleSaveProgress} className="space-y-4">
+   813→   813→            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+   814→   814→              <Field label="التاريخ" required htmlFor="progress-date">
+   815→   815→                <Input
+   816→   816→                  id="progress-date"
+   817→   817→                  type="date"
+   818→   818→                  dir="ltr"
+   819→   819→                  value={progressForm.date}
+   820→   820→                  onChange={(e) =>
+   821→   821→                    setProgressForm({ ...progressForm, date: e.target.value })
+   822→   822→                  }
+   823→   823→                  required
+   824→   824→                />
+   825→   825→              </Field>
+   826→   826→              <Field label="الوزن (كجم)" required htmlFor="progress-weight">
+   827→   827→                <Input
+   828→   828→                  id="progress-weight"
+   829→   829→                  type="number"
+   830→   830→                  step="0.1"
+   831→   831→                  min="20"
+   832→   832→                  max="300"
+   833→   833→                  dir="ltr"
+   834→   834→                  value={progressForm.weight}
+   835→   835→                  onChange={(e) =>
+   836→   836→                    setProgressForm({ ...progressForm, weight: e.target.value })
+   837→   837→                  }
+   838→   838→                  placeholder="78.5"
+   839→   839→                  required
+   840→   840→                />
+   841→   841→              </Field>
+   842→   842→              <Field label="نسبة الدهون %" htmlFor="progress-fat">
+   843→   843→                <Input
+   844→   844→                  id="progress-fat"
+   845→   845→                  type="number"
+   846→   846→                  step="0.1"
+   847→   847→                  min="0"
+   848→   848→                  max="70"
+   849→   849→                  dir="ltr"
+   850→   850→                  value={progressForm.fatPercent}
+   851→   851→                  onChange={(e) =>
+   852→   852→                    setProgressForm({ ...progressForm, fatPercent: e.target.value })
+   853→   853→                  }
+   854→   854→                  placeholder="18"
+   855→   855→                />
+   856→   856→              </Field>
+   857→   857→              <Field label="الكتلة العضلية" htmlFor="progress-muscle">
+   858→   858→                <Input
+   859→   859→                  id="progress-muscle"
+   860→   860→                  type="number"
+   861→   861→                  step="0.1"
+   862→   862→                  min="0"
+   863→   863→                  dir="ltr"
+   864→   864→                  value={progressForm.muscleMass}
+   865→   865→                  onChange={(e) =>
+   866→   866→                    setProgressForm({ ...progressForm, muscleMass: e.target.value })
+   867→   867→                  }
+   868→   868→                  placeholder="32"
+   869→   869→                />
+   870→   870→              </Field>
+   871→   871→              <Field label="الخصر (سم)" htmlFor="progress-waist">
+   872→   872→                <Input
+   873→   873→                  id="progress-waist"
+   874→   874→                  type="number"
+   875→   875→                  step="0.1"
+   876→   876→                  min="0"
+   877→   877→                  dir="ltr"
+   878→   878→                  value={progressForm.waist}
+   879→   879→                  onChange={(e) =>
+   880→   880→                    setProgressForm({ ...progressForm, waist: e.target.value })
+   881→   881→                  }
+   882→   882→                  placeholder="82"
+   883→   883→                />
+   884→   884→              </Field>
+   885→   885→              <Field label="الصدر (سم)" htmlFor="progress-chest">
+   886→   886→                <Input
+   887→   887→                  id="progress-chest"
+   888→   888→                  type="number"
+   889→   889→                  step="0.1"
+   890→   890→                  min="0"
+   891→   891→                  dir="ltr"
+   892→   892→                  value={progressForm.chest}
+   893→   893→                  onChange={(e) =>
+   894→   894→                    setProgressForm({ ...progressForm, chest: e.target.value })
+   895→   895→                  }
+   896→   896→                  placeholder="98"
+   897→   897→                />
+   898→   898→              </Field>
+   899→   899→              <Field label="الذراع (سم)" htmlFor="progress-arm">
+   900→   900→                <Input
+   901→   901→                  id="progress-arm"
+   902→   902→                  type="number"
+   903→   903→                  step="0.1"
+   904→   904→                  min="0"
+   905→   905→                  dir="ltr"
+   906→   906→                  value={progressForm.arm}
+   907→   907→                  onChange={(e) =>
+   908→   908→                    setProgressForm({ ...progressForm, arm: e.target.value })
+   909→   909→                  }
+   910→   910→                  placeholder="34"
+   911→   911→                />
+   912→   912→              </Field>
+   913→   913→              <Field label="ملاحظات" htmlFor="progress-notes">
+   914→   914→                <Input
+   915→   915→                  id="progress-notes"
+   916→   916→                  value={progressForm.notes}
+   917→   917→                  onChange={(e) =>
+   918→   918→                    setProgressForm({ ...progressForm, notes: e.target.value })
+   919→   919→                  }
+   920→   920→                  placeholder="ملاحظة سريعة..."
+   921→   921→                />
+   922→   922→              </Field>
+   923→   923→            </div>
+   924→   924→            <div className="flex justify-end">
+   925→   925→              <Button type="submit" disabled={progressSaving}>
+   926→   926→                {progressSaving && (
+   927→   927→                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+   928→   928→                )}
+   929→   929→                إضافة سجل
+   930→   930→              </Button>
+   931→   931→            </div>
+   932→   932→          </form>
+   933→   933→
+   934→   934→          {/* Logs table */}
+   935→   935→          <div className="space-y-2">
+   936→   936→            <h3 className="text-sm font-semibold text-muted-foreground">
+   937→   937→              سجلات المتابعة
+   938→   938→            </h3>
+   939→   939→            {progressLoading ? (
+   940→   940→              <div className="space-y-2">
+   941→   941→                {Array.from({ length: 3 }).map((_, i) => (
+   942→   942→                  <Skeleton key={i} className="h-10 w-full" />
+   943→   943→                ))}
+   944→   944→              </div>
+   945→   945→            ) : progressLogs.length === 0 ? (
+   946→   946→              <p className="py-6 text-center text-sm text-muted-foreground">
+   947→   947→                لا توجد سجلات متابعة بعد — أضف أول قياس
+   948→   948→              </p>
+   949→   949→            ) : (
+   950→   950→              <div className="rounded-lg border overflow-hidden">
+   951→   951→                <div className="overflow-x-auto custom-scrollbar">
+   952→   952→                  <Table>
+   953→   953→                    <TableHeader>
+   954→   954→                      <TableRow>
+   955→   955→                        <TableHead>التاريخ</TableHead>
+   956→   956→                        <TableHead>الوزن</TableHead>
+   957→   957→                        <TableHead>الدهون %</TableHead>
+   958→   958→                        <TableHead>العضلات</TableHead>
+   959→   959→                        <TableHead>الخصر</TableHead>
+   960→   960→                        <TableHead>ملاحظات</TableHead>
+   961→   961→                        <TableHead className="text-left">حذف</TableHead>
+   962→   962→                      </TableRow>
+   963→   963→                    </TableHeader>
+   964→   964→                    <TableBody>
+   965→   965→                      {progressLogs.map((log) => (
+   966→   966→                        <TableRow key={log.id}>
+   967→   967→                          <TableCell className="text-xs whitespace-nowrap text-muted-foreground">
+   968→   968→                            {formatLogDate(log.date)}
+   969→   969→                          </TableCell>
+   970→   970→                          <TableCell className="font-bold text-cyan-400 tabular-nums">
+   971→   971→                            {fmtNum(log.weight)}
+   972→   972→                          </TableCell>
+   973→   973→                          <TableCell className="tabular-nums">
+   974→   974→                            {fmtNum(log.fatPercent)}
+   975→   975→                          </TableCell>
+   976→   976→                          <TableCell className="tabular-nums">
+   977→   977→                            {fmtNum(log.muscleMass)}
+   978→   978→                          </TableCell>
+   979→   979→                          <TableCell className="tabular-nums">
+   980→   980→                            {fmtNum(log.waist)}
+   981→   981→                          </TableCell>
+   982→   982→                          <TableCell className="max-w-40">
+   983→   983→                            <p className="text-xs text-muted-foreground line-clamp-1">
+   984→   984→                              {log.notes ?? "—"}
+   985→   985→                            </p>
+   986→   986→                          </TableCell>
+   987→   987→                          <TableCell>
+   988→   988→                            <div className="flex justify-end">
+   989→   989→                              <Button
+   990→   990→                                size="icon"
+   991→   991→                                variant="ghost"
+   992→   992→                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+   993→   993→                                onClick={() => setLogDeleteTarget(log)}
+   994→   994→                                aria-label="حذف السجل"
+   995→   995→                              >
+   996→   996→                                <Trash2 className="h-4 w-4" aria-hidden="true" />
+   997→   997→                              </Button>
+   998→   998→                            </div>
+   999→   999→                          </TableCell>
+  1000→  1000→                        </TableRow>
+  1001→  1001→                      ))}
+  1002→  1002→                    </TableBody>
+  1003→  1003→                  </Table>
+  1004→  1004→                </div>
+  1005→  1005→              </div>
+  1006→  1006→            )}
+  1007→  1007→          </div>
+  1008→  1008→        </DialogContent>
+  1009→  1009→      </Dialog>
+  1010→  1010→
+  1011→  1011→      {/* Log delete confirm */}
+  1012→  1012→      <AlertDialog
+  1013→  1013→        open={!!logDeleteTarget}
+  1014→  1014→        onOpenChange={(open) => !open && setLogDeleteTarget(null)}
+  1015→  1015→      >
+  1016→  1016→        <AlertDialogContent>
+  1017→  1017→          <AlertDialogHeader>
+  1018→  1018→            <AlertDialogTitle>تأكيد حذف السجل</AlertDialogTitle>
+  1019→  1019→            <AlertDialogDescription>
+  1020→  1020→              هل أنت متأكد من حذف سجل المتابعة بتاريخ{" "}
+  1021→  1021→              {logDeleteTarget ? formatLogDate(logDeleteTarget.date) : ""}؟
+  1022→  1022→            </AlertDialogDescription>
+  1023→  1023→          </AlertDialogHeader>
+  1024→  1024→          <AlertDialogFooter className="gap-2">
+  1025→  1025→            <AlertDialogCancel disabled={logDeleting}>إلغاء</AlertDialogCancel>
+  1026→  1026→            <AlertDialogAction
+  1027→  1027→              onClick={(e) => {
+  1028→  1028→                e.preventDefault();
+  1029→  1029→                handleDeleteLog();
+  1030→  1030→              }}
+  1031→  1031→              disabled={logDeleting}
+  1032→  1032→              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+  1033→  1033→            >
+  1034→  1034→              {logDeleting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+  1035→  1035→              حذف نهائي
+  1036→  1036→            </AlertDialogAction>
+  1037→  1037→          </AlertDialogFooter>
+  1038→  1038→        </AlertDialogContent>
+  1039→  1039→      </AlertDialog>
+  1040→  1040→    </div>
+  1041→  1041→  );
+  1042→  1042→}
+  1043→  1043→

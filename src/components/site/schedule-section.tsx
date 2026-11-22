@@ -140,12 +140,14 @@ export function ScheduleSection({
               return (
                 <button
                   key={day.index}
+                  id={`schedule-day-tab-${day.index}`}
                   type="button"
                   role="tab"
                   aria-selected={selectedDay === day.index}
+                  aria-controls="schedule-day-panel"
                   onClick={() => setSelectedDay(day.index)}
                   className={cn(
-                    "flex shrink-0 items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200",
+                    "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                     selectedDay === day.index
                       ? "glow-cyan border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                       : "border-primary/20 bg-card text-muted-foreground hover:border-primary/50 hover:text-primary"
@@ -166,19 +168,25 @@ export function ScheduleSection({
         </FadeUp>
 
         {/* Timeline of the selected day */}
-        {daySlots.length === 0 ? (
-          <FadeUp className="mx-auto max-w-lg rounded-2xl border-2 border-dashed border-primary/25 p-10 text-center">
-            <Dumbbell className="mx-auto mb-3 size-10 text-primary/50" aria-hidden="true" />
-            <p className="font-bold">لا توجد حصص مجدولة في هذا اليوم</p>
-            <p className="mt-1 text-sm text-muted-foreground">استمتع براحة أو تمرن فردّي</p>
-          </FadeUp>
-        ) : (
-          <ol className="mx-auto flex max-w-3xl flex-col gap-5 md:gap-6">
-            {daySlots.map((slot, i) => (
-              <SlotRow key={slot.id} slot={slot} index={i} />
-            ))}
-          </ol>
-        )}
+        <div
+          id="schedule-day-panel"
+          role="tabpanel"
+          aria-labelledby={`schedule-day-tab-${selectedDay}`}
+        >
+          {daySlots.length === 0 ? (
+            <FadeUp className="mx-auto max-w-lg rounded-2xl border-2 border-dashed border-primary/25 p-10 text-center">
+              <Dumbbell className="mx-auto mb-3 size-10 text-primary/50" aria-hidden="true" />
+              <p className="font-bold">لا توجد حصص مجدولة في هذا اليوم</p>
+              <p className="mt-1 text-sm text-muted-foreground">استمتع براحة أو تمرن فردّي</p>
+            </FadeUp>
+          ) : (
+            <ol className="mx-auto flex max-w-3xl flex-col gap-5 md:gap-6">
+              {daySlots.map((slot, i) => (
+                <SlotRow key={slot.id} slot={slot} index={i} />
+              ))}
+            </ol>
+          )}
+        </div>
 
         {/* Bottom hint */}
         <FadeUp className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-12">

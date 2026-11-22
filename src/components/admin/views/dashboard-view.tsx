@@ -27,77 +27,67 @@ import {
 } from "@/components/ui/table";
 import { apiFetch } from "@/components/admin/api";
 import { StatusBadge } from "@/components/admin/shared";
+import { formatDate } from "@/lib/gym";
 import type { StatsResponse } from "@/components/admin/types";
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("ar-EG", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return iso;
-  }
-}
+/** Neutral card + colored icon chip (semantic colors, brand primary for members/classes). */
+const CHIP = {
+  primary: "bg-primary/15 text-primary border-primary/25",
+  emerald: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  amber: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  red: "bg-red-500/15 text-red-400 border-red-500/30",
+  violet: "bg-violet-500/15 text-violet-400 border-violet-500/30",
+} as const;
 
 const STAT_CARDS = [
   {
     key: "totalMembers" as const,
     label: "إجمالي الأعضاء",
     icon: Users,
-    color: "text-cyan-400",
-    bg: "bg-cyan-400/10 border-cyan-400/25",
+    chip: CHIP.primary,
   },
   {
     key: "activeMembers" as const,
     label: "أعضاء نشطون",
     icon: UserCheck,
-    color: "text-emerald-400",
-    bg: "bg-emerald-400/10 border-emerald-400/25",
+    chip: CHIP.emerald,
   },
   {
     key: "pendingMembers" as const,
     label: "طلبات معلقة",
     icon: UserPlus,
-    color: "text-amber-400",
-    bg: "bg-amber-400/10 border-amber-400/25",
+    chip: CHIP.amber,
   },
   {
     key: "monthlyRevenue" as const,
     label: "إيرادات شهرية تقديرية",
     icon: Banknote,
-    color: "text-cyan-400",
-    bg: "bg-cyan-400/10 border-cyan-400/25",
+    chip: CHIP.emerald,
     format: (v: number) => `${v.toLocaleString("ar-EG")} ج.م`,
   },
   {
     key: "unreadMessages" as const,
     label: "رسائل غير مقروءة",
     icon: Mail,
-    color: "text-red-400",
-    bg: "bg-red-400/10 border-red-400/25",
+    chip: CHIP.red,
   },
   {
     key: "totalClasses" as const,
     label: "عدد الكلاسات",
     icon: Dumbbell,
-    color: "text-blue-400",
-    bg: "bg-blue-400/10 border-blue-400/25",
+    chip: CHIP.primary,
   },
   {
     key: "totalSlots" as const,
     label: "مواعيد الجدول",
     icon: CalendarDays,
-    color: "text-violet-400",
-    bg: "bg-violet-400/10 border-violet-400/25",
+    chip: CHIP.violet,
   },
   {
     key: "nutritionPlans" as const,
     label: "خطط التغذية",
     icon: UtensilsCrossed,
-    color: "text-amber-400",
-    bg: "bg-amber-400/10 border-amber-400/25",
+    chip: CHIP.amber,
   },
 ];
 
@@ -166,10 +156,10 @@ export default function DashboardView() {
                 ? card.format(value as number)
                 : String(value);
           return (
-            <Card key={card.key} className={`border ${card.bg} p-0`}>
+            <Card key={card.key} className="p-0">
               <CardContent className="p-4 md:p-5 flex items-center gap-3 md:gap-4">
                 <div
-                  className={`flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-xl bg-background/40 ${card.color}`}
+                  className={`flex h-10 w-10 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-xl border ${card.chip}`}
                 >
                   <Icon className="h-5 w-5 md:h-6 md:w-6" aria-hidden="true" />
                 </div>
@@ -224,7 +214,7 @@ export default function DashboardView() {
                   </div>
                   <div className="h-2.5 w-full rounded-full bg-muted overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-l from-cyan-400 to-blue-500 transition-all duration-700"
+                      className="h-full rounded-full bg-gradient-to-l from-primary to-primary/50 transition-all duration-700"
                       style={{ width: `${(d.count / maxDistribution) * 100}%` }}
                       role="progressbar"
                       aria-valuenow={d.count}
@@ -326,7 +316,7 @@ export default function DashboardView() {
                     >
                       <span
                         className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                          msg.read ? "bg-muted-foreground/40" : "bg-cyan-400"
+                          msg.read ? "bg-muted-foreground/40" : "bg-primary"
                         }`}
                         aria-label={msg.read ? "مقروءة" : "غير مقروءة"}
                       />
@@ -345,7 +335,7 @@ export default function DashboardView() {
                         </p>
                       </div>
                       {!msg.read && (
-                        <Badge className="bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">
+                        <Badge className="bg-primary/15 text-primary border border-primary/30">
                           جديدة
                         </Badge>
                       )}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Eye, EyeOff, Loader2, Lock, LogIn, User } from "lucide-react";
+import { ChevronDown, Eye, EyeOff, Loader2, Lock, LogIn, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,7 +61,7 @@ export default function LoginForm() {
         </Label>
         <div className="relative">
           <User
-            className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -69,7 +69,7 @@ export default function LoginForm() {
             name="username"
             autoComplete="username"
             placeholder="أدخل اسم المستخدم"
-            className="pr-9 h-11 bg-background/60"
+            className="ps-9 h-11 bg-background/60"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={loading}
@@ -84,7 +84,7 @@ export default function LoginForm() {
         </Label>
         <div className="relative">
           <Lock
-            className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -93,7 +93,7 @@ export default function LoginForm() {
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             placeholder="أدخل كلمة المرور"
-            className="pr-9 pl-10 h-11 bg-background/60"
+            className="ps-9 pe-10 h-11 bg-background/60"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
@@ -102,7 +102,7 @@ export default function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="absolute end-1 top-1/2 -translate-y-1/2 inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
             disabled={loading}
           >
@@ -133,12 +133,20 @@ export default function LoginForm() {
         )}
       </Button>
 
-      <div className="rounded-lg border border-primary/25 bg-primary/5 p-3 text-center text-sm text-muted-foreground">
-        بيانات الدخول التجريبية:{" "}
-        <span className="font-mono font-semibold text-primary" dir="ltr">
-          admin / ocean123
-        </span>
-      </div>
+      <details className="group rounded-lg border border-border/50 bg-background/30 text-sm">
+        <summary className="flex cursor-pointer select-none list-none items-center justify-center gap-1.5 px-3 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg [&::-webkit-details-marker]:hidden">
+          بيانات الدخول التجريبية
+          <ChevronDown
+            className="h-3.5 w-3.5 transition-transform group-open:rotate-180"
+            aria-hidden="true"
+          />
+        </summary>
+        <p className="px-3 pb-3 text-center text-xs text-muted-foreground">
+          <span className="font-mono font-semibold text-primary" dir="ltr">
+            admin / ocean123
+          </span>
+        </p>
+      </details>
 
       <div className="flex items-center justify-center gap-3 pt-1 text-xs text-muted-foreground">
         <Image

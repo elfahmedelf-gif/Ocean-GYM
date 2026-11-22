@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircleCheckBig, LoaderCircle, Phone, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +47,12 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const successRef = useRef<HTMLDivElement>(null);
+
+  // Announce the success card to screen readers by moving focus to it.
+  useEffect(() => {
+    if (submitted) successRef.current?.focus();
+  }, [submitted]);
 
   const validate = (): boolean => {
     const next: FieldErrors = {};
@@ -108,9 +114,11 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
           {/* Pitch */}
           <div>
             <FadeUp className="flex flex-col items-start gap-4">
-              <span className="ocean-ring inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
+              <span className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-xs font-bold text-primary">
                 <span className="size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />
+                <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-transparent to-primary/60" />
                 انضم إلينا
+                <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-primary/60 to-transparent" />
               </span>
               <h2 id="join-title" className="text-3xl font-extrabold leading-tight md:text-5xl md:leading-tight">
                 ابدأ <span className="text-gradient-ocean">رحلتك</span> الآن
@@ -144,7 +152,12 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
           {/* Form / success */}
           <FadeUp delay={0.1}>
             {submitted ? (
-              <div className="glass ocean-ring flex flex-col items-center gap-4 rounded-2xl p-10 text-center">
+              <div
+                ref={successRef}
+                tabIndex={-1}
+                className="glass ocean-ring flex flex-col items-center gap-4 rounded-2xl p-10 text-center focus-visible:outline-none"
+                aria-live="polite"
+              >
                 <span className="glow-cyan flex size-16 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <CircleCheckBig className="size-9" aria-hidden="true" />
                 </span>
@@ -168,9 +181,14 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                     placeholder="اكتب اسمك الكامل"
                     autoComplete="name"
                     aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? "join-name-error" : undefined}
                     className="h-11"
                   />
-                  {errors.name ? <p className="text-xs text-destructive">{errors.name}</p> : null}
+                  {errors.name ? (
+                    <p id="join-name-error" role="alert" className="text-xs text-destructive">
+                      {errors.name}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -186,9 +204,14 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       placeholder="you@example.com"
                       autoComplete="email"
                       aria-invalid={Boolean(errors.email)}
+                      aria-describedby={errors.email ? "join-email-error" : undefined}
                       className="h-11"
                     />
-                    {errors.email ? <p className="text-xs text-destructive">{errors.email}</p> : null}
+                    {errors.email ? (
+                      <p id="join-email-error" role="alert" className="text-xs text-destructive">
+                        {errors.email}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="join-phone">رقم الهاتف</Label>
@@ -202,9 +225,14 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       placeholder="01xxxxxxxxx"
                       autoComplete="tel"
                       aria-invalid={Boolean(errors.phone)}
+                      aria-describedby={errors.phone ? "join-phone-error" : undefined}
                       className="h-11"
                     />
-                    {errors.phone ? <p className="text-xs text-destructive">{errors.phone}</p> : null}
+                    {errors.phone ? (
+                      <p id="join-phone-error" role="alert" className="text-xs text-destructive">
+                        {errors.phone}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
 

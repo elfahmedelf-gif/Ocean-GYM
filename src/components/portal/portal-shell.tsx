@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
-import { Dumbbell, Loader2, LogOut } from "lucide-react";
+import { ArrowRight, Dumbbell, Loader2, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -63,8 +63,20 @@ export default function PortalShell({
           </Link>
 
           <div className="flex items-center gap-2 md:gap-3">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="h-10 gap-1.5 px-2 text-sm text-muted-foreground hover:text-foreground md:px-3"
+            >
+              <Link href="/" aria-label="العودة إلى الموقع الرئيسي">
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden md:inline">العودة إلى الموقع</span>
+              </Link>
+            </Button>
+
             <div
-              className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/5 py-1 pl-3 pr-1.5"
+              className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/5 py-1 pe-3 ps-1.5"
               title={member.name}
             >
               <Avatar className="h-7 w-7">
@@ -82,7 +94,7 @@ export default function PortalShell({
               size="sm"
               onClick={handleLogout}
               disabled={loggingOut}
-              className="h-9 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              className="h-10 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
               aria-label="تسجيل الخروج من البوابة"
             >
               {loggingOut ? (

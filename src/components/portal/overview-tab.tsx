@@ -8,13 +8,16 @@ import {
   Info,
   Minus,
   Quote,
+  Scale,
   TrendingDown,
   TrendingUp,
+  Wallet,
 } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import StatCard, { weightDeltaTone } from "@/components/portal/stat-card";
 import StatusBadge from "@/components/portal/status-badge";
 import {
   clamp,
@@ -22,26 +25,10 @@ import {
   daysRemaining,
   formatDate,
   formatDelta,
+  formatShortDate,
 } from "@/components/portal/format";
-import { durationLabel, formatPrice } from "@/lib/gym";
+import { durationLabel, formatPrice, goalLabel } from "@/lib/gym";
 import type { PortalMemberDetail } from "@/components/portal/types";
-
-function QuickStat({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Card className="bg-card/60">
-      <CardContent className="p-4">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <div className="mt-1.5 text-xl font-bold">{children}</div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function OverviewTab({ member }: { member: PortalMemberDetail }) {
   const firstName = member.name.trim().split(/\s+/)[0] ?? member.name;
@@ -53,6 +40,7 @@ export default function OverviewTab({ member }: { member: PortalMemberDetail }) 
     latestLog && oldestLog ? latestLog.weight - oldestLog.weight : null;
 
   const remaining = daysRemaining(member.endDate);
+  const goal = member.nutritionPlan?.goal ?? null;
   const total =
     remaining !== null
       ? daysBetween(member.startDate, member.endDate) ??
@@ -135,7 +123,11 @@ export default function OverviewTab({ member }: { member: PortalMemberDetail }) 
 
               {remaining !== null && total !== null && pct !== null && (
                 <div className="space-y-2">
-                  <Progress value={pct} aria-label="نسبة الاشتراك المتبقية" />
+                  <Progress
+                    value={pct}
+                    className="h-2.5 rounded-full bg-primary/15"
+                    aria-label="نسبة الاشتراك المتبقية"
+                  />
                   <p className="text-sm text-muted-foreground">
                     متبقي{" "}
                     <span className="font-bold text-primary" dir="ltr">
@@ -157,62 +149,71 @@ export default function OverviewTab({ member }: { member: PortalMemberDetail }) 
 
       {/* Quick stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <QuickStat label="الوزن الحالي">
-          {latestLog ? (
-            <span>
-              <span dir="ltr">{latestLog.weight}</span>{" "}
-              <span className="text-sm font-medium text-muted-foreground">كجم</span>
-            </span>
-          ) : (
-            <span className="text-muted-foreground">—</span>
-          )}
-        </QuickStat>
+        <StatCard
+          icon={Scale}
+          label="الوزن الحالي"
+          hint={latestLog ? `آخر قياس: ${formatShortDate(latestLog.date)}` : undefined}
+          value={
+            latestLog ? (
+              <span>
+                <span dir="ltr">{latestLog.weight}</span>{" "}
+                <span className="text-sm font-medium text-muted-foreground">كجم</span>
+              </span>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )
+          }
+        />
 
-        <QuickStat label="تغير الوزن">
-          {weightDelta !== null ? (
-            <span
-              className={`inline-flex items-center gap-1.5 ${
-                weightDelta > 0
-                  ? "text-emerald-400"
-                  : weightDelta < 0
-                    ? "text-red-400"
-                    : "text-muted-foreground"
-              }`}
-            >
-              {weightDelta > 0 ? (
-                <TrendingUp className="h-4 w-4" aria-hidden="true" />
-              ) : weightDelta < 0 ? (
-                <TrendingDown className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Minus className="h-4 w-4" aria-hidden="true" />
-              )}
-              <span dir="ltr">{formatDelta(weightDelta)}</span>
-              <span className="text-sm font-medium">كجم</span>
-            </span>
-          ) : (
-            <span className="text-muted-foreground">—</span>
-          )}
-        </QuickStat>
+        <StatCard
+          icon={
+            weightDelta !== null && weightDelta > 0
+              ? TrendingUp
+              : weightDelta !== null && weightDelta < 0
+                ? TrendingDown
+                : Minus
+          }
+          label="تغير الوزن"
+          hint={member.nutritionPlan ? `هدف الخطة: ${goalLabel(member.nutritionPlan.goal)}` : undefined}
+          tone={weightDelta !== null ? weightDeltaTone(weightDelta, goal) : "muted"}
+          value={
+            weightDelta !== null ? (
+              <span className="inline-flex items-baseline gap-1">
+                <span dir="ltr">{formatDelta(weightDelta)}</span>
+                <span className="text-sm font-medium">كجم</span>
+              </span>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )
+          }
+        />
 
-        <QuickStat label="سعرات خطتك">
-          {member.nutritionPlan ? (
-            <span className="inline-flex items-center gap-1.5">
-              <Flame className="h-4 w-4 text-orange-400" aria-hidden="true" />
-              <span dir="ltr">{member.nutritionPlan.calories}</span>
-              <span className="text-sm font-medium text-muted-foreground">سعرة</span>
-            </span>
-          ) : (
-            <span className="text-muted-foreground">—</span>
-          )}
-        </QuickStat>
+        <StatCard
+          icon={Flame}
+          label="سعرات خطتك"
+          value={
+            member.nutritionPlan ? (
+              <span className="inline-flex items-baseline gap-1">
+                <span dir="ltr">{member.nutritionPlan.calories}</span>
+                <span className="text-sm font-medium text-muted-foreground">سعرة</span>
+              </span>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )
+          }
+        />
 
-        <QuickStat label="باقة الاشتراك">
-          {member.plan ? (
-            <span className="text-base">{member.plan.name}</span>
-          ) : (
-            <span className="text-muted-foreground">—</span>
-          )}
-        </QuickStat>
+        <StatCard
+          icon={Wallet}
+          label="باقة الاشتراك"
+          value={
+            member.plan ? (
+              <span className="text-base font-semibold">{member.plan.name}</span>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )
+          }
+        />
       </div>
 
       {/* Coach note */}

@@ -40,6 +40,8 @@ export interface TestimonialView {
   role: string;
   content: string;
   rating: number;
+  /** Optional profile photo — rendered when present, letter avatar otherwise. */
+  image: string | null;
 }
 
 export interface GalleryView {

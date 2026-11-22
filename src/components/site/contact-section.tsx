@@ -1,14 +1,8 @@
-import { Clock, Facebook, Instagram, Mail, MapPin, Navigation, Phone, Twitter, Youtube } from "lucide-react";
+import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
-
-const SOCIALS = [
-  { icon: Facebook, href: SITE.socials[0].href, label: SITE.socials[0].label },
-  { icon: Instagram, href: SITE.socials[1].href, label: SITE.socials[1].label },
-  { icon: Youtube, href: SITE.socials[2].href, label: SITE.socials[2].label },
-  { icon: Twitter, href: SITE.socials[3].href, label: SITE.socials[3].label },
-] as const;
+import { SOCIALS } from "./socials";
 
 /** Google Maps embed (no API key needed) centered on the club location. */
 const MAP_EMBED_SRC =
@@ -131,12 +125,12 @@ export function ContactSection() {
           <div className="flex items-center justify-center gap-3">
             {SOCIALS.map((social) => (
               <a
-                key={social.label}
+                key={social.name}
                 href={social.href}
                 target="_blank"
-                rel="noreferrer"
-                aria-label={social.label}
-                className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
               >
                 <social.icon className="size-5" aria-hidden="true" />
               </a>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
 interface FadeUpProps {
@@ -10,8 +10,18 @@ interface FadeUpProps {
   y?: number;
 }
 
-/** Fade-up-on-scroll wrapper (runs once when the element enters the viewport). */
+/**
+ * Fade-up-on-scroll wrapper (runs once when the element enters the viewport).
+ * When the user prefers reduced motion, children render immediately with
+ * no translate/opacity animation.
+ */
 export function FadeUp({ children, className, delay = 0, y = 24 }: FadeUpProps) {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
