@@ -1,30 +1,12 @@
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
+import { hashPassword, verifyPassword } from "@/lib/hash";
+
+export { hashPassword, verifyPassword };
 
 export const SESSION_COOKIE = "ocean_session";
 const SESSION_DAYS = 7;
-
-/** Hash a password using scrypt: returns "salt:hash" */
-export function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${hash}`;
-}
-
-/** Verify a password against a "salt:hash" stored value */
-export function verifyPassword(password: string, stored: string): boolean {
-  const [salt, hash] = stored.split(":");
-  if (!salt || !hash) return false;
-  try {
-    const candidate = crypto.scryptSync(password, salt, 64);
-    const hashBuf = Buffer.from(hash, "hex");
-    if (hashBuf.length !== candidate.length) return false;
-    return crypto.timingSafeEqual(candidate, hashBuf);
-  } catch {
-    return false;
-  }
-}
 
 /** Create a DB-backed session and set the httpOnly cookie */
 export async function createSessionForAdmin(adminId: string): Promise<string> {

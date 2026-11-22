@@ -30,6 +30,20 @@ export function levelLabel(level: string): string {
   return CLASS_LEVELS.find((l) => l.value === level)?.label ?? "جميع المستويات";
 }
 
+/** Shared badge classes for class levels (single source of truth). */
+export function levelBadgeClass(level: string): string {
+  switch (level) {
+    case "beginner":
+      return "border-emerald-400/30 bg-emerald-500/15 text-emerald-300";
+    case "intermediate":
+      return "border-amber-400/30 bg-amber-500/15 text-amber-300";
+    case "advanced":
+      return "border-rose-400/30 bg-rose-500/15 text-rose-300";
+    default:
+      return "border-primary/30 bg-primary/15 text-primary";
+  }
+}
+
 /** Member statuses */
 export const MEMBER_STATUSES = [
   { value: "pending", label: "قيد المراجعة" },
@@ -81,6 +95,11 @@ export function formatTime12(time: string): string {
 export function formatPrice(price: number): string {
   const formatted = Number.isInteger(price) ? String(price) : price.toFixed(1);
   return `${formatted} ج.م`;
+}
+
+/** Digits-only price (cards render the currency label separately). */
+export function formatPriceDigits(price: number): string {
+  return Number.isInteger(price) ? price.toLocaleString("en-US") : price.toFixed(2);
 }
 
 /** Plan duration label in Arabic */

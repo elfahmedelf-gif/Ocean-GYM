@@ -52,6 +52,16 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
 }
 
 export function TestimonialsSection({ testimonials }: { testimonials: TestimonialView[] }) {
+  // Average rating across approved testimonials (1 decimal, clamped to 5).
+  const avgRating =
+    testimonials.length > 0
+      ? Math.round(
+          (testimonials.reduce((sum, t) => sum + Math.min(5, Math.max(1, t.rating)), 0) /
+            testimonials.length) *
+            10
+        ) / 10
+      : 0;
+
   return (
     <section
       id="testimonials"
@@ -75,13 +85,34 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
             آراء العملاء ستتوفر قريبًا.
           </FadeUp>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {testimonials.slice(0, 8).map((testimonial, i) => (
-              <FadeUp key={testimonial.id} delay={(i % 4) * 0.1} className="h-full">
-                <TestimonialCard testimonial={testimonial} />
-              </FadeUp>
-            ))}
-          </div>
+          <>
+            <FadeUp className="mb-8 flex justify-center md:mb-10">
+              <div className="glass flex items-center gap-3 rounded-full px-5 py-2.5">
+                <div className="flex gap-0.5" aria-hidden="true">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="size-4 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                </div>
+                <span className="text-sm font-extrabold">
+                  <span dir="ltr">{avgRating.toFixed(1)}</span> / 5
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  متوسط تقييم <span dir="ltr">{testimonials.length}</span>
+                  {testimonials.length === 1 ? " تجربة" : " تجارب"} حقيقية
+                </span>
+              </div>
+            </FadeUp>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {testimonials.slice(0, 8).map((testimonial, i) => (
+                <FadeUp key={testimonial.id} delay={(i % 4) * 0.1} className="h-full">
+                  <TestimonialCard testimonial={testimonial} />
+                </FadeUp>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </section>

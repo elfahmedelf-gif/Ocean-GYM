@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Menu } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -14,15 +15,40 @@ import {
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "./nav-links";
 
+/** Sections observed for scroll-spy (desktop nav only). */
+const SPY_IDS = NAV_LINKS.map((l) => l.href.slice(1));
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string>("home");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Scroll-spy: highlight the section currently in view.
+  useEffect(() => {
+    const sections = SPY_IDS.map((id) => document.getElementById(id)).filter(
+      (el): el is HTMLElement => el !== null
+    );
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        }
+      },
+      // A slim horizontal band around the upper third of the viewport.
+      { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -49,19 +75,33 @@ export function Navbar() {
           </span>
         </a>
 
-        <nav aria-label="التنقل الرئيسي" className="hidden items-center gap-1 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "rounded-lg px-3 py-2 text-sm font-semibold text-foreground/85 transition-colors hover:bg-primary/10 hover:text-primary",
-                link.secondary && "hidden xl:inline"
-              )}
-            >
-              {link.label}
-            </a>
-          ))}
+        <nav aria-label="التنقل الرئيسي" className="hidden items-center gap-0.5 lg:flex">
+          {NAV_LINKS.map((link) => {
+            const id = link.href.slice(1);
+            const isActive = activeId === id;
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? "true" : undefined}
+                className={cn(
+                  "relative rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                  isActive ? "text-primary" : "text-foreground/85 hover:bg-primary/10 hover:text-primary",
+                  link.secondary && "hidden xl:inline"
+                )}
+              >
+                {isActive ? (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    className="absolute inset-0 rounded-lg border border-primary/25 bg-primary/10"
+                    aria-hidden="true"
+                  />
+                ) : null}
+                <span className="relative">{link.label}</span>
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -102,16 +142,24 @@ export function Navbar() {
                 aria-label="قائمة التنقل"
                 className="flex flex-1 flex-col gap-1 overflow-y-auto p-4"
               >
-                {NAV_LINKS.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="rounded-xl px-4 py-3 text-sm font-semibold text-foreground/90 transition-colors hover:bg-primary/10 hover:text-primary"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                {NAV_LINKS.map((link) => {
+                  const isActive = activeId === link.href.slice(1);
+                  return (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
+                        isActive
+                          ? "border border-primary/25 bg-primary/10 text-primary"
+                          : "text-foreground/90 hover:bg-primary/10 hover:text-primary"
+                      )}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
               </nav>
               <div className="border-t border-primary/10 p-4">
                 <Button asChild className="h-11 w-full font-bold">

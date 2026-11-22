@@ -1,28 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { Calendar, Timer, User, Users, Waves } from "lucide-react";
+import { ArrowLeft, Calendar, Timer, User, Users, Waves } from "lucide-react";
+import { levelBadgeClass, levelLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import type { GymClassView } from "./types";
 
-const LEVEL_LABELS: Record<string, string> = {
-  beginner: "مبتدئ",
-  intermediate: "متوسط",
-  advanced: "متقدم",
-  all: "جميع المستويات",
-};
-
-const LEVEL_STYLES: Record<string, string> = {
-  beginner: "border-emerald-400/30 bg-emerald-500/15 text-emerald-300",
-  intermediate: "border-amber-400/30 bg-amber-500/15 text-amber-300",
-  advanced: "border-rose-400/30 bg-rose-500/15 text-rose-300",
-  all: "border-primary/30 bg-primary/15 text-primary",
-};
-
 function ClassCard({ gymClass }: { gymClass: GymClassView }) {
-  const levelLabel = LEVEL_LABELS[gymClass.level] ?? LEVEL_LABELS.all;
-  const levelStyle = LEVEL_STYLES[gymClass.level] ?? LEVEL_STYLES.all;
+  const levelLabelValue = levelLabel(gymClass.level);
+  const levelStyle = levelBadgeClass(gymClass.level);
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
@@ -47,8 +34,18 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
         <span
           className={`absolute end-3 top-3 rounded-full border px-3 py-1 text-xs font-bold backdrop-blur-md ${levelStyle}`}
         >
-          {levelLabel}
+          {levelLabelValue}
         </span>
+        {/* Booking CTA — revealed on card hover (desktop), always visible on touch devices */}
+        <a
+          href="#join"
+          aria-label={`احجز مكانك في كلاس ${gymClass.name}`}
+          tabIndex={-1}
+          className="pointer-coarse:translate-y-0 pointer-coarse:opacity-100 absolute inset-x-3 bottom-3 flex translate-y-3 items-center justify-center gap-2 rounded-xl border border-primary/40 bg-background/80 py-2.5 text-sm font-bold text-primary opacity-0 backdrop-blur-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground group-hover:pointer-coarse:translate-y-0 group-hover:translate-y-0 group-hover:opacity-100"
+        >
+          احجز مكانك
+          <ArrowLeft className="size-4" aria-hidden="true" />
+        </a>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">

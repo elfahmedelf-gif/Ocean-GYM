@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { Navbar } from "@/components/site/navbar";
 import { Hero } from "@/components/site/hero";
+import { ScrollProgress } from "@/components/site/scroll-progress";
+import { BackToTop } from "@/components/site/back-to-top";
 import { AboutSection } from "@/components/site/about-section";
 import { ClassesSection } from "@/components/site/classes-section";
 import { ScheduleSection } from "@/components/site/schedule-section";
@@ -135,6 +137,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollProgress />
       <Navbar />
       <main className="flex-1">
         <Hero />
@@ -149,6 +152,7 @@ export default async function HomePage() {
         <ContactSection />
       </main>
       <SiteFooter />
+      <BackToTop />
     </div>
   );
 }

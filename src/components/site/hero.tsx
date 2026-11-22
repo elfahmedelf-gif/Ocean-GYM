@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { animate, motion, useInView } from "framer-motion";
-import { BadgeCheck, Calendar, ChevronDown, Trophy, Users, Waves } from "lucide-react";
+import { ArrowLeft, BadgeCheck, Calendar, ChevronDown, Sparkles, Trophy, Users, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const STATS = [
@@ -101,9 +101,13 @@ export function Hero() {
             <Button
               asChild
               size="lg"
-              className="glow-cyan-strong h-12 px-8 text-base font-bold"
+              className="glow-cyan-strong group h-12 px-8 text-base font-bold"
             >
-              <a href="#join">انضم الآن</a>
+              <a href="#join">
+                <Sparkles className="size-5 transition-transform duration-300 group-hover:-rotate-12" aria-hidden="true" />
+                انضم الآن
+                <ArrowLeft className="size-5 transition-transform duration-300 group-hover:-translate-x-1" aria-hidden="true" />
+              </a>
             </Button>
             <Button
               asChild
@@ -111,7 +115,10 @@ export function Hero() {
               size="lg"
               className="h-12 border-primary/40 bg-primary/5 px-8 text-base font-bold text-primary hover:bg-primary/15 hover:text-primary"
             >
-              <a href="#classes">اكتشف الكلاسات</a>
+              <a href="#classes">
+                <Waves className="size-5" aria-hidden="true" />
+                اكتشف الكلاسات
+              </a>
             </Button>
           </div>
         </motion.div>

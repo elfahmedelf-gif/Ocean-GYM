@@ -6,18 +6,10 @@ import { motion } from "framer-motion";
 import { Dumbbell, Timer, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { GYM_DAYS, formatTime12, levelLabel } from "@/lib/gym";
+import { GYM_DAYS, formatTime12, levelBadgeClass, levelLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import type { ScheduleSlotView } from "./types";
-
-/** Same palette as ClassesSection for a consistent visual language. */
-const LEVEL_STYLES: Record<string, string> = {
-  beginner: "border-emerald-400/30 bg-emerald-500/15 text-emerald-300",
-  intermediate: "border-amber-400/30 bg-amber-500/15 text-amber-300",
-  advanced: "border-rose-400/30 bg-rose-500/15 text-rose-300",
-  all: "border-primary/30 bg-primary/15 text-primary",
-};
 
 /** Arabic plural rules: 1 -> دقيقة واحدة, 2 -> دقيقتين, 3-10 -> دقائق, 11+ -> دقيقة */
 function minutesLabel(minutes: number): string {
@@ -29,7 +21,7 @@ function minutesLabel(minutes: number): string {
 
 function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
   const [digits = slot.time, period = ""] = formatTime12(slot.time).split(" ");
-  const badgeStyle = LEVEL_STYLES[slot.gymClass.level] ?? LEVEL_STYLES.all;
+  const badgeStyle = levelBadgeClass(slot.gymClass.level);
 
   return (
     <motion.li
@@ -143,23 +135,33 @@ export function ScheduleSection({
             aria-label="أيام الجدول الأسبوعي"
             className="custom-scrollbar flex gap-2 overflow-x-auto pb-2 md:justify-center md:pb-0"
           >
-            {GYM_DAYS.map((day) => (
-              <button
-                key={day.index}
-                type="button"
-                role="tab"
-                aria-selected={selectedDay === day.index}
-                onClick={() => setSelectedDay(day.index)}
-                className={cn(
-                  "shrink-0 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200",
-                  selectedDay === day.index
-                    ? "glow-cyan border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                    : "border-primary/20 bg-card text-muted-foreground hover:border-primary/50 hover:text-primary"
-                )}
-              >
-                {day.name}
-              </button>
-            ))}
+            {GYM_DAYS.map((day) => {
+              const isToday = day.index === initialDay;
+              return (
+                <button
+                  key={day.index}
+                  type="button"
+                  role="tab"
+                  aria-selected={selectedDay === day.index}
+                  onClick={() => setSelectedDay(day.index)}
+                  className={cn(
+                    "flex shrink-0 items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200",
+                    selectedDay === day.index
+                      ? "glow-cyan border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                      : "border-primary/20 bg-card text-muted-foreground hover:border-primary/50 hover:text-primary"
+                  )}
+                >
+                  {day.name}
+                  {isToday ? (
+                    <span
+                      className="size-1.5 rounded-full bg-current opacity-80"
+                      title="اليوم"
+                      aria-label="اليوم"
+                    />
+                  ) : null}
+                </button>
+              );
+            })}
           </div>
         </FadeUp>
 

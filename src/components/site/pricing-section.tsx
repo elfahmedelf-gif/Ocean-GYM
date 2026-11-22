@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { durationLabel, formatPrice } from "./format";
+import { formatPriceDigits, durationLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import { useJoinStore } from "./store";
@@ -36,11 +36,18 @@ function PricingCard({ plan }: { plan: PlanView }) {
 
       <div className="mt-4 flex items-baseline gap-2">
         <span dir="ltr" className="text-4xl font-black text-gradient-ocean md:text-5xl">
-          {formatPrice(plan.price)}
+          {formatPriceDigits(plan.price)}
         </span>
         <span className="font-bold text-muted-foreground">ج.م</span>
+        <span className="text-sm text-muted-foreground">/ {durationLabel(plan.duration)}</span>
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">{durationLabel(plan.duration)}</p>
+      {plan.duration > 1 ? (
+        <p className="mt-1 text-xs font-semibold text-primary/90">
+          يعادل <span dir="ltr">{formatPriceDigits(Math.round(plan.price / plan.duration))}</span> ج.م شهريًا فقط
+        </p>
+      ) : (
+        <p className="mt-1 text-xs text-muted-foreground">دفع شهري مرن — بدون التزام</p>
+      )}
 
       <ul className="mt-6 flex-1 space-y-3 border-t border-border/60 pt-6">
         {plan.features

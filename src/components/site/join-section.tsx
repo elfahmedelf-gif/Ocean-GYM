@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { formatPrice } from "./format";
+import { formatPriceDigits } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
@@ -213,7 +213,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       <SelectContent>
                         {plans.map((plan) => (
                           <SelectItem key={plan.id} value={plan.id}>
-                            {plan.name} — <span dir="ltr">{formatPrice(plan.price)}</span> ج.م
+                            {plan.name} — <span dir="ltr">{formatPriceDigits(plan.price)}</span> ج.م
                           </SelectItem>
                         ))}
                       </SelectContent>

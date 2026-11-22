@@ -27,51 +27,143 @@ model Session {
   createdAt DateTime @default(now())
 }
 
-// ===== Services =====
+// ===== Gym Content =====
 
-model Service {
-  id          String   @id @default(cuid())
-  title       String
-  summary     String // سطر تعريفي قصير
-  description String
-  icon        String   @default("truck") // lucide icon name
-  image       String?
-  features    String // مفصولة بأسطر
-  active      Boolean  @default(true)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Trainer {
+  id        String         @id @default(cuid())
+  name      String
+  role      String // التخصص
+  bio       String?
+  image     String?
+  specialty String?
+  instagram String?
+  active    Boolean        @default(true)
+  order     Int            @default(0)
+  classes   GymClass[]
+  slots     ScheduleSlot[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
-// ===== Fleet =====
-
-model FleetVehicle {
-  id          String   @id @default(cuid())
+model GymClass {
+  id          String         @id @default(cuid())
   name        String
-  category    String // تريلة | قلاب | صهريج ...
   description String
+  trainerId   String?
+  trainer     Trainer?       @relation(fields: [trainerId], references: [id])
+  schedule    String
+  duration    Int            @default(60)
+  capacity    Int            @default(20)
+  level       String         @default("all") // beginner | intermediate | advanced | all
   image       String?
-  capacity    String?
-  count       Int      @default(1)
-  specs       String // مفصول بأسطر
-  active      Boolean  @default(true)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  active      Boolean        @default(true)
+  slots       ScheduleSlot[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
-// ===== Verified company figures (animated counters) =====
+// ===== Weekly Schedule =====
 
-model Stat {
-  id     String  @id @default(cuid())
-  value  Int
-  suffix String  @default("")
-  label  String
-  active Boolean @default(true)
-  order  Int     @default(0)
+model ScheduleSlot {
+  id         String    @id @default(cuid())
+  day        Int // 0=السبت .. 6=الجمعة
+  time       String // "HH:MM" 24h format
+  gymClassId String
+  gymClass   GymClass  @relation(fields: [gymClassId], references: [id], onDelete: Cascade)
+  trainerId  String?
+  trainer    Trainer?  @relation(fields: [trainerId], references: [id])
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
 }
 
-// ===== Testimonials =====
+// ===== Nutrition System =====
+
+model NutritionPlan {
+  id          String          @id @default(cuid())
+  name        String
+  goal        String          @default("maintain") // bulk | cut | maintain | healthy
+  calories    Int             @default(2000)
+  protein     Int?
+  carbs       Int?
+  fats        Int?
+  description String?
+  notes       String?
+  active      Boolean         @default(true)
+  meals       NutritionMeal[]
+  members     Member[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model NutritionMeal {
+  id        String        @id @default(cuid())
+  planId    String
+  plan      NutritionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  day       Int // 0=السبت .. 6=الجمعة
+  mealType  String        @default("breakfast") // breakfast | lunch | dinner | snack
+  content   String
+  calories  Int?
+  createdAt DateTime      @default(now())
+}
+
+// ===== Members & Follow-up =====
+
+model Plan {
+  id        String   @id @default(cuid())
+  name      String
+  price     Float
+  duration  Int      @default(1) // بالشهور
+  features  String // مفصولة بأسطر
+  popular   Boolean  @default(false)
+  active    Boolean  @default(true)
+  members   Member[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  id              String          @id @default(cuid())
+  name            String
+  email           String
+  phone           String
+  planId          String?
+  plan            Plan?           @relation(fields: [planId], references: [id])
+  status          String          @default("pending") // pending | active | expired | frozen
+  startDate       DateTime?
+  endDate         DateTime?
+  notes           String?
+  accessCode      String?         @unique // كود دخول بوابة الأعضاء (مثل OC-1234)
+  nutritionPlanId String?
+  nutritionPlan   NutritionPlan?  @relation(fields: [nutritionPlanId], references: [id])
+  progressLogs    ProgressLog[]
+  portalSessions  PortalSession[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model ProgressLog {
+  id         String   @id @default(cuid())
+  memberId   String
+  member     Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  date       DateTime
+  weight     Float
+  fatPercent Float?
+  muscleMass Float?
+  waist      Float?
+  chest      Float?
+  arm        Float?
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model PortalSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
 
 model Testimonial {
   id        String   @id @default(cuid())
@@ -79,67 +171,25 @@ model Testimonial {
   role      String
   content   String
   rating    Int      @default(5)
+  image     String?
   approved  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
 
-// ===== Quote requests (public form) =====
-
-model QuoteRequest {
-  id           String   @id @default(cuid())
-  name         String
-  phone        String
-  email        String?
-  company      String?
-  serviceTitle String
-  origin       String?
-  destination  String?
-  cargo        String?
-  notes        String?
-  status       String   @default("new") // new | reviewing | quoted | won | archived
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+model GalleryItem {
+  id        String   @id @default(cuid())
+  title     String
+  image     String
+  createdAt DateTime @default(now())
 }
 
-// ===== Shipments & client tracking =====
-
-model Shipment {
-  id              String          @id @default(cuid())
-  code            String          @unique // كود التتبع RL-1024
-  clientName      String
-  phone           String?
-  origin          String
-  destination     String
-  serviceType     String          @default("النقل البري الداخلي")
-  weight          String?
-  vehicle         String?
-  status          String          @default("pending") // pending | picked_up | in_transit | out_for_delivery | delivered | cancelled
-  currentLocation String?
-  notes           String?
-  expectedAt      DateTime?
-  deliveredAt     DateTime?
-  events          ShipmentEvent[]
-  portalSessions  PortalSession[]
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-}
-
-model ShipmentEvent {
-  id          String   @id @default(cuid())
-  shipmentId  String
-  shipment    Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  location    String?
-  status      String? // snapshot of shipment status at event time
-  createdAt   DateTime @default(now())
-}
-
-model PortalSession {
-  id         String   @id @default(cuid())
-  token      String   @unique
-  shipmentId String
-  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

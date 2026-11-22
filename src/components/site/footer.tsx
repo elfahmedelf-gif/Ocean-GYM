@@ -1,7 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { KeyRound, Mail, MapPin, Phone } from "lucide-react";
+import { Facebook, Instagram, KeyRound, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
 import { NAV_LINKS } from "./nav-links";
+
+const SOCIALS = [
+  { icon: Facebook, label: "فيسبوك", href: "https://facebook.com" },
+  { icon: Instagram, label: "إنستجرام", href: "https://instagram.com" },
+  { icon: Youtube, label: "يوتيوب", href: "https://youtube.com" },
+  { icon: Twitter, label: "تويتر", href: "https://x.com" },
+] as const;
 
 export function SiteFooter() {
   return (
@@ -26,6 +33,20 @@ export function SiteFooter() {
               أقوى جيم في القاهرة الجديدة — أحدث الأجهزة الأمريكية، مدربون معتمدون دوليًا، وأجواء
               تدفعك كل يوم لتكون نسخة أقوى من نفسك.
             </p>
+            <div className="flex items-center gap-2">
+              {SOCIALS.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={social.label}
+                  className="flex size-10 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary"
+                >
+                  <social.icon className="size-4" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Quick links */}
