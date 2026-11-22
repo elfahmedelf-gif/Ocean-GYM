@@ -55,7 +55,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
       <div className="glass card-sheen mb-1 flex flex-1 items-center gap-3 rounded-2xl border border-primary/15 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg hover:shadow-primary/10 md:gap-4 md:p-4">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-extrabold md:text-lg">{slot.gymClass.name}</h3>
+            <h3 className="text-sm font-black md:text-lg">{slot.gymClass.name}</h3>
             <span
               className={cn(
                 "rounded-full border px-2.5 py-0.5 text-[11px] font-bold md:text-xs",
@@ -150,20 +150,30 @@ export function ScheduleSection({
                   aria-controls="schedule-day-panel"
                   onClick={() => setSelectedDay(day.index)}
                   className={cn(
-                    "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
+                    "relative flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                     selectedDay === day.index
-                      ? "glow-cyan border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                      ? "border-transparent text-primary-foreground"
                       : "border-primary/20 bg-card text-muted-foreground hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary"
                   )}
                 >
-                  {day.name}
-                  {isToday ? (
-                    <span
-                      className="size-1.5 rounded-full bg-current opacity-80"
-                      title="اليوم"
-                      aria-label="اليوم"
+                  {selectedDay === day.index ? (
+                    <motion.span
+                      layoutId="schedule-day-pill"
+                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                      className="absolute inset-0 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8] shadow-lg shadow-primary/30"
+                      aria-hidden="true"
                     />
                   ) : null}
+                  <span className="relative z-10 flex items-center gap-2">
+                    {day.name}
+                    {isToday ? (
+                      <span
+                        className="size-1.5 rounded-full bg-current opacity-80"
+                        title="اليوم"
+                        aria-label="اليوم"
+                      />
+                    ) : null}
+                  </span>
                 </button>
               );
             })}
@@ -196,7 +206,10 @@ export function ScheduleSection({
           <p className="text-sm text-muted-foreground md:text-base">
             بتحتاج مساعدة في اختيار الحصة المناسبة؟
           </p>
-          <Button asChild className="glow-cyan-strong font-bold">
+          <Button
+            asChild
+            className="btn-gradient glow-cyan-strong shimmer font-bold"
+          >
             <a href="#join">انضم الآن</a>
           </Button>
         </FadeUp>

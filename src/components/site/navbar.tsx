@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Menu } from "lucide-react";
+import Link from "next/link";
+import { KeyRound, Menu } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,7 +61,7 @@ export function Navbar() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
         scrolled
-          ? "border-b border-primary/15 bg-background/70 shadow-lg shadow-black/30 backdrop-blur-xl"
+          ? "border-b border-primary/15 bg-background/75 shadow-xl shadow-black/40 backdrop-blur-xl"
           : "bg-transparent"
       )}
     >
@@ -126,7 +127,20 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button asChild className="hidden h-11 px-6 font-bold sm:inline-flex">
+          {/* Member portal — quiet ghost link, revealed from md up */}
+          <Link
+            href="/portal/login"
+            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary md:inline-flex xl:text-sm"
+            aria-label="بوابة الأعضاء — تسجيل الدخول"
+          >
+            <KeyRound className="size-3.5 text-primary/80" aria-hidden="true" />
+            بوابة الأعضاء
+          </Link>
+
+          <Button
+            asChild
+            className="btn-gradient shimmer hidden h-11 px-6 font-bold shadow-lg shadow-primary/25 sm:inline-flex"
+          >
             <a href="#join">انضم الآن</a>
           </Button>
 
@@ -182,11 +196,21 @@ export function Navbar() {
                   );
                 })}
               </nav>
-              <div className="border-t border-primary/10 p-4">
-                <Button asChild className="h-11 w-full font-bold">
+              <div className="grid grid-cols-2 gap-2 border-t border-primary/10 p-4">
+                <Button asChild className="btn-gradient shimmer h-11 font-bold">
                   <a href="#join" onClick={() => setOpen(false)}>
                     انضم الآن
                   </a>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="h-11 border-primary/40 bg-primary/5 font-bold text-primary hover:bg-primary/15 hover:text-primary"
+                >
+                  <Link href="/portal/login" onClick={() => setOpen(false)}>
+                    <KeyRound className="size-4" aria-hidden="true" />
+                    بوابة الأعضاء
+                  </Link>
                 </Button>
               </div>
             </SheetContent>

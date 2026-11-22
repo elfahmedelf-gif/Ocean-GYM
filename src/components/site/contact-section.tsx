@@ -36,8 +36,8 @@ export function ContactSection() {
 
         <FadeUp className="flex flex-col gap-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
+            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="icon-tile size-11">
                 <Phone className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -52,8 +52,8 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
+            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="icon-tile size-11">
                 <MapPin className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -62,8 +62,8 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
+            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="icon-tile size-11">
                 <Clock className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -76,8 +76,8 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-3 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
+            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+              <span className="icon-tile size-11">
                 <Mail className="size-5" aria-hidden="true" />
               </span>
               <div>
@@ -94,7 +94,11 @@ export function ContactSection() {
           </div>
 
           {/* Location map — full-width below the cards */}
-          <div className="overflow-hidden rounded-2xl border border-primary/25 bg-card shadow-lg shadow-black/25">
+          <div className="overflow-hidden rounded-3xl border border-primary/25 bg-card shadow-xl shadow-black/30 ring-1 ring-inset ring-primary/10">
+            <span
+              aria-hidden="true"
+              className="block h-[3px] w-full bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0]"
+            />
             <div className="relative h-72 w-full md:h-96">
               <iframe
                 src={MAP_EMBED_SRC}

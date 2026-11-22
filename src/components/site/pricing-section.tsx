@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatPriceDigits, durationLabel } from "@/lib/gym";
@@ -23,7 +23,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
       className={cn(
         "relative flex h-full flex-col rounded-2xl p-6 transition-all duration-300 md:p-8",
         plan.popular
-          ? "gradient-border glow-cyan-strong z-10 shadow-2xl md:scale-105"
+          ? "gradient-border gradient-border-animated glow-cyan-strong z-10 shadow-2xl md:scale-105"
           : "group border bg-card hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
       )}
     >
@@ -35,15 +35,19 @@ function PricingCard({ plan }: { plan: PlanView }) {
         />
       ) : null}
       {plan.popular ? (
-        <span className="glow-cyan absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1.5 text-sm font-extrabold text-primary-foreground shadow-lg">
+        <span className="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8] px-4 py-1.5 text-sm font-black text-primary-foreground shadow-lg shadow-primary/40">
+          <Flame className="size-3.5" aria-hidden="true" />
           الأكثر طلبًا
         </span>
       ) : null}
 
-      <h3 className="text-xl font-extrabold">{plan.name}</h3>
+      <h3 className="text-xl font-black">{plan.name}</h3>
 
       <div className="mt-4 flex items-baseline gap-2">
-        <span dir="ltr" className="text-4xl font-black text-gradient-ocean md:text-5xl">
+        <span
+          dir="ltr"
+          className="text-gradient-ocean text-glow text-4xl font-black tabular-nums md:text-5xl"
+        >
           {formatPriceDigits(plan.price)}
         </span>
         <span className="font-bold text-muted-foreground">ج.م</span>
@@ -67,7 +71,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
                 className={cn(
                   "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset",
                   plan.popular
-                    ? "bg-primary text-primary-foreground ring-primary/60"
+                    ? "bg-gradient-to-br from-primary to-[#1e6fe8] text-primary-foreground ring-primary/60"
                     : "bg-primary/15 text-primary ring-primary/25"
                 )}
               >
@@ -83,7 +87,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
         variant={plan.popular ? "default" : "outline"}
         className={cn(
           "mt-8 h-12 w-full text-base font-bold",
-          plan.popular && "shimmer",
+          plan.popular && "btn-gradient shimmer",
           !plan.popular && "border-primary/40 bg-primary/5 text-primary hover:bg-primary/15 hover:text-primary"
         )}
       >

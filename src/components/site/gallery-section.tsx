@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -57,7 +57,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                 type="button"
                 onClick={() => setOpenIndex(i)}
                 aria-label={`عرض صورة: ${item.title}`}
-                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-xl border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/15 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
+                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/15 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
               >
                 <Image
                   src={item.image}
@@ -70,6 +70,15 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   aria-hidden="true"
                   className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 />
+                {/* Glass zoom cue at the center */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100"
+                >
+                  <span className="glass flex size-11 scale-75 items-center justify-center rounded-full text-primary transition-transform duration-300 group-hover:scale-100">
+                    <Maximize2 className="size-5" />
+                  </span>
+                </span>
                 <span className="absolute inset-x-0 bottom-0 translate-y-2 p-3 text-start text-sm font-bold opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                   <span className="glass rounded-lg px-2.5 py-1">{item.title}</span>
                 </span>

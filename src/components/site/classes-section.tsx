@@ -13,20 +13,20 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
   const levelStyle = levelBadgeClass(gymClass.level);
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
       {/* Gradient edge that sweeps in across the top on hover */}
       <span
         aria-hidden="true"
         className="absolute inset-x-0 top-0 z-10 h-[3px] origin-right scale-x-0 bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
       />
-      <div className="relative h-52 w-full overflow-hidden">
+      <div className="relative h-56 w-full overflow-hidden">
         {gymClass.image ? (
           <Image
             src={gymClass.image}
             alt={`كلاس ${gymClass.name}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-secondary">
@@ -35,7 +35,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
         )}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent"
         />
         <span
           className={`absolute end-3 top-3 rounded-full border px-3 py-1 text-xs font-bold backdrop-blur-md ${levelStyle}`}
@@ -47,34 +47,34 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
         <a
           href="#join"
           aria-label={`احجز مكانك في كلاس ${gymClass.name}`}
-          className="absolute inset-x-3 bottom-3 flex min-h-11 items-center justify-center gap-2 rounded-xl border border-primary/40 bg-background/80 py-2.5 text-sm font-bold text-primary opacity-80 backdrop-blur-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none group-focus-within:opacity-100 group-hover:opacity-100"
+          className="absolute inset-x-3 bottom-3 flex min-h-11 translate-y-2 items-center justify-center gap-2 rounded-xl border border-primary/40 bg-background/80 py-2.5 text-sm font-bold text-primary opacity-80 backdrop-blur-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100"
         >
           احجز مكانك
-          <ArrowLeft className="size-4" aria-hidden="true" />
+          <ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" />
         </a>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-xl font-extrabold">{gymClass.name}</h3>
+        <h3 className="text-xl font-black">{gymClass.name}</h3>
         <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
           {gymClass.description}
         </p>
 
-        <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
+        <div className="mt-auto grid grid-cols-2 gap-x-2 gap-y-2.5 border-t border-border/60 pt-4 text-xs text-muted-foreground">
           <span className="col-span-2 flex items-center gap-1.5">
             <Calendar className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
             {gymClass.schedule}
           </span>
-          <span className="flex items-center gap-1.5">
-            <Timer className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+          <span className="chip max-w-fit">
+            <Timer className="size-3.5 shrink-0" aria-hidden="true" />
             <span>
               <span dir="ltr">{gymClass.duration}</span> دقائق
             </span>
           </span>
-          <span className="flex items-center gap-1.5">
-            <Users className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+          <span className="chip max-w-fit">
+            <Users className="size-3.5 shrink-0" aria-hidden="true" />
             <span>
-              حتى <span dir="ltr">{gymClass.capacity}</span> متدرب
+              حتى <span dir="ltr">{gymClass.capacity}</span>
             </span>
           </span>
           {gymClass.trainerName ? (

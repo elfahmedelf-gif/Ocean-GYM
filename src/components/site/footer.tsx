@@ -36,7 +36,7 @@ export function SiteFooter() {
                 height={48}
                 className="ocean-ring h-12 w-12 rounded-xl"
               />
-              <span className="text-lg font-extrabold tracking-wide" dir="ltr">
+              <span className="text-lg font-black tracking-wide" dir="ltr">
                 OCEAN <span className="text-gradient-ocean">GYM</span>
               </span>
             </div>
@@ -66,14 +66,25 @@ export function SiteFooter() {
 
           {/* Quick links */}
           <nav aria-label="روابط سريعة">
-            <h3 className="mb-4 font-extrabold">روابط سريعة</h3>
-            <ul className="grid grid-cols-2 gap-2 text-sm">
+            <h3 className="font-black">روابط سريعة</h3>
+            <span
+              aria-hidden="true"
+              className="mb-5 mt-2 block h-0.5 w-10 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8]/40"
+            />
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className={cn(LINK_FOCUS, "text-muted-foreground transition-colors hover:text-primary")}
+                    className={cn(
+                      LINK_FOCUS,
+                      "group inline-flex items-center gap-1.5 text-muted-foreground transition-all duration-200 hover:text-primary"
+                    )}
                   >
+                    <span
+                      aria-hidden="true"
+                      className="h-px w-0 rounded-full bg-primary transition-all duration-300 group-hover:w-2.5"
+                    />
                     {link.label}
                   </a>
                 </li>
@@ -81,7 +92,10 @@ export function SiteFooter() {
               <li>
                 <Link
                   href="/portal/login"
-                  className={cn(LINK_FOCUS, "flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary")}
+                  className={cn(
+                    LINK_FOCUS,
+                    "flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
+                  )}
                 >
                   <KeyRound className="size-3.5 text-primary" aria-hidden="true" />
                   بوابة الأعضاء
@@ -92,7 +106,11 @@ export function SiteFooter() {
 
           {/* Contact */}
           <div>
-            <h3 className="mb-4 font-extrabold">تواصل معنا</h3>
+            <h3 className="font-black">تواصل معنا</h3>
+            <span
+              aria-hidden="true"
+              className="mb-5 mt-2 block h-0.5 w-10 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8]/40"
+            />
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-primary" aria-hidden="true" />
@@ -123,8 +141,15 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t border-primary/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row md:px-6">
+      {/* Giant fading brand watermark that sinks behind the bottom bar */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 overflow-hidden">
+        <p className="watermark -mb-[0.32em] text-center" dir="ltr">
+          OCEAN GYM
+        </p>
+      </div>
+
+      <div className="relative z-10 border-t border-primary/10 bg-[#081228]/70">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground backdrop-blur-sm sm:flex-row md:px-6">
           <p>© {year} Ocean GYM — جميع الحقوق محفوظة</p>
           <Link href="/admin" className={cn(LINK_FOCUS, "transition-colors hover:text-primary")}>
             لوحة التحكم

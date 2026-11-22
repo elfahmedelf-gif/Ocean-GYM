@@ -69,13 +69,23 @@ function NavLinks({
             href={item.href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+            className={`relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
               active
                 ? "bg-accent text-primary"
                 : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
             }`}
           >
-            <Icon className="h-4.5 w-4.5 shrink-0" aria-hidden="true" />
+            {/* Gradient start-edge indicator for the active page */}
+            {active ? (
+              <span
+                aria-hidden="true"
+                className="absolute inset-y-1.5 start-0 w-1 rounded-full bg-gradient-to-b from-primary to-[#1e6fe8]"
+              />
+            ) : null}
+            <Icon
+              className={`h-4.5 w-4.5 shrink-0 ${active ? "text-primary" : "opacity-80"}`}
+              aria-hidden="true"
+            />
             <span className="flex-1">{item.label}</span>
             {item.badgeKey === "unread" && unreadCount > 0 && (
               <Badge className="bg-destructive/90 text-destructive-foreground border-0 px-2 min-w-6 h-5 rounded-full text-xs">
@@ -101,7 +111,7 @@ function Brand() {
         priority
       />
       <div className="leading-tight">
-        <p className="text-base font-bold text-gradient-ocean">Ocean GYM</p>
+        <p className="text-base font-black text-gradient-ocean">Ocean GYM</p>
         <p className="text-xs text-muted-foreground">لوحة التحكم</p>
       </div>
     </div>

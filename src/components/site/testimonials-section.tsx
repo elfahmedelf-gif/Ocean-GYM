@@ -13,7 +13,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
   const rating = Math.min(5, Math.max(1, testimonial.rating));
 
   return (
-    <figure className="card-sheen group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+    <figure className="card-sheen group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
       {/* Gradient edge sweeps across the top on hover */}
       <span
         aria-hidden="true"
@@ -36,7 +36,9 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
             />
           ))}
         </div>
-        <Quote className="size-6 text-primary/30" aria-hidden="true" />
+        <span className="icon-tile size-9">
+          <Quote className="size-4" aria-hidden="true" />
+        </span>
       </div>
 
       <blockquote className="flex-1 text-sm leading-relaxed text-muted-foreground">
@@ -44,21 +46,27 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
       </blockquote>
 
       <figcaption className="flex items-center gap-3 border-t border-border/60 pt-4">
-        {testimonial.image ? (
-          <Image
-            src={testimonial.image}
-            alt={`صورة ${testimonial.name}`}
-            width={40}
-            height={40}
-            className="size-10 shrink-0 rounded-full border border-primary/30 object-cover"
-          />
-        ) : (
-          <Avatar className="size-10 border border-primary/30">
-            <AvatarFallback className="bg-primary/15 font-extrabold text-primary">
-              {testimonial.name.trim().charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-        )}
+        {/* Gradient ring around the avatar */}
+        <span
+          aria-hidden="true"
+          className="rounded-full bg-gradient-to-br from-primary to-[#1e6fe8] p-[2px]"
+        >
+          {testimonial.image ? (
+            <Image
+              src={testimonial.image}
+              alt={`صورة ${testimonial.name}`}
+              width={40}
+              height={40}
+              className="size-10 shrink-0 rounded-full border border-background object-cover"
+            />
+          ) : (
+            <Avatar className="size-10 border border-background">
+              <AvatarFallback className="bg-primary/15 font-extrabold text-primary">
+                {testimonial.name.trim().charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+          )}
+        </span>
         <div>
           <div className="text-sm font-extrabold">{testimonial.name}</div>
           <div className="text-xs text-muted-foreground">{testimonial.role}</div>
@@ -115,7 +123,11 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
                     />
                   ))}
                 </div>
-                <span className="text-sm font-extrabold">
+                <span
+                  aria-hidden="true"
+                  className="h-4 w-px bg-primary/25"
+                />
+                <span className="text-sm font-black tabular-nums">
                   <span dir="ltr">{avgRating.toFixed(1)}</span> / 5
                 </span>
                 <span className="text-xs text-muted-foreground">

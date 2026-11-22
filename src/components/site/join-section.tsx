@@ -128,8 +128,8 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 انضم إلينا
                 <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-primary/60 to-transparent" />
               </span>
-              <h2 id="join-title" className="text-3xl font-extrabold leading-tight md:text-5xl md:leading-tight">
-                ابدأ <span className="text-gradient-ocean">رحلتك</span> الآن
+              <h2 id="join-title" className="text-balance text-3xl font-black leading-[1.25] md:text-5xl md:leading-[1.25]">
+                ابدأ <span className="text-gradient-ocean text-glow">رحلتك</span> الآن
               </h2>
               <p className="max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
                 املأ النموذج وسيتواصل معك فريق الاستقبال خلال 24 ساعة لحجز حصة التقييم المجانية
@@ -138,10 +138,10 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               <ul className="mt-2 space-y-3">
                 {BENEFITS.map((benefit) => (
                   <li key={benefit} className="flex items-center gap-2.5 text-sm md:text-base">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary ring-1 ring-inset ring-primary/25">
-                      <CircleCheckBig className="size-3.5" aria-hidden="true" />
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/25 to-primary/5 text-primary ring-1 ring-inset ring-primary/30 transition-all duration-300">
+                      <CircleCheckBig className="size-4" aria-hidden="true" />
                     </span>
-                    {benefit}
+                    <span className="leading-relaxed">{benefit}</span>
                   </li>
                 ))}
               </ul>
@@ -168,10 +168,10 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 className="glass ocean-ring flex flex-col items-center gap-4 rounded-2xl p-10 text-center focus-visible:outline-none"
                 aria-live="polite"
               >
-                <span className="glow-cyan flex size-16 items-center justify-center rounded-full bg-primary/15 text-primary">
+                <span className="glow-cyan flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-primary/10 text-primary ring-1 ring-inset ring-primary/40">
                   <CircleCheckBig className="size-9" aria-hidden="true" />
                 </span>
-                <h3 className="text-2xl font-extrabold">تم استلام طلبك!</h3>
+                <h3 className="text-2xl font-black">تم استلام طلبك!</h3>
                 <p className="max-w-sm text-muted-foreground">
                   سنتواصل معك خلال 24 ساعة لتأكيد اشتراكك وحجز حصة التقييم المجانية.
                 </p>
@@ -276,7 +276,11 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                   />
                 </div>
 
-                <Button type="submit" disabled={loading} className="glow-cyan shimmer h-12 w-full text-base font-bold">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-gradient glow-cyan-strong shimmer h-12 w-full text-base font-bold"
+                >
                   {loading ? (
                     <>
                       <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />

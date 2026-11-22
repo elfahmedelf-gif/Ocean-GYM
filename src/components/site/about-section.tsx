@@ -51,7 +51,7 @@ export function AboutSection() {
             />
             <div className="relative">
               <div
-                className="relative overflow-hidden rounded-2xl shadow-2xl shadow-black/40"
+                className="relative overflow-hidden rounded-3xl shadow-2xl shadow-black/40 ring-1 ring-primary/15"
               >
                 <Image
                   src="/images/about-gym.jpg"
@@ -64,7 +64,7 @@ export function AboutSection() {
                 {/* Inner ocean tint that lifts on hover */}
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 bg-gradient-to-t from-primary/15 via-transparent to-transparent opacity-60 transition-opacity duration-700 group-hover:opacity-100"
+                  className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-60 transition-opacity duration-700 group-hover:opacity-100"
                 />
               </div>
               {/* Cyan corner frames — thin gradient segments fading away from each corner */}
@@ -82,10 +82,10 @@ export function AboutSection() {
                 <span className="absolute bottom-0 end-0 h-24 w-0.5 rounded-full bg-gradient-to-b from-primary/0 to-primary/80" />
                 <span className="absolute bottom-0 end-0 h-0.5 w-24 rounded-full bg-gradient-to-l from-primary/0 to-primary/80" />
               </div>
-              {/* Since-2017 badge */}
-              <div className="glass ocean-ring absolute bottom-6 start-6 flex items-center gap-2 rounded-2xl px-5 py-3">
+              {/* Since-2017 badge — live pulse adds a premium feel */}
+              <div className="glass ocean-ring absolute bottom-6 start-6 flex items-center gap-2.5 rounded-2xl px-5 py-3">
                 <Waves className="size-5 text-primary" aria-hidden="true" />
-                <span className="text-lg font-extrabold text-gradient-ocean">منذ 2017</span>
+                <span className="text-lg font-black text-gradient-ocean">منذ 2017</span>
               </div>
             </div>
           </FadeUp>
@@ -109,13 +109,13 @@ export function AboutSection() {
                 {FEATURES.map((feature) => (
                   <div
                     key={feature.title}
-                    className="card-sheen group flex items-start gap-3 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
+                    className="card-sheen group flex items-start gap-3.5 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 md:p-5"
                   >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary ring-1 ring-inset ring-primary/25 transition-all duration-300 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30">
+                    <span className="icon-tile size-11">
                       <feature.icon className="size-5" aria-hidden="true" />
                     </span>
                     <div>
-                      <h3 className="font-bold">{feature.title}</h3>
+                      <h3 className="font-extrabold">{feature.title}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         {feature.desc}
                       </p>

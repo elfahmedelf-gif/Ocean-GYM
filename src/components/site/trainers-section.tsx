@@ -19,6 +19,8 @@ function instagramHandle(raw: string | null | undefined): string | null {
 }
 
 function TrainerCard({ trainer }: { trainer: TrainerView }) {
+  const handle = instagramHandle(trainer.instagram);
+
   return (
     <article className="card-sheen group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
       {/* Gradient edge sweeps across the top on hover */}
@@ -33,7 +35,7 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
             alt={`المدرب ${trainer.name}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-secondary">
@@ -42,24 +44,24 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
         )}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100"
+          className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-100"
         />
 
         <div className="absolute inset-x-0 bottom-0 p-5">
-          <h3 className="text-xl font-extrabold">{trainer.name}</h3>
-          <p className="mt-0.5 text-sm font-bold text-primary">{trainer.role}</p>
+          <h3 className="text-xl font-black">{trainer.name}</h3>
+          <p className="mt-1 text-sm font-bold text-primary">{trainer.role}</p>
           {trainer.specialty ? (
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
           ) : null}
-          {instagramHandle(trainer.instagram) ? (
+          {handle ? (
             <a
-              href={`https://instagram.com/${instagramHandle(trainer.instagram)}`}
+              href={`https://instagram.com/${handle}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-1.5 rounded-full text-xs text-muted-foreground transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold text-primary backdrop-blur-sm transition-all duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
             >
-              <Instagram className="size-3.5 text-primary" aria-hidden="true" />
-              <span dir="ltr">@{instagramHandle(trainer.instagram)}</span>
+              <Instagram className="size-3.5" aria-hidden="true" />
+              <span dir="ltr">@{handle}</span>
             </a>
           ) : null}
         </div>

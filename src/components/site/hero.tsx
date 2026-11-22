@@ -166,22 +166,26 @@ export function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="flex flex-col items-center gap-6"
         >
-          <span className="glass ocean-ring inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold text-primary">
+          <span className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-sm font-bold text-primary">
+            <span aria-hidden="true" className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 [animation-duration:2.4s]" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
             <Waves className="size-4" aria-hidden="true" />
             أقوى جيم في القاهرة
           </span>
 
           <h1
             id="hero-title"
-            className="text-4xl font-black leading-[1.25] sm:text-5xl md:text-7xl md:leading-[1.2]"
+            className="text-balance text-4xl font-black leading-[1.2] sm:text-5xl md:text-6xl md:leading-[1.2] lg:text-7xl lg:leading-[1.18]"
           >
-            <span className="text-gradient-ocean-animated drop-shadow-[0_0_30px_rgba(56,199,232,0.25)]">
+            <span className="text-gradient-ocean-animated text-glow">
               بحر من القوة
             </span>{" "}
             يبدأ من هنا
           </h1>
 
-          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          <p className="max-w-2xl text-balance text-base leading-relaxed text-muted-foreground md:text-lg">
             تدرب على أحدث الأجهزة الأمريكية بإشراف مدربين معتمدين دوليًا، واستمتع بأكثر من 30 حصة
             أسبوعية لكل المستويات — رحلتك نحو نسخة أقوى منك تبدأ اليوم.
           </p>
@@ -190,7 +194,7 @@ export function Hero() {
             <Button
               asChild
               size="lg"
-              className="glow-cyan-strong shimmer group h-12 px-8 text-base font-bold"
+              className="btn-gradient glow-cyan-strong shimmer group h-12 px-8 text-base font-bold"
             >
               <a href="#join">
                 <Sparkles
@@ -208,7 +212,7 @@ export function Hero() {
               asChild
               variant="outline"
               size="lg"
-              className="h-12 border-primary/40 bg-primary/5 px-8 text-base font-bold text-primary hover:bg-primary/15 hover:text-primary"
+              className="h-12 border-primary/40 bg-primary/5 px-8 text-base font-bold text-primary backdrop-blur-sm hover:bg-primary/15 hover:text-primary"
             >
               <a href="#classes">
                 <Waves className="size-5" aria-hidden="true" />
@@ -224,7 +228,7 @@ export function Hero() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-          className="mt-16 grid grid-cols-2 gap-3 md:mt-20 md:gap-5 lg:grid-cols-4"
+          className="mt-16 grid grid-cols-2 gap-3 md:mt-20 md:gap-4 lg:grid-cols-4"
         >
           {STATS.map((stat) => (
             <motion.div
@@ -233,15 +237,17 @@ export function Hero() {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
               }}
-              className="glass card-sheen rounded-2xl px-4 py-5"
+              className="glass card-sheen group rounded-2xl px-4 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/15"
             >
-              <span className="mx-auto mb-3 flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-inset ring-primary/30">
-                <stat.icon className="size-5 text-primary" aria-hidden="true" />
+              <span className="icon-tile mx-auto mb-3 size-11">
+                <stat.icon className="size-5" aria-hidden="true" />
               </span>
-              <div className="text-3xl font-extrabold text-gradient-ocean md:text-4xl">
+              <div className="text-3xl font-black text-gradient-ocean tabular-nums md:text-4xl">
                 <Counter to={stat.to} prefix="+" />
               </div>
-              <div className="mt-1 text-sm text-muted-foreground">{stat.label}</div>
+              <div className="mt-1 text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/90">
+                {stat.label}
+              </div>
             </motion.div>
           ))}
         </motion.div>
