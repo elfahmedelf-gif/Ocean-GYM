@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   BadgeCheck,
   Calendar,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Pause,
@@ -32,10 +31,6 @@ const SLIDES = [
   {
     src: "/images/hero-boxing.jpg",
     alt: "كلاس البوكسينج بإشراف مدربين محترفين",
-  },
-  {
-    src: "/images/hero-pool.jpg",
-    alt: "حمام السباحة الأولمبي داخل Ocean GYM",
   },
   {
     src: "/images/hero-weights.jpg",
@@ -199,7 +194,7 @@ export function Hero() {
 
           <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             تدرب على أحدث الأجهزة الأمريكية بإشراف مدربين معتمدين دوليًا، واستمتع بأكثر من 30 حصة
-            أسبوعية وحمام سباحة أولمبي — رحلتك نحو نسخة أقوى منك تبدأ اليوم.
+            أسبوعية لكل المستويات — رحلتك نحو نسخة أقوى منك تبدأ اليوم.
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -261,11 +256,11 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Slider chrome — fixed to the viewport while the hero is in view */}
+      {/* Slider controls — centered at the bottom, minimal premium style */}
       <div
         aria-hidden={!heroVisible}
         className={cn(
-          "fixed bottom-5 left-[4.75rem] z-40 flex items-center gap-1 rounded-full border border-primary/25 bg-background/70 p-1.5 shadow-lg shadow-black/40 backdrop-blur-md transition-all duration-300 md:bottom-6",
+          "fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center transition-all duration-300",
           heroVisible ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
         )}
       >
@@ -273,57 +268,54 @@ export function Hero() {
           type="button"
           onClick={goPrev}
           aria-label="الصورة السابقة"
-          className="flex size-10 items-center justify-center rounded-full text-foreground/90 transition-colors hover:bg-primary/15 hover:text-primary"
+          className="flex size-12 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"
         >
-          <ChevronRight className="size-5" aria-hidden="true" />
+          <ChevronRight
+            className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+            aria-hidden="true"
+          />
         </button>
+
+        <span aria-hidden="true" className="h-7 w-px bg-white/25" />
+
         <button
           type="button"
           onClick={playing ? pause : resume}
           aria-label={playing ? "إيقاف تقليب الصور" : "تشغيل تقليب الصور"}
           aria-pressed={playing}
-          className="flex size-10 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15"
+          className="flex size-12 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
         >
           {playing ? (
-            <Pause className="size-5" aria-hidden="true" />
+            <Pause
+              className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+              aria-hidden="true"
+            />
           ) : (
-            <Play className="size-5 -translate-x-px" aria-hidden="true" />
+            <Play
+              className="size-6 -translate-x-px drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+              aria-hidden="true"
+            />
           )}
         </button>
+
+        <span aria-hidden="true" className="h-7 w-px bg-white/25" />
+
         <button
           type="button"
           onClick={goNext}
           aria-label="الصورة التالية"
-          className="flex size-10 items-center justify-center rounded-full text-foreground/90 transition-colors hover:bg-primary/15 hover:text-primary"
+          className="flex size-12 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"
         >
-          <ChevronLeft className="size-5" aria-hidden="true" />
+          <ChevronLeft
+            className="size-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+            aria-hidden="true"
+          />
         </button>
 
-        <span aria-hidden="true" className="mx-1 h-5 w-px bg-primary/25" />
-
-        <span
-          dir="ltr"
-          className="px-2 text-xs font-extrabold tabular-nums text-muted-foreground"
-        >
-          {index + 1} / {SLIDES.length}
-        </span>
         <span className="sr-only" aria-live="polite">
           الشريحة {index + 1} من {SLIDES.length}: {SLIDES[index].alt}
         </span>
       </div>
-
-      {/* Scroll indicator — fixed while the hero is in view */}
-      <a
-        href="#about"
-        aria-label="انتقل إلى قسم عن الجيم"
-        className={cn(
-          "fixed bottom-6 left-1/2 z-40 hidden -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground transition-all duration-300 hover:text-primary sm:flex",
-          heroVisible ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
-        )}
-      >
-        <span className="text-xs font-semibold">اكتشف المزيد</span>
-        <ChevronDown className="size-6 animate-bounce" aria-hidden="true" />
-      </a>
 
       {/* Slide progress bar — fixed at the viewport edge, fills right-to-left with the timer */}
       <div

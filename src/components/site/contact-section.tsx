@@ -1,4 +1,4 @@
-import { Clock, Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import { Clock, Facebook, Instagram, Mail, MapPin, Navigation, Phone, Twitter, Youtube } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
@@ -9,6 +9,14 @@ const SOCIALS = [
   { icon: Youtube, href: SITE.socials[2].href, label: SITE.socials[2].label },
   { icon: Twitter, href: SITE.socials[3].href, label: SITE.socials[3].label },
 ] as const;
+
+/** Google Maps embed (no API key needed) centered on the club location. */
+const MAP_EMBED_SRC =
+  "https://maps.google.com/maps?q=" +
+  encodeURIComponent(SITE.address) +
+  "&z=13&hl=ar&output=embed";
+const MAP_DIRECTIONS_HREF =
+  "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(SITE.address);
 
 export function ContactSection() {
   return (
@@ -85,6 +93,38 @@ export function ContactSection() {
                   {SITE.email}
                 </a>
               </div>
+            </div>
+          </div>
+
+          {/* Location map — full-width below the cards */}
+          <div className="overflow-hidden rounded-2xl border border-primary/25 bg-card shadow-lg shadow-black/25">
+            <div className="relative h-72 w-full md:h-96">
+              <iframe
+                src={MAP_EMBED_SRC}
+                title="موقع Ocean GYM على الخريطة — التجمع الخامس، القاهرة الجديدة"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+                className="absolute inset-0 size-full border-0"
+              />
+            </div>
+            <div className="flex flex-col items-start justify-between gap-3 border-t border-border/60 p-4 sm:flex-row sm:items-center">
+              <div className="flex items-center gap-2 text-sm">
+                <MapPin className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                <span className="font-bold">{SITE.address}</span>
+              </div>
+              <a
+                href={MAP_DIRECTIONS_HREF}
+                target="_blank"
+                rel="noreferrer"
+                className="group inline-flex items-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              >
+                احصل على الاتجاهات
+                <Navigation
+                  className="size-4 transition-transform duration-300 group-hover:-translate-x-1"
+                  aria-hidden="true"
+                />
+              </a>
             </div>
           </div>
 

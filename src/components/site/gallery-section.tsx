@@ -27,7 +27,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               جولة داخل <span className="text-gradient-ocean">المكان</span>
             </>
           }
-          subtitle="اطلع على أرضية التمرين، الاستوديوهات، والحمام السباحة — الأجواء التي ستمارس فيها كل يوم."
+          subtitle="اطلع على أرضية التمرين والاستوديوهات ومناطق الكارديو — الأجواء التي ستمارس فيها كل يوم."
         />
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">

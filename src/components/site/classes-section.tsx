@@ -99,7 +99,7 @@ export function ClassesSection({ classes }: { classes: GymClassView[] }) {
               اختر <span className="text-gradient-ocean">تحديك</span> القادم
             </>
           }
-          subtitle="من البوكسينج إلى الكروس فت والسباحة — أكثر من 30 حصة أسبوعية بإشراف مدربين متخصصين لكل المستويات."
+          subtitle="من البوكسينج إلى الكروس فت واليوجا — أكثر من 30 حصة أسبوعية بإشراف مدربين متخصصين لكل المستويات."
         />
 
         {classes.length === 0 ? (

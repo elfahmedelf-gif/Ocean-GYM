@@ -114,7 +114,6 @@ export function durationLabel(duration: number): string {
 export const GYM_IMAGES = [
   "/images/hero-bg.jpg",
   "/images/hero-boxing.jpg",
-  "/images/hero-pool.jpg",
   "/images/hero-weights.jpg",
   "/images/about-gym.jpg",
   "/images/trainer-1.jpg",
@@ -126,7 +125,6 @@ export const GYM_IMAGES = [
   "/images/class-spinning.jpg",
   "/images/class-yoga.jpg",
   "/images/class-functional.jpg",
-  "/images/class-swimming.jpg",
   "/images/logo-wide.png",
   "/images/logo.png",
 ] as const;

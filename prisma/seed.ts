@@ -182,20 +182,6 @@ async function main() {
       active: true,
     },
   });
-  const swimming = await db.gymClass.create({
-    data: {
-      name: "سباحة",
-      description:
-        "حمام سباحة أولمبي مغطى ومدفأ، كلاسات تعليم سباحة وتحسين الأداء لكل الأعمار بإشراف مدربين معتمدين.",
-      trainerId: null,
-      schedule: "يومياً — فتحات من 9:00 صباحاً حتى 11:00 مساً",
-      duration: 45,
-      capacity: 12,
-      level: "all",
-      image: "/images/class-swimming.jpg",
-      active: true,
-    },
-  });
 
   // ===== Weekly Schedule =====
   // day: 0=السبت .. 6=الجمعة
@@ -220,9 +206,7 @@ async function main() {
     { day: 4, time: "19:00", gymClassId: boxing.id, trainerId: ahmed.id },
     // الخميس
     { day: 5, time: "19:00", gymClassId: crossfit.id, trainerId: karim.id },
-    { day: 5, time: "20:00", gymClassId: swimming.id, trainerId: null },
     // الجمعة
-    { day: 6, time: "11:00", gymClassId: swimming.id, trainerId: null },
     { day: 6, time: "17:00", gymClassId: bodybuilding.id, trainerId: karim.id },
   ];
   await db.scheduleSlot.createMany({ data: slots });
@@ -473,7 +457,7 @@ async function main() {
         name: "م. عمرو دياب",
         role: "عضو الباقة الذهبية",
         content:
-          "الحمام الأولمبي والساونا بعد التدريب تجربة تانية خالص. الأسعار ممتازة مقارنة بالمستوى، والقفل الإلكتروني والنظافة بيرفعوا التجربة لأعلى مستوى.",
+          "الساونا والجاكوزي بعد التدريب تجربة تانية خالص. الأسعار ممتازة مقارنة بالمستوى، والقفل الإلكتروني والنظافة بيرفعوا التجربة لأعلى مستوى.",
         rating: 5,
         approved: true,
       },
@@ -488,7 +472,6 @@ async function main() {
       { title: "كلاس البوكسينج", image: "/images/class-boxing.jpg" },
       { title: "منطقة الكروسفت", image: "/images/class-crossfit.jpg" },
       { title: "استوديو السبيننج", image: "/images/class-spinning.jpg" },
-      { title: "الحمام الأولمبي", image: "/images/class-swimming.jpg" },
       { title: "منطقة التمارين الوظيفية", image: "/images/class-functional.jpg" },
       { title: "استوديو اليوجا", image: "/images/class-yoga.jpg" },
       { title: "أجواء النادي العامة", image: "/images/about-gym.jpg" },
@@ -504,7 +487,7 @@ async function main() {
         email: "hoda@example.com",
         phone: "01011223344",
         subject: "استفسار عن كلاسات البنات",
-        content: "السلام عليكم، عايزة أعرف كلاسات البنات متاحة في أي أوقات، وهل فيه مدربات للسباحة؟",
+        content: "السلام عليكم، عايزة أعرف كلاسات البنات متاحة في أي أوقات، وهل فيه مدربات متخصصة للكلاسات؟",
         read: false,
       },
       {

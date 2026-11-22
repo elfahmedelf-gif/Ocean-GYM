@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Apple, BadgeCheck, Building2, Dumbbell, Flame, Waves } from "lucide-react";
+import { Activity, Apple, BadgeCheck, Building2, Dumbbell, Flame, Waves } from "lucide-react";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 
@@ -22,9 +22,9 @@ const FEATURES = [
     desc: "خطط غذائية مخصصة لهدفك من خبراء التغذية الرياضية.",
   },
   {
-    icon: Waves,
-    title: "حمام سباحة أولمبي",
-    desc: "مياه معالجة ومدفأة على مدار العام مع حصص تعليم وتحسين أداء.",
+    icon: Activity,
+    title: "منطقة كارديو متطورة",
+    desc: "أجهزة جري ودراجات وإليبتيكال بأحدث الموديلات وشاشات تفاعلية لمتابعة أدائك.",
   },
   {
     icon: Flame,
