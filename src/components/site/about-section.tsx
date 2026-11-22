@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Activity, Apple, BadgeCheck, Building2, Dumbbell, Flame, Waves } from "lucide-react";
+import { Activity, Apple, BadgeCheck, Building2, Dumbbell, Flame, Users, Waves } from "lucide-react";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { spotlightProps } from "./spotlight";
 
 const FEATURES = [
   {
@@ -50,8 +51,13 @@ export function AboutSection() {
               className="absolute inset-8 -z-10 rounded-full bg-primary/10 blur-3xl"
             />
             <div className="relative">
+              {/* Slow-spinning dashed ring peeking from behind the card (end side) */}
               <div
-                className="relative overflow-hidden rounded-3xl shadow-2xl shadow-black/40 ring-1 ring-primary/15"
+                aria-hidden="true"
+                className="ring-dashed animate-spin-slower pointer-events-none absolute -bottom-14 -end-14 z-0 size-52 opacity-40"
+              />
+              <div
+                className="relative z-10 overflow-hidden rounded-3xl shadow-2xl shadow-black/40 ring-1 ring-primary/15"
               >
                 <Image
                   src="/images/about-gym.jpg"
@@ -82,8 +88,15 @@ export function AboutSection() {
                 <span className="absolute bottom-0 end-0 h-24 w-0.5 rounded-full bg-gradient-to-b from-primary/0 to-primary/80" />
                 <span className="absolute bottom-0 end-0 h-0.5 w-24 rounded-full bg-gradient-to-l from-primary/0 to-primary/80" />
               </div>
+              {/* Members badge — floating at the top-end, mirrors the since-2017 badge */}
+              <div className="glass ocean-ring absolute -top-6 end-6 z-20 flex items-center gap-2.5 rounded-2xl px-4 py-2.5">
+                <Users className="size-4 text-primary" aria-hidden="true" />
+                <span className="text-sm font-black">
+                  <span dir="ltr" className="text-gradient-ocean">+1200</span> عضو نشط
+                </span>
+              </div>
               {/* Since-2017 badge — live pulse adds a premium feel */}
-              <div className="glass ocean-ring absolute bottom-6 start-6 flex items-center gap-2.5 rounded-2xl px-5 py-3">
+              <div className="glass ocean-ring absolute bottom-6 start-6 z-20 flex items-center gap-2.5 rounded-2xl px-5 py-3">
                 <Waves className="size-5 text-primary" aria-hidden="true" />
                 <span className="text-lg font-black text-gradient-ocean">منذ 2017</span>
               </div>
@@ -96,6 +109,7 @@ export function AboutSection() {
               align="start"
               kicker="عن الجيم"
               headingId="about-title"
+              ghostNumber="01"
               title={
                 <>
                   لماذا <span className="text-gradient-ocean">Ocean GYM</span>؟
@@ -109,13 +123,14 @@ export function AboutSection() {
                 {FEATURES.map((feature) => (
                   <div
                     key={feature.title}
-                    className="card-sheen group flex items-start gap-3.5 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 md:p-5"
+                    className="card-sheen card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 md:p-5"
+                    {...spotlightProps}
                   >
                     <span className="icon-tile size-11">
                       <feature.icon className="size-5" aria-hidden="true" />
                     </span>
                     <div>
-                      <h3 className="font-extrabold">{feature.title}</h3>
+                      <h3 className="font-extrabold transition-colors duration-300 group-hover:text-primary">{feature.title}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         {feature.desc}
                       </p>

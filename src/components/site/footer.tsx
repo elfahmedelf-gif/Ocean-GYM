@@ -149,9 +149,27 @@ export function SiteFooter() {
       </div>
 
       <div className="relative z-10 border-t border-primary/10 bg-[#081228]/70">
+        {/* Gradient hairline melting the bottom bar into the footer */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary/40 to-transparent"
+        />
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground backdrop-blur-sm sm:flex-row md:px-6">
-          <p>© {year} Ocean GYM — جميع الحقوق محفوظة</p>
-          <Link href="/admin" className={cn(LINK_FOCUS, "transition-colors hover:text-primary")}>
+          <p className="flex items-center gap-2">
+            <Waves className="size-3.5 text-primary/70" aria-hidden="true" />
+            © {year} Ocean GYM — جميع الحقوق محفوظة
+          </p>
+          <Link
+            href="/admin"
+            className={cn(
+              LINK_FOCUS,
+              "inline-flex items-center gap-1.5 transition-colors hover:text-primary"
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className="size-1.5 rounded-full bg-primary/60"
+            />
             لوحة التحكم
           </Link>
         </div>

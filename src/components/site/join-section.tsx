@@ -117,6 +117,17 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
         className="animate-pulse-glow pointer-events-none absolute -top-24 start-[15%] size-96 rounded-full bg-primary/10 blur-3xl"
       />
 
+      {/* Slow-spinning dashed rings — quiet geometry behind the two columns */}
+      <div
+        aria-hidden="true"
+        className="ring-dashed animate-spin-slower pointer-events-none absolute -top-20 -end-24 size-72 opacity-30"
+      />
+      <div
+        aria-hidden="true"
+        style={{ animationDirection: "reverse" }}
+        className="ring-dashed animate-spin-slower pointer-events-none absolute -bottom-28 -start-24 size-80 opacity-20"
+      />
+
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Pitch */}
@@ -137,11 +148,14 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               </p>
               <ul className="mt-2 space-y-3">
                 {BENEFITS.map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-2.5 text-sm md:text-base">
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/25 to-primary/5 text-primary ring-1 ring-inset ring-primary/30 transition-all duration-300">
+                  <li
+                    key={benefit}
+                    className="group flex items-center gap-2.5 text-sm md:text-base"
+                  >
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/25 to-primary/5 text-primary ring-1 ring-inset ring-primary/30 transition-all duration-300 group-hover:scale-110 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground">
                       <CircleCheckBig className="size-4" aria-hidden="true" />
                     </span>
-                    <span className="leading-relaxed">{benefit}</span>
+                    <span className="leading-relaxed transition-colors duration-300 group-hover:text-foreground">{benefit}</span>
                   </li>
                 ))}
               </ul>
@@ -171,7 +185,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 <span className="glow-cyan flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-primary/10 text-primary ring-1 ring-inset ring-primary/40">
                   <CircleCheckBig className="size-9" aria-hidden="true" />
                 </span>
-                <h3 className="text-2xl font-black">تم استلام طلبك!</h3>
+                <h3 className="text-2xl font-black text-gradient-ocean">تم استلام طلبك!</h3>
                 <p className="max-w-sm text-muted-foreground">
                   سنتواصل معك خلال 24 ساعة لتأكيد اشتراكك وحجز حصة التقييم المجانية.
                 </p>

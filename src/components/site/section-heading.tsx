@@ -10,6 +10,8 @@ interface SectionHeadingProps {
   subtitle?: string;
   headingId?: string;
   align?: "center" | "start";
+  /** Optional editorial ghost number rendered behind the header (e.g. "01"). */
+  ghostNumber?: string;
 }
 
 /**
@@ -30,21 +32,36 @@ function Kicker({ children }: { children: ReactNode }) {
   );
 }
 
-/** Standard section header: kicker pill + big black-weight title + glowing accent bar + subtitle. */
+/** Standard section header: ghost number + kicker pill + big black-weight title + glowing accent bar + subtitle. */
 export function SectionHeading({
   kicker,
   title,
   subtitle,
   headingId,
   align = "center",
+  ghostNumber,
 }: SectionHeadingProps) {
   return (
     <FadeUp
       className={cn(
-        "mb-12 flex flex-col gap-4 md:mb-16",
+        "relative mb-12 flex flex-col gap-4 md:mb-16",
         align === "center" ? "items-center text-center" : "items-start text-start"
       )}
     >
+      {ghostNumber ? (
+        <span
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute -top-8 select-none font-black leading-none text-primary/[0.07] md:-top-10",
+            "text-[clamp(3.5rem,9vw,6rem)]",
+            align === "center"
+              ? "left-1/2 -translate-x-1/2"
+              : "start-0"
+          )}
+        >
+          {ghostNumber}
+        </span>
+      ) : null}
       <Kicker>{kicker}</Kicker>
       <h2
         id={headingId}

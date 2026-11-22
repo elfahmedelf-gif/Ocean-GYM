@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { GYM_DAYS, formatTime12, levelBadgeClass, levelLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import type { ScheduleSlotView } from "./types";
 
@@ -52,7 +53,10 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
       </div>
 
       {/* Slot card */}
-      <div className="glass card-sheen mb-1 flex flex-1 items-center gap-3 rounded-2xl border border-primary/15 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg hover:shadow-primary/10 md:gap-4 md:p-4">
+      <div
+        className="glass card-sheen card-spotlight mb-1 flex flex-1 items-center gap-3 rounded-2xl border border-primary/15 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg hover:shadow-primary/10 md:gap-4 md:p-4"
+        {...spotlightProps}
+      >
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-black md:text-lg">{slot.gymClass.name}</h3>
@@ -103,6 +107,13 @@ export function ScheduleSection({
   // Never call new Date() here — initialDay comes as a prop to stay hydration-safe.
   const [selectedDay, setSelectedDay] = useState(initialDay);
 
+  /** Number of sessions per day — shown as a mini counter inside each day pill. */
+  const countByDay = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const slot of slots) map.set(slot.day, (map.get(slot.day) ?? 0) + 1);
+    return map;
+  }, [slots]);
+
   const daySlots = useMemo(
     () =>
       slots
@@ -123,6 +134,7 @@ export function ScheduleSection({
         <SectionHeading
           kicker="الجدول الأسبوعي"
           headingId="schedule-title"
+          ghostNumber="03"
           title={
             <>
               خطط <span className="text-gradient-ocean">أسبوعك</span> بالساعة
@@ -166,6 +178,16 @@ export function ScheduleSection({
                   ) : null}
                   <span className="relative z-10 flex items-center gap-2">
                     {day.name}
+                    <span
+                      className={cn(
+                        "rounded-full px-1.5 py-0.5 text-[10px] font-black tabular-nums",
+                        selectedDay === day.index
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-primary/15 text-primary"
+                      )}
+                    >
+                      {countByDay.get(day.index) ?? 0}
+                    </span>
                     {isToday ? (
                       <span
                         className="size-1.5 rounded-full bg-current opacity-80"

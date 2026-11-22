@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { formatPriceDigits, durationLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
@@ -21,11 +22,12 @@ function PricingCard({ plan }: { plan: PlanView }) {
   return (
     <article
       className={cn(
-        "relative flex h-full flex-col rounded-2xl p-6 transition-all duration-300 md:p-8",
+        "group relative flex h-full flex-col rounded-2xl p-6 transition-all duration-300 md:p-8",
         plan.popular
           ? "gradient-border gradient-border-animated glow-cyan-strong z-10 shadow-2xl md:scale-105"
-          : "group border bg-card hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+          : "card-spotlight border bg-card hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
       )}
+      {...(plan.popular ? {} : spotlightProps)}
     >
       {/* Gradient edge for non-popular cards too — keeps the hover language consistent */}
       {!plan.popular ? (
@@ -46,7 +48,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
       <div className="mt-4 flex items-baseline gap-2">
         <span
           dir="ltr"
-          className="text-gradient-ocean text-glow text-4xl font-black tabular-nums md:text-5xl"
+          className="text-gradient-ocean text-glow text-4xl font-black tabular-nums transition-transform duration-300 group-hover:scale-105 md:text-5xl"
         >
           {formatPriceDigits(plan.price)}
         </span>
@@ -69,7 +71,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
             <li key={feature} className="flex items-start gap-2.5 text-sm">
               <span
                 className={cn(
-                  "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset",
+                  "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset transition-transform duration-300 group-hover:scale-115",
                   plan.popular
                     ? "bg-gradient-to-br from-primary to-[#1e6fe8] text-primary-foreground ring-primary/60"
                     : "bg-primary/15 text-primary ring-primary/25"
@@ -110,6 +112,7 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
         <SectionHeading
           kicker="الباقات"
           headingId="pricing-title"
+          ghostNumber="05"
           title={
             <>
               باقات <span className="text-gradient-ocean">مرنة</span> تناسب طموحك

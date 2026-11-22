@@ -279,6 +279,7 @@
     box-shadow:
       0 10px 26px rgba(56, 199, 232, 0.35),
       inset 0 0 0 1px rgba(56, 199, 232, 0.4);
+    transform: rotate(-6deg) scale(1.08);
   }
 
   /* Gradient primary surface for the strongest CTAs */
@@ -307,6 +308,39 @@
     line-height: 1.25rem;
     font-weight: 700;
     color: var(--primary);
+  }
+
+  /* ===== Premium design system v4 — full-site refactor ===== */
+
+  /* Mouse-tracking spotlight glow for cards.
+     --spot-x / --spot-y are set by the shared spotlightProps handlers,
+     so the radial highlight follows the cursor with zero re-renders. */
+  .card-spotlight {
+    position: relative;
+  }
+  .card-spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      440px circle at var(--spot-x, 50%) var(--spot-y, 40%),
+      rgba(56, 199, 232, 0.14),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+  }
+  .card-spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* Decorative dashed circle ring (about / join decorations) */
+  .ring-dashed {
+    border: 1.5px dashed rgba(56, 199, 232, 0.3);
+    border-radius: 9999px;
   }
 
   /* Giant fading brand watermark (footer) */
@@ -405,6 +439,34 @@
   animation: pulse-glow 4s ease-in-out infinite;
 }
 
+/* Soft breathing halo for the strongest CTA (hero primary button) */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 24px rgba(56, 199, 232, 0.35),
+      0 0 64px rgba(30, 111, 232, 0.22);
+  }
+  50% {
+    box-shadow:
+      0 0 36px rgba(56, 199, 232, 0.5),
+      0 0 96px rgba(30, 111, 232, 0.3);
+  }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 3.2s ease-in-out infinite;
+}
+
+/* Slow decorative spin (dashed rings) */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slower {
+  animation: spin-slow 26s linear infinite;
+}
+
 /* Respect users who prefer reduced motion — kill decorative animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-ken-burns,
@@ -413,6 +475,8 @@
   .animate-slider-progress,
   .animate-ping,
   .animate-marquee,
+  .animate-glow-pulse,
+  .animate-spin-slower,
   .text-gradient-ocean-animated,
   .gradient-border-animated {
     animation: none !important;
@@ -453,6 +517,6 @@
   animation: ken-burns calc(var(--slide-duration, 6s) * 1.4) ease-out forwards;
 }
 
+/* cache-bust v4-1795387000 */
 
-
-/* cache-bust v3-1795386092 */
+/* cache-bust v4b-1795387200 */

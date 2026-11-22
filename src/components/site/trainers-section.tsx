@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Instagram, UserRound } from "lucide-react";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import type { TrainerView } from "./types";
 
@@ -22,7 +23,10 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
   const handle = instagramHandle(trainer.instagram);
 
   return (
-    <article className="card-sheen group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
+    <article
+      className="card-sheen card-spotlight group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15"
+      {...spotlightProps}
+    >
       {/* Gradient edge sweeps across the top on hover */}
       <span
         aria-hidden="true"
@@ -48,10 +52,15 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
         />
 
         <div className="absolute inset-x-0 bottom-0 p-5">
+          {/* Gradient nameplate hairline above the name — matches the card edge language */}
+          <span
+            aria-hidden="true"
+            className="mb-3 block h-[2px] w-10 origin-right scale-x-100 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8]/40 transition-transform duration-500 group-hover:scale-x-[2.2]"
+          />
           <h3 className="text-xl font-black">{trainer.name}</h3>
           <p className="mt-1 text-sm font-bold text-primary">{trainer.role}</p>
           {trainer.specialty ? (
-            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
+            <p className="mt-1.5 max-w-[85%] text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
           ) : null}
           {handle ? (
             <a
@@ -83,6 +92,7 @@ export function TrainersSection({ trainers }: { trainers: TrainerView[] }) {
         <SectionHeading
           kicker="المدربون"
           headingId="trainers-title"
+          ghostNumber="04"
           title={
             <>
               نخبة من <span className="text-gradient-ocean">الخبراء</span> معك خطوة بخطوة

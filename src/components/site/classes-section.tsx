@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, Timer, User, Users, Waves } from "lucide-react";
 import { levelBadgeClass, levelLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import type { GymClassView } from "./types";
 
@@ -13,7 +14,10 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
   const levelStyle = levelBadgeClass(gymClass.level);
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15">
+    <article
+      className="card-spotlight group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15"
+      {...spotlightProps}
+    >
       {/* Gradient edge that sweeps in across the top on hover */}
       <span
         aria-hidden="true"
@@ -38,9 +42,17 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
           className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent"
         />
         <span
-          className={`absolute end-3 top-3 rounded-full border px-3 py-1 text-xs font-bold backdrop-blur-md ${levelStyle}`}
+          className={`absolute end-3 top-3 z-10 rounded-full border px-3 py-1 text-xs font-bold backdrop-blur-md ${levelStyle}`}
         >
           {levelLabelValue}
+        </span>
+        {/* Duration chip on the opposite corner — instant info at a glance */}
+        <span
+          aria-hidden="true"
+          className="absolute start-3 top-3 z-10 flex items-center gap-1.5 rounded-full border border-primary/30 bg-background/70 px-2.5 py-1 text-[11px] font-bold text-primary backdrop-blur-md"
+        >
+          <Timer className="size-3" />
+          <span dir="ltr">{gymClass.duration}</span> د
         </span>
         {/* Booking CTA — always reachable (visible at reduced opacity), fully revealed
             on hover, and on keyboard focus of anything inside the card. */}
@@ -55,7 +67,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-xl font-black">{gymClass.name}</h3>
+        <h3 className="text-xl font-black transition-colors duration-300 group-hover:text-primary">{gymClass.name}</h3>
         <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
           {gymClass.description}
         </p>
@@ -102,6 +114,7 @@ export function ClassesSection({ classes }: { classes: GymClassView[] }) {
         <SectionHeading
           kicker="الكلاسات"
           headingId="classes-title"
+          ghostNumber="02"
           title={
             <>
               اختر <span className="text-gradient-ocean">تحديك</span> القادم

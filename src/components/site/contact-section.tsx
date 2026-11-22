@@ -1,8 +1,11 @@
+"use client";
+
 import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import { SOCIALS } from "./socials";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 
 /** Google Maps embed (no API key needed) centered on the club location. */
@@ -26,6 +29,7 @@ export function ContactSection() {
         <SectionHeading
           kicker="تواصل معنا"
           headingId="contact-title"
+          ghostNumber="08"
           title={
             <>
               نحن <span className="text-gradient-ocean">هنا</span> من أجلك
@@ -36,7 +40,10 @@ export function ContactSection() {
 
         <FadeUp className="flex flex-col gap-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+            <div
+              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              {...spotlightProps}
+            >
               <span className="icon-tile size-11">
                 <Phone className="size-5" aria-hidden="true" />
               </span>
@@ -52,7 +59,10 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+            <div
+              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              {...spotlightProps}
+            >
               <span className="icon-tile size-11">
                 <MapPin className="size-5" aria-hidden="true" />
               </span>
@@ -62,7 +72,10 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+            <div
+              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              {...spotlightProps}
+            >
               <span className="icon-tile size-11">
                 <Clock className="size-5" aria-hidden="true" />
               </span>
@@ -76,7 +89,10 @@ export function ContactSection() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+            <div
+              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              {...spotlightProps}
+            >
               <span className="icon-tile size-11">
                 <Mail className="size-5" aria-hidden="true" />
               </span>
@@ -137,7 +153,7 @@ export function ContactSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
+                className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:scale-110 hover:border-primary hover:bg-primary/10 hover:text-primary hover:shadow-lg hover:shadow-primary/25 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
               >
                 <social.icon className="size-5" aria-hidden="true" />
               </a>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import {
   ArrowLeft,
   BadgeCheck,
@@ -19,10 +19,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Counter } from "./counter";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 
 /** Slide rotation interval (ms) — drives autoplay, progress bar and Ken Burns zoom. */
 const SLIDE_DURATION = 6000;
+
+/** Staggered cinematic entrance for the hero content stack. */
+const STACK_CONTAINER: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.08 } },
+};
+const STACK_ITEM: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 
 const SLIDES = [
   {
@@ -161,40 +172,47 @@ export function Hero() {
       {/* Extra bottom padding keeps the stats clear of the slider controls (absolute bottom-6) */}
       <div className="relative z-10 mx-auto w-full max-w-5xl px-4 pb-40 pt-32 text-center md:px-6 md:pb-48 md:pt-36">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          initial="hidden"
+          animate="visible"
+          variants={STACK_CONTAINER}
           className="flex flex-col items-center gap-6"
         >
-          <span className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-sm font-bold text-primary">
+          <motion.span
+            variants={STACK_ITEM}
+            className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-sm font-bold text-primary"
+          >
             <span aria-hidden="true" className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 [animation-duration:2.4s]" />
               <span className="relative inline-flex size-2 rounded-full bg-primary" />
             </span>
             <Waves className="size-4" aria-hidden="true" />
             أقوى جيم في القاهرة
-          </span>
+          </motion.span>
 
-          <h1
+          <motion.h1
             id="hero-title"
+            variants={STACK_ITEM}
             className="text-balance text-4xl font-black leading-[1.2] sm:text-5xl md:text-6xl md:leading-[1.2] lg:text-7xl lg:leading-[1.18]"
           >
             <span className="text-gradient-ocean-animated text-glow">
               بحر من القوة
             </span>{" "}
             يبدأ من هنا
-          </h1>
+          </motion.h1>
 
-          <p className="max-w-2xl text-balance text-base leading-relaxed text-muted-foreground md:text-lg">
+          <motion.p
+            variants={STACK_ITEM}
+            className="max-w-2xl text-balance text-base leading-relaxed text-muted-foreground md:text-lg"
+          >
             تدرب على أحدث الأجهزة الأمريكية بإشراف مدربين معتمدين دوليًا، واستمتع بأكثر من 30 حصة
             أسبوعية لكل المستويات — رحلتك نحو نسخة أقوى منك تبدأ اليوم.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+          <motion.div variants={STACK_ITEM} className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <Button
               asChild
               size="lg"
-              className="btn-gradient glow-cyan-strong shimmer group h-12 px-8 text-base font-bold"
+              className="btn-gradient glow-cyan-strong shimmer animate-glow-pulse group h-12 px-8 text-base font-bold"
             >
               <a href="#join">
                 <Sparkles
@@ -219,7 +237,7 @@ export function Hero() {
                 اكتشف الكلاسات
               </a>
             </Button>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Animated stats */}
@@ -237,7 +255,8 @@ export function Hero() {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
               }}
-              className="glass card-sheen group rounded-2xl px-4 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/15"
+              className="glass card-sheen card-spotlight group rounded-2xl px-4 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/15"
+              {...spotlightProps}
             >
               <span className="icon-tile mx-auto mb-3 size-11">
                 <stat.icon className="size-5" aria-hidden="true" />

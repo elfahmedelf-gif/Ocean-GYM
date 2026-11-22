@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import { WaveDivider } from "./wave-divider";
@@ -42,6 +43,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
         <SectionHeading
           kicker="المعرض"
           headingId="gallery-title"
+          ghostNumber="07"
           title={
             <>
               جولة داخل <span className="text-gradient-ocean">المكان</span>
@@ -52,20 +54,37 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {gallery.map((item, i) => (
-            <FadeUp key={item.id} delay={(i % 4) * 0.08}>
+            <FadeUp
+              key={item.id}
+              delay={(i % 4) * 0.08}
+              className={i === 0 ? "sm:col-span-2 lg:col-span-2" : undefined}
+            >
               <button
                 type="button"
                 onClick={() => setOpenIndex(i)}
                 aria-label={`عرض صورة: ${item.title}`}
-                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/15 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
+                className={cn(
+                  "group relative block w-full overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/15 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
+                  // First image becomes a wide featured banner (spans 2 columns from sm up)
+                  i === 0
+                    ? "aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-full"
+                    : "aspect-[4/3]"
+                )}
               >
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
+                  sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
+                {/* Always-visible index chip — subtle editorial numbering */}
+                <span
+                  aria-hidden="true"
+                  className="absolute start-3 top-3 z-10 rounded-full border border-primary/25 bg-background/70 px-2.5 py-0.5 text-[11px] font-black tabular-nums text-primary/90 backdrop-blur-md"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <span
                   aria-hidden="true"
                   className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"

@@ -76,7 +76,7 @@ export function Navbar() {
         <a
           href="#home"
           className={cn(
-            "flex items-center gap-3 rounded-lg",
+            "group flex items-center gap-3 rounded-lg",
             NAV_FOCUS
           )}
           aria-label="Ocean GYM — الرئيسية"
@@ -87,9 +87,9 @@ export function Navbar() {
             width={48}
             height={48}
             priority
-            className="ocean-ring h-12 w-12 rounded-xl"
+            className="ocean-ring h-12 w-12 rounded-xl transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105"
           />
-          <span className="text-lg font-extrabold tracking-wide" dir="ltr">
+          <span className="text-lg font-extrabold tracking-wide transition-colors duration-300 group-hover:text-primary" dir="ltr">
             OCEAN <span className="text-gradient-ocean">GYM</span>
           </span>
         </a>

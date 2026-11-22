@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
+import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import type { TestimonialView } from "./types";
 
@@ -13,7 +14,15 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
   const rating = Math.min(5, Math.max(1, testimonial.rating));
 
   return (
-    <figure className="card-sheen group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+    <figure
+      className="card-sheen card-spotlight group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+      {...spotlightProps}
+    >
+      {/* Giant ghost quote watermark behind the content — editorial depth */}
+      <Quote
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-4 -start-4 size-24 rotate-12 text-primary/[0.05]"
+      />
       {/* Gradient edge sweeps across the top on hover */}
       <span
         aria-hidden="true"
@@ -36,7 +45,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
             />
           ))}
         </div>
-        <span className="icon-tile size-9">
+        <span className="icon-tile size-9 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
           <Quote className="size-4" aria-hidden="true" />
         </span>
       </div>
@@ -99,6 +108,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
         <SectionHeading
           kicker="آراء العملاء"
           headingId="testimonials-title"
+          ghostNumber="06"
           title={
             <>
               قصص <span className="text-gradient-ocean">نجاح</span> أعضائنا
