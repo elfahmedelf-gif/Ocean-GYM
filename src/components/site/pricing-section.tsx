@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatPriceDigits, durationLabel } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
@@ -12,7 +13,20 @@ import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
 
 function PricingCard({ plan }: { plan: PlanView }) {
+  const { t, lang } = useLang();
   const setPlanId = useJoinStore((s) => s.setPlanId);
+
+  // Duration suffix — Arabic uses the localized helper, English composes its own units.
+  const per =
+    lang === "ar"
+      ? durationLabel(plan.duration)
+      : plan.duration === 1
+        ? "month"
+        : plan.duration === 3
+          ? "3 months"
+          : plan.duration === 12
+            ? "year"
+            : `${plan.duration} months`;
 
   const choosePlan = () => {
     setPlanId(plan.id);
@@ -33,7 +47,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
       {!plan.popular ? (
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-3xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+          className="absolute inset-x-0 top-0 h-[3px] rtl:origin-right ltr:origin-left scale-x-0 rounded-t-3xl rtl:bg-gradient-to-l ltr:bg-gradient-to-r from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
         />
       ) : null}
       {plan.popular ? (
@@ -45,7 +59,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
       {plan.popular ? (
         <span className="gold-badge gold-shimmer absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-black">
           <Flame className="size-3.5" aria-hidden="true" />
-          الأكثر طلبًا
+          {t.pricing.popular}
         </span>
       ) : null}
 
@@ -58,15 +72,17 @@ function PricingCard({ plan }: { plan: PlanView }) {
         >
           {formatPriceDigits(plan.price)}
         </span>
-        <span className="font-bold text-muted-foreground">ج.م</span>
-        <span className="text-sm text-muted-foreground">/ {durationLabel(plan.duration)}</span>
+        <span className="font-bold text-muted-foreground">{t.pricing.currency}</span>
+        <span className="text-sm text-muted-foreground">/ {per}</span>
       </div>
       {plan.duration > 1 ? (
         <p className="mt-1 text-xs font-semibold text-primary/90">
-          يعادل <span dir="ltr">{formatPriceDigits(Math.round(plan.price / plan.duration))}</span> ج.م شهريًا فقط
+          {t.pricing.equalPre}
+          <span dir="ltr">{formatPriceDigits(Math.round(plan.price / plan.duration))}</span> {t.pricing.equalCurrency}
+          {t.pricing.equalPost}
         </p>
       ) : (
-        <p className="mt-1 text-xs text-muted-foreground">دفع شهري مرن — بدون التزام</p>
+        <p className="mt-1 text-xs text-muted-foreground">{t.pricing.flexible}</p>
       )}
 
       <ul className="mt-6 flex-1 space-y-3 border-t border-border/60 pt-6">
@@ -99,13 +115,15 @@ function PricingCard({ plan }: { plan: PlanView }) {
           !plan.popular && "border-primary/40 bg-primary/5 text-primary hover:bg-primary/15 hover:text-primary"
         )}
       >
-        اشترك الآن
+        {t.pricing.subscribe}
       </Button>
     </article>
   );
 }
 
 export function PricingSection({ plans }: { plans: PlanView[] }) {
+  const { t } = useLang();
+
   return (
     <section
       id="pricing"
@@ -121,20 +139,22 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
       />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="الباقات"
+          kicker={t.pricing.kicker}
           headingId="pricing-title"
           ghostNumber="05"
           title={
             <>
-              باقات <span className="text-gradient-ocean">مرنة</span> تناسب طموحك
+              {t.pricing.titlePre}
+              <span className="text-gradient-ocean">{t.pricing.titleGradient}</span>
+              {t.pricing.titlePost}
             </>
           }
-          subtitle="اختر الباقة التي تناسب هدفك — بدون رسوم خفية، وبإمكانك الترقية في أي وقت."
+          subtitle={t.pricing.subtitle}
         />
 
         {plans.length === 0 ? (
           <FadeUp className="glass mx-auto max-w-md rounded-2xl p-10 text-center text-muted-foreground">
-            سيتم إعلان الباقات قريبًا — تواصل معنا لمعرفة التفاصيل.
+            {t.pricing.comingSoon}
           </FadeUp>
         ) : (
           <div
@@ -161,9 +181,9 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
             className="mt-12 flex flex-col items-center justify-center gap-x-8 gap-y-4 sm:flex-row md:mt-14"
           >
             {[
-              { icon: ShieldCheck, label: "دفع آمن ومضمون" },
-              { icon: RefreshCw, label: "ترقية الباقة في أي وقت" },
-              { icon: Sparkles, label: "حصة تقييم مجانية" },
+              { icon: ShieldCheck, label: t.pricing.trust[0] },
+              { icon: RefreshCw, label: t.pricing.trust[1] },
+              { icon: Sparkles, label: t.pricing.trust[2] },
             ].map((item) => (
               <span
                 key={item.label}

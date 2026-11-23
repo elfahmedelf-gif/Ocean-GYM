@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Counter } from "./counter";
 import { WaveDivider } from "./wave-divider";
+import { useLang } from "./language";
 
 /** Slide rotation interval (ms) — drives autoplay, progress bar and Ken Burns zoom. */
 const SLIDE_DURATION = 6000;
@@ -50,13 +51,16 @@ const SLIDES = [
 ] as const;
 
 const STATS = [
-  { icon: Users, to: 1200, label: "عضو نشط" },
-  { icon: BadgeCheck, to: 15, label: "مدرب محترف" },
-  { icon: Calendar, to: 30, label: "حصة أسبوعية" },
-  { icon: Trophy, to: 8, label: "سنوات خبرة" },
+  { icon: Users, to: 1200 },
+  { icon: BadgeCheck, to: 15 },
+  { icon: Calendar, to: 30 },
+  { icon: Trophy, to: 8 },
 ] as const;
 
 export function Hero() {
+  const { t, lang } = useLang();
+  // Stat labels come from the dictionary, matched to STATS by index (members, trainers, sessions, years).
+  const statLabels = [t.hero.stats.members, t.hero.stats.trainers, t.hero.stats.sessions, t.hero.stats.years];
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   /** Bumped when playback resumes so the progress bar restarts in sync with the timer. */
@@ -106,8 +110,8 @@ export function Hero() {
     <section
       id="home"
       role="region"
-      aria-roledescription="كاروسيل"
-      aria-label="صور أجواء Ocean GYM"
+      aria-roledescription={t.hero.carouselRole}
+      aria-label={t.hero.imagesLabel}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
@@ -203,7 +207,7 @@ export function Hero() {
               <span className="relative inline-flex size-2 rounded-full bg-primary" />
             </span>
             <Waves className="size-4" aria-hidden="true" />
-            أقوى جيم في القاهرة
+            {t.hero.badge}
             {/* Twinkling champagne sparkles — the luxury signature */}
             <Sparkles
               aria-hidden="true"
@@ -222,9 +226,9 @@ export function Hero() {
             className="text-balance text-4xl font-black leading-[1.2] drop-shadow-[0_10px_36px_rgba(0,0,0,0.5)] sm:text-5xl md:text-6xl md:leading-[1.2] lg:text-7xl lg:leading-[1.18]"
           >
             <span className="text-gradient-ocean-animated text-glow">
-              بحر من القوة
-            </span>{" "}
-            يبدأ من هنا
+              {t.hero.titleGradient}
+            </span>
+            {t.hero.titlePost}
           </motion.h1>
 
           {/* Champagne hairline under the headline — the editorial divider */}
@@ -238,8 +242,7 @@ export function Hero() {
             variants={STACK_ITEM}
             className="max-w-2xl text-balance text-base leading-relaxed text-muted-foreground md:text-lg"
           >
-            تدرب على أحدث الأجهزة الأمريكية بإشراف مدربين معتمدين دوليًا، واستمتع بأكثر من 30 حصة
-            أسبوعية لكل المستويات — رحلتك نحو نسخة أقوى منك تبدأ اليوم.
+            {t.hero.subtitle}
           </motion.p>
 
           <motion.div variants={STACK_ITEM} className="flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -253,7 +256,7 @@ export function Hero() {
                   className="size-5 transition-transform duration-300 group-hover:-rotate-12"
                   aria-hidden="true"
                 />
-                انضم الآن
+                {t.hero.ctaJoin}
                 <ArrowLeft
                   className="size-5 transition-transform duration-300 group-hover:-translate-x-1"
                   aria-hidden="true"
@@ -268,7 +271,7 @@ export function Hero() {
             >
               <a href="#classes">
                 <Waves className="size-5" aria-hidden="true" />
-                اكتشف الكلاسات
+                {t.hero.ctaClasses}
               </a>
             </Button>
           </motion.div>
@@ -286,9 +289,9 @@ export function Hero() {
             variants={{ hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
             className="ocean-ring mx-auto grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl border border-primary/25 bg-primary/15 shadow-2xl shadow-black/50 backdrop-blur-xl sm:grid-cols-4"
           >
-            {STATS.map((stat) => (
+            {STATS.map((stat, i) => (
               <div
-                key={stat.label}
+                key={stat.to}
                 className="stat-cell group flex flex-col items-center px-4 py-6 text-center"
               >
                 <span className="icon-tile mb-3 size-11">
@@ -298,7 +301,7 @@ export function Hero() {
                   <Counter to={stat.to} prefix="+" />
                 </div>
                 <div className="mt-1 text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/90">
-                  {stat.label}
+                  {statLabels[i]}
                 </div>
               </div>
             ))}
@@ -321,7 +324,7 @@ export function Hero() {
         <button
           type="button"
           onClick={goPrev}
-          aria-label="الصورة السابقة"
+          aria-label={t.hero.prevSlide}
           className="flex size-12 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"
         >
           <ChevronRight
@@ -335,7 +338,7 @@ export function Hero() {
         <button
           type="button"
           onClick={playing ? pause : resume}
-          aria-label={playing ? "إيقاف تقليب الصور" : "تشغيل تقليب الصور"}
+          aria-label={playing ? t.hero.pause : t.hero.play}
           aria-pressed={playing}
           className="flex size-12 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
         >
@@ -357,7 +360,7 @@ export function Hero() {
         <button
           type="button"
           onClick={goNext}
-          aria-label="الصورة التالية"
+          aria-label={t.hero.nextSlide}
           className="flex size-12 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"
         >
           <ChevronLeft
@@ -367,7 +370,7 @@ export function Hero() {
         </button>
 
         <span className="sr-only" aria-live="polite">
-          الشريحة {index + 1} من {SLIDES.length}: {SLIDES[index].alt}
+          {t.hero.slideOf} {index + 1} {lang === "ar" ? "من" : "of"} {SLIDES.length}: {SLIDES[index].alt}
         </span>
       </div>
 
@@ -379,7 +382,7 @@ export function Hero() {
         <div
           key={`${index}:${epoch}`}
           className={cn(
-            "animate-slider-progress h-full w-full origin-right bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0]",
+            "animate-slider-progress h-full w-full rtl:origin-right ltr:origin-left rtl:bg-gradient-to-l ltr:bg-gradient-to-r from-primary via-[#1e6fe8] to-[#7dd8f0]",
             !playing && "animate-slider-paused"
           )}
           style={{ "--slide-duration": `${SLIDE_DURATION}ms` } as React.CSSProperties}

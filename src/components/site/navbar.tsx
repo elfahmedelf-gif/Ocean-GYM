@@ -14,24 +14,15 @@ import {
   Star,
   Users,
   Wallet,
+  X,
   type LucideIcon,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS } from "./nav-links";
+import { LanguageSwitcher, useLang } from "./language";
 
-/** Sections observed for scroll-spy (desktop nav only). */
-const SPY_IDS = NAV_LINKS.map((l) => l.href.slice(1));
-
-/** Icon per section — gives the mobile drawer a professional, scannable look. */
+/** Icon per section — gives the dropdown a professional, scannable look. */
 const NAV_ICONS: Record<string, LucideIcon> = {
   home: Home,
   about: Info,
@@ -49,9 +40,13 @@ const NAV_FOCUS =
   "focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none";
 
 export function Navbar() {
+  const { t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("home");
+
+  const navItems = t.nav.items;
+  const spyIds = navItems.map((l) => l.href.slice(1));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -62,9 +57,9 @@ export function Navbar() {
 
   // Scroll-spy: highlight the section currently in view.
   useEffect(() => {
-    const sections = SPY_IDS.map((id) => document.getElementById(id)).filter(
-      (el): el is HTMLElement => el !== null
-    );
+    const sections = spyIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -79,7 +74,17 @@ export function Navbar() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [spyIds]);
+
+  // Escape closes the dropdown; body scroll stays free (it's a dropdown, not a modal).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <motion.header
@@ -88,13 +93,13 @@ export function Navbar() {
       transition={{ duration: 0.55, ease: "easeOut" }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled
+        scrolled || open
           ? "border-b border-primary/15 bg-background/85 shadow-2xl shadow-black/50 backdrop-blur-xl"
           : "bg-transparent"
       )}
     >
       {/* Gradient hairline that fades in with the scrolled glass bar */}
-      {scrolled ? (
+      {scrolled || open ? (
         <span
           aria-hidden="true"
           className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-l from-transparent via-primary/60 to-transparent"
@@ -103,10 +108,7 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-[72px] md:px-6">
         <a
           href="#home"
-          className={cn(
-            "group flex items-center gap-3 rounded-lg",
-            NAV_FOCUS
-          )}
+          className={cn("group flex items-center gap-3 rounded-lg", NAV_FOCUS)}
           aria-label="Ocean GYM — الرئيسية"
         >
           <Image
@@ -123,8 +125,8 @@ export function Navbar() {
         </a>
 
         {/* All links visible from lg up — tighter sizing at lg, roomier from xl. */}
-        <nav aria-label="التنقل الرئيسي" className="hidden items-center gap-0.5 lg:flex">
-          {NAV_LINKS.map((link) => {
+        <nav aria-label={t.nav.mainNav} className="hidden items-center gap-0.5 lg:flex">
+          {navItems.map((link) => {
             const id = link.href.slice(1);
             const isActive = activeId === id;
             return (
@@ -155,47 +157,64 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Language switcher — desktop */}
+          <div className="hidden md:block">
+            <LanguageSwitcher />
+          </div>
+
           <Button
             asChild
             className="btn-gradient shimmer hidden h-11 px-6 font-bold shadow-lg shadow-primary/25 sm:inline-flex"
           >
-            <a href="#join">انضم الآن</a>
+            <a href="#join">{t.nav.joinCta}</a>
           </Button>
 
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="size-11 border-primary/30 lg:hidden"
-                aria-label="فتح قائمة التنقل"
-              >
-                <Menu className="size-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="w-[300px] border-primary/20 bg-background/95 backdrop-blur-xl"
+          {/* Dropdown trigger — mobile/tablet only */}
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-11 border-primary/30 lg:hidden"
+            aria-label={open ? t.nav.closeMenu : t.nav.openMenu}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </Button>
+        </div>
+      </div>
+
+      {/* ── Mobile dropdown — slides down from under the header ── */}
+      <AnimatePresence>
+        {open ? (
+          <>
+            {/* Invisible backdrop catches outside clicks without dimming the page */}
+            <button
+              type="button"
+              aria-hidden="true"
+              tabIndex={-1}
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 z-[-1] cursor-default"
+            />
+            <motion.div
+              id="mobile-menu"
+              key="mobile-dropdown"
+              initial={{ opacity: 0, y: -14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -14 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="absolute inset-x-0 top-full z-40 origin-top overflow-hidden border-b border-primary/20 bg-background/95 shadow-2xl shadow-black/60 backdrop-blur-xl lg:hidden"
             >
-              <SheetHeader className="border-b border-primary/10 pe-14">
-                <SheetTitle className="flex items-center gap-3">
-                  <Image
-                    src="/images/logo.png"
-                    alt="شعار Ocean GYM"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-lg"
-                  />
-                  <span className="font-extrabold" dir="ltr">
-                    OCEAN <span className="text-gradient-ocean">GYM</span>
-                  </span>
-                </SheetTitle>
-              </SheetHeader>
+              {/* Gradient hairline melting the panel into the header */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary/50 to-transparent"
+              />
               <nav
-                aria-label="قائمة التنقل"
-                className="flex flex-1 flex-col gap-1 overflow-y-auto p-4"
+                aria-label={t.nav.mobileNav}
+                className="custom-scrollbar flex max-h-[60vh] flex-col gap-1 overflow-y-auto p-4"
               >
-                {NAV_LINKS.map((link) => {
+                {navItems.map((link) => {
                   const id = link.href.slice(1);
                   const isActive = activeId === id;
                   const Icon = NAV_ICONS[id] ?? Sparkles;
@@ -205,7 +224,7 @@ export function Navbar() {
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "group flex min-h-11 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
+                        "group flex min-h-11 items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                         isActive
                           ? "border border-primary/25 bg-primary/10 text-primary shadow-[inset_0_0_18px_rgba(56,199,232,0.08)]"
                           : "text-foreground/90 hover:bg-primary/10 hover:text-primary"
@@ -227,17 +246,21 @@ export function Navbar() {
                   );
                 })}
               </nav>
-              <div className="border-t border-primary/10 p-4">
-                <Button asChild className="btn-gradient shimmer h-11 w-full font-bold">
+              <div className="flex items-center justify-between gap-3 border-t border-primary/10 p-4">
+                <LanguageSwitcher compact />
+                <Button
+                  asChild
+                  className="btn-gradient shimmer h-11 flex-1 font-bold"
+                >
                   <a href="#join" onClick={() => setOpen(false)}>
-                    انضم الآن
+                    {t.nav.joinCta}
                   </a>
                 </Button>
               </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
+            </motion.div>
+          </>
+        ) : null}
+      </AnimatePresence>
     </motion.header>
   );
 }

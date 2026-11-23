@@ -12,11 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { WaveDivider } from "./wave-divider";
 import type { GalleryView } from "./types";
 
 export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
+  const { t } = useLang();
   /** Index of the image open in the lightbox (null = closed). */
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const selected = openIndex !== null ? gallery[openIndex] : null;
@@ -43,15 +45,17 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
       <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="المعرض"
+          kicker={t.gallery.kicker}
           headingId="gallery-title"
           ghostNumber="07"
           title={
             <>
-              جولة داخل <span className="text-gradient-ocean">المكان</span>
+              {t.gallery.titlePre}
+              <span className="text-gradient-ocean">{t.gallery.titleGradient}</span>
+              {t.gallery.titlePost}
             </>
           }
-          subtitle="اطلع على أرضية التمرين والاستوديوهات ومناطق الكارديو — الأجواء التي ستمارس فيها كل يوم."
+          subtitle={t.gallery.subtitle}
         />
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
@@ -64,7 +68,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               <button
                 type="button"
                 onClick={() => setOpenIndex(i)}
-                aria-label={`عرض صورة: ${item.title}`}
+                aria-label={`${t.gallery.view}${item.title}`}
                 className={cn(
                   "group relative block w-full overflow-hidden rounded-2xl border border-primary/15 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_22px_54px_-16px_rgba(56,199,232,0.4)] focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                   // First image becomes a wide featured banner (spans 2 columns from sm up)
@@ -156,7 +160,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   <button
                     type="button"
                     onClick={goPrev}
-                    aria-label="الصورة السابقة"
+                    aria-label={t.gallery.prev}
                     className="absolute start-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-primary/40 bg-background/80 text-primary backdrop-blur-md transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none md:start-3"
                   >
                     <ChevronRight className="size-5" aria-hidden="true" />
@@ -164,7 +168,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   <button
                     type="button"
                     onClick={goNext}
-                    aria-label="الصورة التالية"
+                    aria-label={t.gallery.next}
                     className="absolute end-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-primary/40 bg-background/80 text-primary backdrop-blur-md transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none md:end-3"
                   >
                     <ChevronLeft className="size-5" aria-hidden="true" />
@@ -175,7 +179,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               <DialogHeader className="items-center text-center">
                 <DialogTitle className="text-lg font-extrabold">{selected.title}</DialogTitle>
                 <DialogDescription className="sr-only">
-                  صورة من معرض Ocean GYM — استخدم الأسهم للتنقل بين الصور
+                  {t.gallery.hint}
                 </DialogDescription>
                 <span
                   dir="ltr"
@@ -186,7 +190,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               </DialogHeader>
 
               <span className="sr-only" aria-live="polite">
-                الصورة {openIndex + 1} من {gallery.length}: {selected.title}
+                {t.gallery.liveRegion(openIndex + 1, gallery.length, selected.title)}
               </span>
             </>
           ) : null}

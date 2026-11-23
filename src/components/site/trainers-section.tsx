@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Instagram, UserRound } from "lucide-react";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
@@ -20,6 +21,7 @@ function instagramHandle(raw: string | null | undefined): string | null {
 }
 
 function TrainerCard({ trainer }: { trainer: TrainerView }) {
+  const { t } = useLang();
   const handle = instagramHandle(trainer.instagram);
 
   return (
@@ -30,13 +32,13 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
       {/* Gradient edge sweeps across the top on hover */}
       <span
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 z-10 h-[3px] origin-right scale-x-0 bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+        className="absolute inset-x-0 top-0 z-10 h-[3px] rtl:origin-right ltr:origin-left scale-x-0 rtl:bg-gradient-to-l ltr:bg-gradient-to-r from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
       />
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         {trainer.image ? (
           <Image
             src={trainer.image}
-            alt={`المدرب ${trainer.name}`}
+            alt={t.trainers.trainerAlt(trainer.name)}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:saturate-125"
@@ -85,6 +87,8 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
 }
 
 export function TrainersSection({ trainers }: { trainers: TrainerView[] }) {
+  const { t } = useLang();
+
   return (
     <section
       id="trainers"
@@ -97,20 +101,22 @@ export function TrainersSection({ trainers }: { trainers: TrainerView[] }) {
       <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="المدربون"
+          kicker={t.trainers.kicker}
           headingId="trainers-title"
           ghostNumber="04"
           title={
             <>
-              نخبة من <span className="text-gradient-ocean">الخبراء</span> معك خطوة بخطوة
+              {t.trainers.titlePre}
+              <span className="text-gradient-ocean">{t.trainers.titleGradient}</span>
+              {t.trainers.titlePost}
             </>
           }
-          subtitle="مدربون معتمدون دوليًا يجمعون بين العلم والخبرة الميدانية، ويصممون لك برنامجًا يناسب هدفك ومستواك."
+          subtitle={t.trainers.subtitle}
         />
 
         {trainers.length === 0 ? (
           <FadeUp className="glass mx-auto max-w-md rounded-2xl p-10 text-center text-muted-foreground">
-            سيتم التعريف بفريق المدربين قريبًا.
+            {t.trainers.empty}
           </FadeUp>
         ) : (
           <div className="grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">

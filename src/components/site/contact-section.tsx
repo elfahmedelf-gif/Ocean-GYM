@@ -3,6 +3,7 @@
 import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { SOCIALS } from "./socials";
 import { spotlightProps } from "./spotlight";
@@ -17,6 +18,8 @@ const MAP_DIRECTIONS_HREF =
   "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(SITE.address);
 
 export function ContactSection() {
+  const { t, lang } = useLang();
+
   return (
     <section
       id="contact"
@@ -27,15 +30,17 @@ export function ContactSection() {
       <WaveDivider variant={3} className="text-[#081228]" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="تواصل معنا"
+          kicker={t.contact.kicker}
           headingId="contact-title"
           ghostNumber="08"
           title={
             <>
-              نحن <span className="text-gradient-ocean">هنا</span> من أجلك
+              {t.contact.titlePre}
+              <span className="text-gradient-ocean">{t.contact.titleGradient}</span>
+              {t.contact.titlePost}
             </>
           }
-          subtitle="لديك سؤال عن الباقات أو الحصص؟ زرنا في التجمع الخامس أو تواصل معنا مباشرة — فريقنا جاهز لمساعدتك."
+          subtitle={t.contact.subtitle}
         />
 
         <FadeUp className="flex flex-col gap-8">
@@ -48,7 +53,7 @@ export function ContactSection() {
                 <Phone className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <div className="text-xs text-muted-foreground">الهاتف</div>
+                <div className="text-xs text-muted-foreground">{t.contact.phone}</div>
                 <a
                   href={SITE.phoneHref}
                   dir="ltr"
@@ -67,7 +72,7 @@ export function ContactSection() {
                 <MapPin className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <div className="text-xs text-muted-foreground">العنوان</div>
+                <div className="text-xs text-muted-foreground">{t.contact.address}</div>
                 <div className="mt-1 font-bold">{SITE.address}</div>
               </div>
             </div>
@@ -80,11 +85,11 @@ export function ContactSection() {
                 <Clock className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <div className="text-xs text-muted-foreground">مواعيد العمل</div>
+                <div className="text-xs text-muted-foreground">{t.contact.hours}</div>
                 <div className="mt-1 text-sm font-bold leading-relaxed">
-                  السبت — الخميس: <span dir="ltr">8ص - 12م</span>
+                  {t.contact.satThu} <span dir="ltr">{lang === "ar" ? "8ص - 12م" : "8AM - 12PM"}</span>
                   <br />
-                  الجمعة: <span dir="ltr">10ص - 10م</span>
+                  {t.contact.fri} <span dir="ltr">{lang === "ar" ? "10ص - 10م" : "10AM - 10PM"}</span>
                 </div>
               </div>
             </div>
@@ -97,7 +102,7 @@ export function ContactSection() {
                 <Mail className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <div className="text-xs text-muted-foreground">البريد الإلكتروني</div>
+                <div className="text-xs text-muted-foreground">{t.contact.email}</div>
                 <a
                   href={SITE.emailHref}
                   dir="ltr"
@@ -118,7 +123,7 @@ export function ContactSection() {
             <div className="relative h-72 w-full md:h-96">
               <iframe
                 src={MAP_EMBED_SRC}
-                title="موقع Ocean GYM على الخريطة — التجمع الخامس، القاهرة الجديدة"
+                title={t.contact.mapTitle}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
@@ -136,7 +141,7 @@ export function ContactSection() {
                 rel="noreferrer"
                 className="group inline-flex items-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
               >
-                احصل على الاتجاهات
+                {t.contact.directions}
                 <Navigation
                   className="size-4 transition-transform duration-300 group-hover:-translate-x-1"
                   aria-hidden="true"

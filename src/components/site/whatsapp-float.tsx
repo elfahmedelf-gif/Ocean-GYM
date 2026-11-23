@@ -1,4 +1,7 @@
+"use client";
+
 import { SITE } from "@/lib/site";
+import { useLang } from "./language";
 
 /** Official-style WhatsApp glyph (speech bubble + handset). */
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -14,13 +17,14 @@ function WhatsAppIcon({ className }: { className?: string }) {
  * service sites). Opens a chat with a pre-filled inquiry message.
  */
 export function WhatsAppFloat() {
+  const { t } = useLang();
   return (
     <a
       href={SITE.whatsappHref}
       target="_blank"
       rel="noreferrer"
-      aria-label="تواصل معنا عبر واتساب"
-      title="تواصل معنا عبر واتساب"
+      aria-label={t.floats.whatsapp}
+      title={t.floats.whatsapp}
       className="group fixed bottom-[4.75rem] left-4 z-50 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-[#25D366]/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#25D366]/40 md:left-6"
     >
       {/* Expanding label — materializes beside the bubble on hover/focus.
@@ -29,7 +33,7 @@ export function WhatsAppFloat() {
         aria-hidden="true"
         className="pointer-events-none absolute left-full top-1/2 ms-3 flex -translate-y-1/2 scale-75 items-center whitespace-nowrap rounded-full border border-[#25D366]/40 bg-background/90 px-3.5 py-1.5 text-xs font-bold text-foreground opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100"
       >
-        كلمنا واتساب — بنرد فورًا
+        {t.floats.whatsappTip}
       </span>
       {/* Soft ping ring for attention without being noisy */}
       <span

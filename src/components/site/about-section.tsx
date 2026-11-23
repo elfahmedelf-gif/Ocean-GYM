@@ -3,43 +3,22 @@
 import Image from "next/image";
 import { Activity, Apple, BadgeCheck, Building2, Dumbbell, Flame, Users, Waves } from "lucide-react";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { spotlightProps } from "./spotlight";
 
 const FEATURES = [
-  {
-    icon: Dumbbell,
-    title: "أحدث الأجهزة الأمريكية",
-    desc: "أجهزة Life Fitness و Hammer Strength بأحدث الموديلات العالمية.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "مدربون معتمدون دوليًا",
-    desc: "فريق متخصص يحمل شهادات ISSA و NASM و خبرة ميدانية طويلة.",
-  },
-  {
-    icon: Apple,
-    title: "برنامج تغذية متكامل",
-    desc: "خطط غذائية مخصصة لهدفك من خبراء التغذية الرياضية.",
-  },
-  {
-    icon: Activity,
-    title: "منطقة كارديو متطورة",
-    desc: "أجهزة جري ودراجات وإليبتيكال بأحدث الموديلات وشاشات تفاعلية لمتابعة أدائك.",
-  },
-  {
-    icon: Flame,
-    title: "ساونا وجاكوزي",
-    desc: "استرجاع سريع للعضلات واسترخاء كامل بعد كل تمرين.",
-  },
-  {
-    icon: Building2,
-    title: "مساحة 1500 متر مربع",
-    desc: "ثلاثة أدوار مجهزة بالكامل من الأوزان الحرة إلى استوديوهات الكلاسات.",
-  },
+  { icon: Dumbbell },
+  { icon: BadgeCheck },
+  { icon: Apple },
+  { icon: Activity },
+  { icon: Flame },
+  { icon: Building2 },
 ] as const;
 
 export function AboutSection() {
+  const { t } = useLang();
+
   return (
     <section id="about" aria-labelledby="about-title" className="scroll-mt-24 py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -66,7 +45,7 @@ export function AboutSection() {
               >
                 <Image
                   src="/images/about-gym.jpg"
-                  alt="من داخل Ocean GYM — منطقة الأوزان والأجهزة الحديثة"
+                  alt={t.about.imageAlt}
                   width={1344}
                   height={768}
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -97,13 +76,13 @@ export function AboutSection() {
               <div className="glass ocean-ring absolute -top-6 end-6 z-20 flex items-center gap-2.5 rounded-2xl px-4 py-2.5">
                 <Users className="size-4 text-primary" aria-hidden="true" />
                 <span className="text-sm font-black">
-                  <span dir="ltr" className="text-gradient-ocean">+1200</span> عضو نشط
+                  <span dir="ltr" className="text-gradient-ocean">+1200</span> {t.about.membersBadge}
                 </span>
               </div>
               {/* Since-2017 badge — the luxury gold anchor of the section */}
               <div className="glass ocean-ring absolute bottom-6 start-6 z-20 flex items-center gap-2.5 rounded-2xl px-5 py-3">
                 <Waves className="size-5 text-[#e7c069]" aria-hidden="true" />
-                <span className="text-gradient-gold-animated text-lg font-black">منذ 2017</span>
+                <span className="text-gradient-gold-animated text-lg font-black">{t.about.sinceBadge}</span>
               </div>
             </div>
           </FadeUp>
@@ -112,43 +91,48 @@ export function AboutSection() {
           <div>
             <SectionHeading
               align="start"
-              kicker="عن الجيم"
+              kicker={t.about.kicker}
               headingId="about-title"
               ghostNumber="01"
               title={
                 <>
-                  لماذا <span className="text-gradient-ocean">Ocean GYM</span>؟
+                  {t.about.titlePre}
+                  <span className="text-gradient-ocean">{t.about.titleGradient}</span>
+                  {t.about.titlePost}
                 </>
               }
-              subtitle="لسنا مجرد نادٍ رياضي — نحن مجتمع متكامل صُمم ليأخذك من أول تمرين إلى أفضل نسخة من نفسك، بمكانة عالمية وأجواء تدفعك للاستمرار."
+              subtitle={t.about.subtitle}
             />
 
             <FadeUp delay={0.1}>
               <div className="grid gap-4 sm:grid-cols-2">
-                {FEATURES.map((feature, i) => (
-                  <div
-                    key={feature.title}
-                    className="card-sheen card-spotlight lux-card group relative flex items-start gap-3.5 overflow-hidden rounded-2xl border border-primary/15 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_20px_50px_-18px_rgba(56,199,232,0.3)] md:p-5"
-                    {...spotlightProps}
-                  >
-                    {/* Editorial index — tiny, top-end corner */}
-                    <span
-                      aria-hidden="true"
-                      className="text-ghost-outline pointer-events-none absolute end-3 top-2 select-none text-2xl font-black leading-none"
+                {FEATURES.map((feature, i) => {
+                  const f = t.about.features[i];
+                  return (
+                    <div
+                      key={f.title}
+                      className="card-sheen card-spotlight lux-card group relative flex items-start gap-3.5 overflow-hidden rounded-2xl border border-primary/15 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_20px_50px_-18px_rgba(56,199,232,0.3)] md:p-5"
+                      {...spotlightProps}
                     >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="icon-tile size-11">
-                      <feature.icon className="size-5" aria-hidden="true" />
-                    </span>
-                    <div>
-                      <h3 className="font-extrabold transition-colors duration-300 group-hover:text-primary">{feature.title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                        {feature.desc}
-                      </p>
+                      {/* Editorial index — tiny, top-end corner */}
+                      <span
+                        aria-hidden="true"
+                        className="text-ghost-outline pointer-events-none absolute end-3 top-2 select-none text-2xl font-black leading-none"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="icon-tile size-11">
+                        <feature.icon className="size-5" aria-hidden="true" />
+                      </span>
+                      <div>
+                        <h3 className="font-extrabold transition-colors duration-300 group-hover:text-primary">{f.title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                          {f.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </FadeUp>
           </div>

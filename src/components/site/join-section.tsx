@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SITE } from "@/lib/site";
 import { formatPriceDigits } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { WaveDivider } from "./wave-divider";
 import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
@@ -30,14 +31,9 @@ interface FieldErrors {
   phone?: string;
 }
 
-const BENEFITS = [
-  "حصة تقييم لياقة مجانية مع مدرب معتمد",
-  "خطة تدريب وتغذية مصممة حسب هدفك",
-  "متابعة دورية لقياس تقدمك وتعديل البرنامج",
-];
-
 export function JoinSection({ plans }: { plans: PlanView[] }) {
   const { toast } = useToast();
+  const { t } = useLang();
   const planId = useJoinStore((s) => s.planId);
   const setPlanId = useJoinStore((s) => s.setPlanId);
 
@@ -57,11 +53,11 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
 
   const validate = (): boolean => {
     const next: FieldErrors = {};
-    if (!name.trim()) next.name = "الاسم الكامل مطلوب";
-    if (!email.trim()) next.email = "البريد الإلكتروني مطلوب";
-    else if (!EMAIL_REGEX.test(email.trim())) next.email = "صيغة البريد الإلكتروني غير صحيحة";
-    if (!phone.trim()) next.phone = "رقم الهاتف مطلوب";
-    else if (!PHONE_REGEX.test(phone.trim())) next.phone = "رقم الهاتف غير صحيح";
+    if (!name.trim()) next.name = t.join.errors.nameRequired;
+    if (!email.trim()) next.email = t.join.errors.emailRequired;
+    else if (!EMAIL_REGEX.test(email.trim())) next.email = t.join.errors.emailInvalid;
+    if (!phone.trim()) next.phone = t.join.errors.phoneRequired;
+    else if (!PHONE_REGEX.test(phone.trim())) next.phone = t.join.errors.phoneInvalid;
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -86,15 +82,15 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
         setPlanId(null);
       } else {
         toast({
-          title: "تعذر إرسال الطلب",
-          description: data.error ?? "حدث خطأ غير متوقع، حاول مرة أخرى",
+          title: t.join.errors.sendFailed,
+          description: data.error ?? t.join.errors.unexpected,
           variant: "destructive",
         });
       }
     } catch {
       toast({
-        title: "تعذر إرسال الطلب",
-        description: "تحقق من اتصالك بالإنترنت وحاول مرة أخرى",
+        title: t.join.errors.sendFailed,
+        description: t.join.errors.network,
         variant: "destructive",
       });
     } finally {
@@ -139,20 +135,21 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               <span className="glass ocean-ring inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-xs font-bold text-primary">
                 <span className="size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />
                 <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-transparent to-primary/60" />
-                انضم إلينا
+                {t.join.kicker}
                 <span aria-hidden="true" className="h-px w-4 rounded-full bg-gradient-to-l from-primary/60 to-transparent" />
               </span>
               <h2 id="join-title" className="text-balance text-3xl font-black leading-[1.25] md:text-5xl md:leading-[1.25]">
-                ابدأ <span className="text-gradient-ocean text-glow">رحلتك</span> الآن
+                {t.join.titlePre}
+                <span className="text-gradient-ocean text-glow">{t.join.titleGradient}</span>
+                {t.join.titlePost}
               </h2>
               <p className="max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-                املأ النموذج وسيتواصل معك فريق الاستقبال خلال 24 ساعة لحجز حصة التقييم المجانية
-                واختيار الباقة المناسبة لك.
+                {t.join.subtitle}
               </p>
               <ul className="mt-2 space-y-3">
-                {BENEFITS.map((benefit) => (
+                {t.join.benefits.map((benefit, i) => (
                   <li
-                    key={benefit}
+                    key={i}
                     className="group flex items-center gap-2.5 text-sm md:text-base"
                   >
                     <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/25 to-primary/5 text-primary ring-1 ring-inset ring-primary/30 transition-all duration-300 group-hover:scale-110 group-hover:from-primary group-hover:to-[#1e6fe8] group-hover:text-primary-foreground">
@@ -164,7 +161,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               </ul>
               <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="size-4 text-primary" aria-hidden="true" />
-                أو اتصل بنا مباشرة:
+                {t.join.callDirect}
                 <a
                   href={SITE.phoneHref}
                   dir="ltr"
@@ -188,24 +185,24 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 <span className="glow-cyan flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-primary/10 text-primary ring-1 ring-inset ring-primary/40">
                   <CircleCheckBig className="size-9" aria-hidden="true" />
                 </span>
-                <h3 className="text-2xl font-black text-gradient-ocean">تم استلام طلبك!</h3>
+                <h3 className="text-2xl font-black text-gradient-ocean">{t.join.success.title}</h3>
                 <p className="max-w-sm text-muted-foreground">
-                  سنتواصل معك خلال 24 ساعة لتأكيد اشتراكك وحجز حصة التقييم المجانية.
+                  {t.join.success.text}
                 </p>
                 <Button variant="outline" className="mt-2 border-primary/40 text-primary hover:bg-primary/10 hover:text-primary" onClick={() => setSubmitted(false)}>
-                  إرسال طلب آخر
+                  {t.join.success.again}
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate className="gradient-border space-y-4 rounded-3xl p-6 md:p-8" aria-labelledby="join-title">
                 <div className="space-y-2">
-                  <Label htmlFor="join-name">الاسم الكامل</Label>
+                  <Label htmlFor="join-name">{t.join.form.name}</Label>
                   <Input
                     id="join-name"
                     name="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="اكتب اسمك الكامل"
+                    placeholder={t.join.form.namePh}
                     autoComplete="name"
                     aria-invalid={Boolean(errors.name)}
                     aria-describedby={errors.name ? "join-name-error" : undefined}
@@ -220,7 +217,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="join-email">البريد الإلكتروني</Label>
+                    <Label htmlFor="join-email">{t.join.form.email}</Label>
                     <Input
                       id="join-email"
                       name="email"
@@ -228,7 +225,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       dir="ltr"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
+                      placeholder={t.join.form.emailPh}
                       autoComplete="email"
                       aria-invalid={Boolean(errors.email)}
                       aria-describedby={errors.email ? "join-email-error" : undefined}
@@ -241,7 +238,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                     ) : null}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="join-phone">رقم الهاتف</Label>
+                    <Label htmlFor="join-phone">{t.join.form.phone}</Label>
                     <Input
                       id="join-phone"
                       name="phone"
@@ -249,7 +246,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       dir="ltr"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="01xxxxxxxxx"
+                      placeholder={t.join.form.phonePh}
                       autoComplete="tel"
                       aria-invalid={Boolean(errors.phone)}
                       aria-describedby={errors.phone ? "join-phone-error" : undefined}
@@ -265,15 +262,15 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
 
                 {plans.length > 0 ? (
                   <div className="space-y-2">
-                    <Label htmlFor="join-plan">اختر الباقة</Label>
+                    <Label htmlFor="join-plan">{t.join.form.plan}</Label>
                     <Select value={planId ?? ""} onValueChange={(value) => setPlanId(value || null)}>
                       <SelectTrigger id="join-plan" className="h-12 w-full border-primary/25 bg-background/50">
-                        <SelectValue placeholder="اختر الباقة (اختياري)" />
+                        <SelectValue placeholder={t.join.form.planPh} />
                       </SelectTrigger>
                       <SelectContent>
                         {plans.map((plan) => (
                           <SelectItem key={plan.id} value={plan.id}>
-                            {plan.name} — <span dir="ltr">{formatPriceDigits(plan.price)}</span> ج.م
+                            {t.join.form.planItem(plan.name, formatPriceDigits(plan.price))}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -282,13 +279,13 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 ) : null}
 
                 <div className="space-y-2">
-                  <Label htmlFor="join-notes">ملاحظات</Label>
+                  <Label htmlFor="join-notes">{t.join.form.notes}</Label>
                   <Textarea
                     id="join-notes"
                     name="notes"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="أخبرنا عن هدفك أو أي متطلبات خاصة (اختياري)"
+                    placeholder={t.join.form.notesPh}
                     rows={3}
                     className="border-primary/25 bg-background/50 focus-visible:border-primary/60 focus-visible:ring-primary/25"
                   />
@@ -302,12 +299,12 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                   {loading ? (
                     <>
                       <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-                      جارٍ الإرسال...
+                      {t.join.form.submitting}
                     </>
                   ) : (
                     <>
                       <Send className="size-5" aria-hidden="true" />
-                      إرسال الطلب
+                      {t.join.form.submit}
                     </>
                   )}
                 </Button>
@@ -315,7 +312,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 {/* Quiet trust microcopy under the submit — closes the loop */}
                 <p className="flex items-center justify-center gap-2 pt-1 text-center text-xs text-muted-foreground">
                   <Lock className="size-3.5 shrink-0 text-primary/80" aria-hidden="true" />
-                  بياناتك محفوظة بسرية تام ولا تُشارك مع أي جهة خارجية
+                  {t.join.form.privacy}
                 </p>
               </form>
             )}

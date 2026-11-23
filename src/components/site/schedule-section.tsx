@@ -6,23 +6,21 @@ import { motion } from "framer-motion";
 import { Dumbbell, Timer, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { GYM_DAYS, formatTime12, levelBadgeClass, levelLabel } from "@/lib/gym";
+import { levelBadgeClass } from "@/lib/gym";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import type { ScheduleSlotView } from "./types";
 
-/** Arabic plural rules: 1 -> دقيقة واحدة, 2 -> دقيقتين, 3-10 -> دقائق, 11+ -> دقيقة */
-function minutesLabel(minutes: number): string {
-  if (minutes === 1) return "دقيقة واحدة";
-  if (minutes === 2) return "دقيقتين";
-  if (minutes >= 3 && minutes <= 10) return `${minutes} دقائق`;
-  return `${minutes} دقيقة`;
-}
-
 function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
-  const [digits = slot.time, period = ""] = formatTime12(slot.time).split(" ");
+  const { t } = useLang();
+
+  const [hStr = "0", mStr = "00"] = slot.time.split(":");
+  const h = parseInt(hStr, 10);
+  const digits = `${h % 12 === 0 ? 12 : h % 12}:${mStr}`;
+  const period = h < 12 ? t.schedule.am : t.schedule.pm;
   const badgeStyle = levelBadgeClass(slot.gymClass.level);
 
   return (
@@ -71,7 +69,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
                 badgeStyle
               )}
             >
-              {levelLabel(slot.gymClass.level)}
+              {t.classes.levels[slot.gymClass.level] ?? t.classes.levels.all}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground md:text-sm">
@@ -83,14 +81,14 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
             ) : null}
             <span className="flex items-center gap-1.5">
               <Timer className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-              {minutesLabel(slot.gymClass.duration)}
+              {t.schedule.minutesLabel(slot.gymClass.duration)}
             </span>
           </div>
         </div>
         {slot.gymClass.image ? (
           <Image
             src={slot.gymClass.image}
-            alt={`كلاس ${slot.gymClass.name}`}
+            alt={t.schedule.trainerAlt(slot.gymClass.name)}
             width={64}
             height={48}
             className="h-12 w-16 shrink-0 rounded-lg border border-primary/20 object-cover shadow-[0_6px_18px_-6px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover/slot:scale-105 group-hover/slot:border-primary/50"
@@ -110,6 +108,7 @@ export function ScheduleSection({
   initialDay?: number;
 }) {
   // Never call new Date() here — initialDay comes as a prop to stay hydration-safe.
+  const { t } = useLang();
   const [selectedDay, setSelectedDay] = useState(initialDay);
 
   /** Number of sessions per day — shown as a mini counter inside each day pill. */
@@ -137,25 +136,27 @@ export function ScheduleSection({
       <WaveDivider variant={3} className="text-[#081228]" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="الجدول الأسبوعي"
+          kicker={t.schedule.kicker}
           headingId="schedule-title"
           ghostNumber="03"
           title={
             <>
-              خطط <span className="text-gradient-ocean">أسبوعك</span> بالساعة
+              {t.schedule.titlePre}
+              <span className="text-gradient-ocean">{t.schedule.titleGradient}</span>
+              {t.schedule.titlePost}
             </>
           }
-          subtitle="حصصنا متاحة طوال الأسبوع من السبت إلى الجمعة — اختر اليوم المناسب واكتشف مواعيد الكلاسات والمدربين المتاحين."
+          subtitle={t.schedule.subtitle}
         />
 
         {/* Day pill tabs — single row, horizontally scrollable on mobile */}
         <FadeUp className="-mx-4 mb-8 px-4 md:mx-0 md:mb-10 md:px-0">
           <div
             role="tablist"
-            aria-label="أيام الجدول الأسبوعي"
+            aria-label={t.schedule.daysAria}
             className="custom-scrollbar flex gap-2 overflow-x-auto pb-2 md:justify-center md:pb-0"
           >
-            {GYM_DAYS.map((day) => {
+            {t.schedule.days.map((name, index) => ({ index, name })).map((day) => {
               const isToday = day.index === initialDay;
               return (
                 <button
@@ -196,8 +197,8 @@ export function ScheduleSection({
                     {isToday ? (
                       <span
                         className="size-1.5 rounded-full bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_8px_rgba(226,189,98,0.8)]"
-                        title="اليوم"
-                        aria-label="اليوم"
+                        title={t.schedule.today}
+                        aria-label={t.schedule.today}
                       />
                     ) : null}
                   </span>
@@ -216,8 +217,8 @@ export function ScheduleSection({
           {daySlots.length === 0 ? (
             <FadeUp className="glass mx-auto max-w-lg rounded-3xl border-2 border-dashed border-primary/25 p-10 text-center">
               <Dumbbell className="mx-auto mb-3 size-10 text-primary/50" aria-hidden="true" />
-              <p className="font-bold">لا توجد حصص مجدولة في هذا اليوم</p>
-              <p className="mt-1 text-sm text-muted-foreground">استمتع براحة أو تمرن فردّي</p>
+              <p className="font-bold">{t.schedule.emptyTitle}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t.schedule.emptyDesc}</p>
             </FadeUp>
           ) : (
             <ol className="mx-auto flex max-w-3xl flex-col gap-5 md:gap-6">
@@ -231,13 +232,13 @@ export function ScheduleSection({
         {/* Bottom hint */}
         <FadeUp className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-12">
           <p className="text-sm text-muted-foreground md:text-base">
-            بتحتاج مساعدة في اختيار الحصة المناسبة؟
+            {t.schedule.help}
           </p>
           <Button
             asChild
             className="btn-gradient glow-cyan-strong shimmer font-bold"
           >
-            <a href="#join">انضم الآن</a>
+            <a href="#join">{t.schedule.cta}</a>
           </Button>
         </FadeUp>
       </div>

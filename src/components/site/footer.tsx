@@ -1,8 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import { Mail, MapPin, Phone, Waves } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS } from "./nav-links";
+import { useLang } from "./language";
 import { SOCIALS } from "./socials";
 import { WaveDivider } from "./wave-divider";
 
@@ -11,6 +13,7 @@ const LINK_FOCUS =
   "rounded-sm focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none";
 
 export function SiteFooter() {
+  const { t } = useLang();
   const year = new Date().getFullYear();
 
   return (
@@ -33,7 +36,7 @@ export function SiteFooter() {
             <div className="flex items-center gap-3">
               <Image
                 src="/images/logo.png"
-                alt="شعار Ocean GYM"
+                alt={t.footer.logoAlt}
                 width={48}
                 height={48}
                 className="ocean-ring h-12 w-12 rounded-xl"
@@ -43,8 +46,7 @@ export function SiteFooter() {
               </span>
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              أقوى جيم في القاهرة الجديدة — أحدث الأجهزة الأمريكية، مدربون معتمدون دوليًا، وأجواء
-              تدفعك كل يوم لتكون نسخة أقوى من نفسك.
+              {t.footer.desc}
             </p>
             <div className="flex items-center gap-2">
               {SOCIALS.map((social) => (
@@ -62,19 +64,19 @@ export function SiteFooter() {
             </div>
             <p className="flex items-center gap-2 text-xs text-muted-foreground/80">
               <Waves className="size-3.5 text-primary/70" aria-hidden="true" />
-              مدربون معتمدون دوليًا — تجربة تمرين آمنة وممتعة
+              {t.footer.certified}
             </p>
           </div>
 
           {/* Quick links */}
-          <nav aria-label="روابط سريعة">
-            <h3 className="font-black">روابط سريعة</h3>
+          <nav aria-label={t.footer.quickLinks}>
+            <h3 className="font-black">{t.footer.quickLinks}</h3>
             <span
               aria-hidden="true"
               className="mb-5 mt-2 block h-0.5 w-10 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8]/40"
             />
             <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
-              {NAV_LINKS.map((link) => (
+              {t.nav.items.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
@@ -96,7 +98,7 @@ export function SiteFooter() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-black">تواصل معنا</h3>
+            <h3 className="font-black">{t.footer.contactUs}</h3>
             <span
               aria-hidden="true"
               className="mb-5 mt-2 block h-0.5 w-10 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8]/40"
@@ -147,7 +149,7 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground backdrop-blur-sm sm:flex-row md:px-6">
           <p className="flex items-center gap-2">
             <Waves className="size-3.5 text-primary/70" aria-hidden="true" />
-            © {year} Ocean GYM — جميع الحقوق محفوظة
+            © {year} Ocean GYM — {t.footer.rights}
           </p>
           <p className="flex items-center gap-2" dir="ltr">
             <span aria-hidden="true" className="size-1.5 rotate-45 rounded-[1px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_6px_rgba(226,189,98,0.5)]" />

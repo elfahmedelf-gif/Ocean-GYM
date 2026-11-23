@@ -5,12 +5,14 @@ import { BadgeCheck, Quote, Star } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
+import { useLang } from "./language";
 import { SectionHeading } from "./section-heading";
 import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 import type { TestimonialView } from "./types";
 
 function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
+  const { t } = useLang();
   const rating = Math.min(5, Math.max(1, testimonial.rating));
 
   return (
@@ -32,7 +34,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
         <div
           className="flex gap-0.5"
           role="img"
-          aria-label={`التقييم: ${rating} من 5 نجوم`}
+          aria-label={t.testimonials.ratingAria(rating)}
         >
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
@@ -65,7 +67,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
           {testimonial.image ? (
             <Image
               src={testimonial.image}
-              alt={`صورة ${testimonial.name}`}
+              alt={t.testimonials.imageAlt(testimonial.name)}
               width={40}
               height={40}
               className="size-10 shrink-0 rounded-full border border-background object-cover"
@@ -93,6 +95,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
 }
 
 export function TestimonialsSection({ testimonials }: { testimonials: TestimonialView[] }) {
+  const { t } = useLang();
   // Average rating across approved testimonials (1 decimal, clamped to 5).
   const avgRating =
     testimonials.length > 0
@@ -113,20 +116,22 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
       <WaveDivider variant={1} className="text-[#081228]" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="آراء العملاء"
+          kicker={t.testimonials.kicker}
           headingId="testimonials-title"
           ghostNumber="06"
           title={
             <>
-              قصص <span className="text-gradient-ocean">نجاح</span> أعضائنا
+              {t.testimonials.titlePre}
+              <span className="text-gradient-ocean">{t.testimonials.titleGradient}</span>
+              {t.testimonials.titlePost}
             </>
           }
-          subtitle="أكثر من 1200 عضو اختاروا Ocean GYM — إليك بعض تجاربهم الحقيقية."
+          subtitle={t.testimonials.subtitle}
         />
 
         {testimonials.length === 0 ? (
           <FadeUp className="glass mx-auto max-w-md rounded-2xl p-10 text-center text-muted-foreground">
-            آراء العملاء ستتوفر قريبًا.
+            {t.testimonials.empty}
           </FadeUp>
         ) : (
           <>
@@ -148,8 +153,9 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
                   <span dir="ltr">{avgRating.toFixed(1)}</span> / 5
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  متوسط تقييم <span dir="ltr">{testimonials.length}</span>
-                  {testimonials.length === 1 ? " تجربة" : " تجارب"} حقيقية
+                  {t.testimonialsPill.avgPre}
+                  <span dir="ltr">{testimonials.length}</span>
+                  {testimonials.length === 1 ? t.testimonialsPill.avgPostSingle : t.testimonialsPill.avgPostMulti}
                 </span>
               </div>
             </FadeUp>
