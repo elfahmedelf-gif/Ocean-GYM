@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   CalendarDays,
   Dumbbell,
   Home,
   Images,
   Info,
-  KeyRound,
   Mail,
   Menu,
   Sparkles,
@@ -157,16 +155,6 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {/* Member portal — quiet ghost link, revealed from md up */}
-          <Link
-            href="/portal/login"
-            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary md:inline-flex xl:text-sm"
-            aria-label="بوابة الأعضاء — تسجيل الدخول"
-          >
-            <KeyRound className="size-3.5 text-primary/80" aria-hidden="true" />
-            بوابة الأعضاء
-          </Link>
-
           <Button
             asChild
             className="btn-gradient shimmer hidden h-11 px-6 font-bold shadow-lg shadow-primary/25 sm:inline-flex"
@@ -239,21 +227,11 @@ export function Navbar() {
                   );
                 })}
               </nav>
-              <div className="grid grid-cols-2 gap-2 border-t border-primary/10 p-4">
-                <Button asChild className="btn-gradient shimmer h-11 font-bold">
+              <div className="border-t border-primary/10 p-4">
+                <Button asChild className="btn-gradient shimmer h-11 w-full font-bold">
                   <a href="#join" onClick={() => setOpen(false)}>
                     انضم الآن
                   </a>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-11 border-primary/40 bg-primary/5 font-bold text-primary hover:bg-primary/15 hover:text-primary"
-                >
-                  <Link href="/portal/login" onClick={() => setOpen(false)}>
-                    <KeyRound className="size-4" aria-hidden="true" />
-                    بوابة الأعضاء
-                  </Link>
                 </Button>
               </div>
             </SheetContent>

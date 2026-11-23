@@ -13,6 +13,7 @@ import { GallerySection } from "@/components/site/gallery-section";
 import { TestimonialsSection } from "@/components/site/testimonials-section";
 import { JoinSection } from "@/components/site/join-section";
 import { ContactSection } from "@/components/site/contact-section";
+import { TrustMarquee } from "@/components/site/trust-marquee";
 import { SiteFooter } from "@/components/site/footer";
 import type {
   GalleryView,
@@ -159,6 +160,7 @@ export default async function HomePage() {
       <Navbar />
       <main id="main" className="flex-1">
         <Hero />
+        <TrustMarquee />
         <AboutSection />
         <ClassesSection classes={classes} />
         <ScheduleSection slots={slots} initialDay={currentGymDay()} />

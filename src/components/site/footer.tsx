@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { KeyRound, Mail, MapPin, Phone, Waves } from "lucide-react";
+import { Mail, MapPin, Phone, Waves } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "./nav-links";
@@ -92,18 +91,6 @@ export function SiteFooter() {
                   </a>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/portal/login"
-                  className={cn(
-                    LINK_FOCUS,
-                    "flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
-                  )}
-                >
-                  <KeyRound className="size-3.5 text-primary" aria-hidden="true" />
-                  بوابة الأعضاء
-                </Link>
-              </li>
             </ul>
           </nav>
 
@@ -162,20 +149,10 @@ export function SiteFooter() {
             <Waves className="size-3.5 text-primary/70" aria-hidden="true" />
             © {year} Ocean GYM — جميع الحقوق محفوظة
           </p>
-          <Link
-            href="/admin"
-            className={cn(
-              LINK_FOCUS,
-              "inline-flex items-center gap-1.5 transition-colors hover:text-primary"
-            )}
-          >
-            {/* Gold diamond — tiny luxury marker */}
-            <span
-              aria-hidden="true"
-              className="size-1.5 rotate-45 rounded-[1px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_6px_rgba(226,189,98,0.5)]"
-            />
-            لوحة التحكم
-          </Link>
+          <p className="flex items-center gap-2" dir="ltr">
+            <span aria-hidden="true" className="size-1.5 rotate-45 rounded-[1px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_6px_rgba(226,189,98,0.5)]" />
+            <span className="font-semibold tracking-widest text-foreground/70">OCEAN GYM</span>
+          </p>
         </div>
       </div>
     </footer>
