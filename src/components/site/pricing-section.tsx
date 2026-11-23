@@ -37,7 +37,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
         />
       ) : null}
       {plan.popular ? (
-        <span className="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8] px-4 py-1.5 text-sm font-black text-primary-foreground shadow-lg shadow-primary/40">
+        <span className="gold-badge absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-black">
           <Flame className="size-3.5" aria-hidden="true" />
           الأكثر طلبًا
         </span>
@@ -108,6 +108,11 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
     >
       {/* Shoreline from the deep trainers band above */}
       <WaveDivider variant={2} className="text-[#081228]" />
+      {/* Warm gold ambient behind the heading — quiet luxury for the pricing stage */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-16 left-1/2 size-[420px] -translate-x-1/2 rounded-full bg-[#e2bd62]/[0.05] blur-3xl"
+      />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="الباقات"

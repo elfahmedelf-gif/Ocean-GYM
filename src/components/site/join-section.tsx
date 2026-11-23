@@ -206,7 +206,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                     autoComplete="name"
                     aria-invalid={Boolean(errors.name)}
                     aria-describedby={errors.name ? "join-name-error" : undefined}
-                    className="h-11"
+                    className="h-12 border-primary/25 bg-background/50 focus-visible:border-primary/60 focus-visible:ring-primary/25"
                   />
                   {errors.name ? (
                     <p id="join-name-error" role="alert" className="text-xs text-destructive">
@@ -229,7 +229,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       autoComplete="email"
                       aria-invalid={Boolean(errors.email)}
                       aria-describedby={errors.email ? "join-email-error" : undefined}
-                      className="h-11"
+                      className="h-12 border-primary/25 bg-background/50 focus-visible:border-primary/60 focus-visible:ring-primary/25"
                     />
                     {errors.email ? (
                       <p id="join-email-error" role="alert" className="text-xs text-destructive">
@@ -250,7 +250,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       autoComplete="tel"
                       aria-invalid={Boolean(errors.phone)}
                       aria-describedby={errors.phone ? "join-phone-error" : undefined}
-                      className="h-11"
+                      className="h-12 border-primary/25 bg-background/50 focus-visible:border-primary/60 focus-visible:ring-primary/25"
                     />
                     {errors.phone ? (
                       <p id="join-phone-error" role="alert" className="text-xs text-destructive">
@@ -264,7 +264,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                   <div className="space-y-2">
                     <Label htmlFor="join-plan">اختر الباقة</Label>
                     <Select value={planId ?? ""} onValueChange={(value) => setPlanId(value || null)}>
-                      <SelectTrigger id="join-plan" className="h-11 w-full">
+                      <SelectTrigger id="join-plan" className="h-12 w-full border-primary/25 bg-background/50">
                         <SelectValue placeholder="اختر الباقة (اختياري)" />
                       </SelectTrigger>
                       <SelectContent>
@@ -287,6 +287,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="أخبرنا عن هدفك أو أي متطلبات خاصة (اختياري)"
                     rows={3}
+                    className="border-primary/25 bg-background/50 focus-visible:border-primary/60 focus-visible:ring-primary/25"
                   />
                 </div>
 

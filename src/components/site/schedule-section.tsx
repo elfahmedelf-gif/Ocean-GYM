@@ -54,12 +54,17 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
 
       {/* Slot card */}
       <div
-        className="glass card-sheen card-spotlight mb-1 flex flex-1 items-center gap-3 rounded-2xl border border-primary/15 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg hover:shadow-primary/10 md:gap-4 md:p-4"
+        className="glass card-sheen card-spotlight group/slot relative mb-1 flex flex-1 items-center gap-3 overflow-hidden rounded-2xl border border-primary/15 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg hover:shadow-primary/10 md:gap-4 md:p-4"
         {...spotlightProps}
       >
+        {/* Hover accent bar sliding in from the inline-start edge */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-2 start-0 w-[3px] origin-top scale-y-0 rounded-full bg-gradient-to-b from-primary to-[#1e6fe8] transition-transform duration-500 group-hover/slot:scale-y-100"
+        />
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-black md:text-lg">{slot.gymClass.name}</h3>
+            <h3 className="text-sm font-black transition-colors duration-300 group-hover/slot:text-primary md:text-lg">{slot.gymClass.name}</h3>
             <span
               className={cn(
                 "rounded-full border px-2.5 py-0.5 text-[11px] font-bold md:text-xs",
@@ -88,7 +93,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
             alt={`كلاس ${slot.gymClass.name}`}
             width={64}
             height={48}
-            className="h-12 w-16 shrink-0 rounded-lg border border-primary/20 object-cover"
+            className="h-12 w-16 shrink-0 rounded-lg border border-primary/20 object-cover transition-all duration-300 group-hover/slot:scale-105 group-hover/slot:border-primary/50"
           />
         ) : null}
       </div>
@@ -190,7 +195,7 @@ export function ScheduleSection({
                     </span>
                     {isToday ? (
                       <span
-                        className="size-1.5 rounded-full bg-current opacity-80"
+                        className="size-1.5 rounded-full bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_8px_rgba(226,189,98,0.8)]"
                         title="اليوم"
                         aria-label="اليوم"
                       />

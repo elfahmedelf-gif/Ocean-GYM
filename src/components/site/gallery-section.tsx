@@ -85,6 +85,12 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
+                {/* Title tag stays pinned on the featured tile (desktop) */}
+                {i === 0 ? (
+                  <span className="absolute inset-x-0 bottom-0 hidden p-3 text-start text-sm font-bold lg:block">
+                    <span className="glass rounded-lg px-2.5 py-1">{item.title}</span>
+                  </span>
+                ) : null}
                 <span
                   aria-hidden="true"
                   className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"

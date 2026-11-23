@@ -19,7 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Counter } from "./counter";
-import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 
 /** Slide rotation interval (ms) — drives autoplay, progress bar and Ken Burns zoom. */
@@ -192,7 +191,7 @@ export function Hero() {
           <motion.h1
             id="hero-title"
             variants={STACK_ITEM}
-            className="text-balance text-4xl font-black leading-[1.2] sm:text-5xl md:text-6xl md:leading-[1.2] lg:text-7xl lg:leading-[1.18]"
+            className="text-balance text-4xl font-black leading-[1.2] drop-shadow-[0_10px_36px_rgba(0,0,0,0.5)] sm:text-5xl md:text-6xl md:leading-[1.2] lg:text-7xl lg:leading-[1.18]"
           >
             <span className="text-gradient-ocean-animated text-glow">
               بحر من القوة
@@ -240,35 +239,35 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Animated stats */}
+        {/* Luxury stats — one frosted hairline grid instead of loose cards */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-          className="mt-16 grid grid-cols-2 gap-3 md:mt-20 md:gap-4 lg:grid-cols-4"
+          className="mt-16 md:mt-20"
         >
-          {STATS.map((stat) => (
-            <motion.div
-              key={stat.label}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-              }}
-              className="glass card-sheen card-spotlight group rounded-2xl px-4 py-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/15"
-              {...spotlightProps}
-            >
-              <span className="icon-tile mx-auto mb-3 size-11">
-                <stat.icon className="size-5" aria-hidden="true" />
-              </span>
-              <div className="text-3xl font-black text-gradient-ocean tabular-nums md:text-4xl">
-                <Counter to={stat.to} prefix="+" />
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
+            className="ocean-ring mx-auto grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl border border-primary/25 bg-primary/15 shadow-2xl shadow-black/50 backdrop-blur-xl sm:grid-cols-4"
+          >
+            {STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="stat-cell group flex flex-col items-center px-4 py-6 text-center"
+              >
+                <span className="icon-tile mb-3 size-11">
+                  <stat.icon className="size-5" aria-hidden="true" />
+                </span>
+                <div className="text-3xl font-black text-gradient-ocean tabular-nums md:text-4xl">
+                  <Counter to={stat.to} prefix="+" />
+                </div>
+                <div className="mt-1 text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/90">
+                  {stat.label}
+                </div>
               </div>
-              <div className="mt-1 text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/90">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
+            ))}
+          </motion.div>
         </motion.div>
       </div>
 

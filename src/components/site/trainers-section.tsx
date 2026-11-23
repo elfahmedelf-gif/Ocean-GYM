@@ -24,7 +24,7 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
 
   return (
     <article
-      className="card-sheen card-spotlight group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15"
+      className="card-sheen card-spotlight group relative overflow-hidden rounded-3xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_24px_64px_-16px_rgba(56,199,232,0.4)]"
       {...spotlightProps}
     >
       {/* Gradient edge sweeps across the top on hover */}
@@ -39,23 +39,28 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
             alt={`المدرب ${trainer.name}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:saturate-125"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-secondary">
             <UserRound className="size-16 text-primary/40" aria-hidden="true" />
           </div>
         )}
+        {/* Ocean duotone wash that lifts to true color on hover */}
+        <div
+          aria-hidden="true"
+          className="duotone-ocean absolute inset-0 z-[1] bg-gradient-to-t from-primary/35 via-transparent to-primary/10"
+        />
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-100"
         />
 
         <div className="absolute inset-x-0 bottom-0 p-5">
-          {/* Gradient nameplate hairline above the name — matches the card edge language */}
+          {/* Gold hairline above the name — the luxury nameplate signature */}
           <span
             aria-hidden="true"
-            className="mb-3 block h-[2px] w-10 origin-right scale-x-100 rounded-full bg-gradient-to-l from-primary to-[#1e6fe8]/40 transition-transform duration-500 group-hover:scale-x-[2.2]"
+            className="mb-3 block h-[2px] w-10 origin-right scale-x-100 rounded-full bg-gradient-to-l from-[#e7c069] to-[#c9962e]/30 shadow-[0_0_10px_rgba(226,189,98,0.4)] transition-transform duration-500 group-hover:scale-x-[2.2]"
           />
           <h3 className="text-xl font-black">{trainer.name}</h3>
           <p className="mt-1 text-sm font-bold text-primary">{trainer.role}</p>

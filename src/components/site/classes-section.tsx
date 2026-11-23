@@ -15,7 +15,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
 
   return (
     <article
-      className="card-spotlight group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15"
+      className="card-spotlight group relative flex flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_24px_60px_-16px_rgba(56,199,232,0.35)]"
       {...spotlightProps}
     >
       {/* Gradient edge that sweeps in across the top on hover */}
@@ -23,14 +23,14 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
         aria-hidden="true"
         className="absolute inset-x-0 top-0 z-10 h-[3px] origin-right scale-x-0 bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
       />
-      <div className="relative h-56 w-full overflow-hidden">
+      <div className="relative h-60 w-full overflow-hidden">
         {gymClass.image ? (
           <Image
             src={gymClass.image}
             alt={`كلاس ${gymClass.name}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            className="object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:saturate-125"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-secondary">
@@ -110,6 +110,8 @@ export function ClassesSection({ classes }: { classes: GymClassView[] }) {
     >
       {/* Shoreline from the plain section above */}
       <WaveDivider variant={2} className="text-background" />
+      {/* Stage light washing the top of the deep band */}
+      <div aria-hidden="true" className="beam-top pointer-events-none absolute inset-x-0 top-0 h-44" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="الكلاسات"

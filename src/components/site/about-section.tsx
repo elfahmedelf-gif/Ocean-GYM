@@ -56,8 +56,13 @@ export function AboutSection() {
                 aria-hidden="true"
                 className="ring-dashed animate-spin-slower pointer-events-none absolute -bottom-14 -end-14 z-0 size-52 opacity-40"
               />
+              {/* Luxury offset hairline frame — a gallery-style back plate */}
               <div
-                className="relative z-10 overflow-hidden rounded-3xl shadow-2xl shadow-black/40 ring-1 ring-primary/15"
+                aria-hidden="true"
+                className="absolute -bottom-5 -start-5 z-0 h-full w-full rounded-3xl bg-gradient-to-br from-primary/25 via-primary/5 to-transparent"
+              />
+              <div
+                className="lux-frame relative z-10 overflow-hidden rounded-3xl"
               >
                 <Image
                   src="/images/about-gym.jpg"
@@ -95,10 +100,10 @@ export function AboutSection() {
                   <span dir="ltr" className="text-gradient-ocean">+1200</span> عضو نشط
                 </span>
               </div>
-              {/* Since-2017 badge — live pulse adds a premium feel */}
+              {/* Since-2017 badge — the luxury gold anchor of the section */}
               <div className="glass ocean-ring absolute bottom-6 start-6 z-20 flex items-center gap-2.5 rounded-2xl px-5 py-3">
-                <Waves className="size-5 text-primary" aria-hidden="true" />
-                <span className="text-lg font-black text-gradient-ocean">منذ 2017</span>
+                <Waves className="size-5 text-[#e7c069]" aria-hidden="true" />
+                <span className="gold-gradient text-lg font-black">منذ 2017</span>
               </div>
             </div>
           </FadeUp>
@@ -120,12 +125,19 @@ export function AboutSection() {
 
             <FadeUp delay={0.1}>
               <div className="grid gap-4 sm:grid-cols-2">
-                {FEATURES.map((feature) => (
+                {FEATURES.map((feature, i) => (
                   <div
                     key={feature.title}
-                    className="card-sheen card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 md:p-5"
+                    className="card-sheen card-spotlight group relative flex items-start gap-3.5 overflow-hidden rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 md:p-5"
                     {...spotlightProps}
                   >
+                    {/* Editorial index — tiny, top-end corner */}
+                    <span
+                      aria-hidden="true"
+                      className="text-ghost-outline pointer-events-none absolute end-3 top-2 select-none text-2xl font-black leading-none"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                     <span className="icon-tile size-11">
                       <feature.icon className="size-5" aria-hidden="true" />
                     </span>

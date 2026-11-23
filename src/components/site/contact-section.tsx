@@ -110,7 +110,7 @@ export function ContactSection() {
           </div>
 
           {/* Location map — full-width below the cards */}
-          <div className="overflow-hidden rounded-3xl border border-primary/25 bg-card shadow-xl shadow-black/30 ring-1 ring-inset ring-primary/10">
+          <div className="lux-frame overflow-hidden rounded-3xl bg-card">
             <span
               aria-hidden="true"
               className="block h-[3px] w-full bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0]"

@@ -52,8 +52,8 @@ export function SectionHeading({
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute -top-8 select-none font-black leading-none text-primary/[0.07] md:-top-10",
-            "text-[clamp(3.5rem,9vw,6rem)]",
+            "text-ghost-outline pointer-events-none absolute -top-8 select-none font-black leading-none md:-top-10",
+            "text-[clamp(3.5rem,9vw,6.5rem)]",
             align === "center"
               ? "left-1/2 -translate-x-1/2"
               : "start-0"
@@ -69,12 +69,14 @@ export function SectionHeading({
       >
         {title}
       </h2>
-      {/* Glowing accent bar — symmetric so it reads the same in RTL, with a hot center dot */}
+      {/* Luxury accent bar — symmetric cyan hairline with a champagne-gold
+          diamond at its heart: the shared signature of every section header */}
       <span
         aria-hidden="true"
-        className="relative h-[3px] w-28 rounded-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+        className="relative h-[3px] w-32 rounded-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"
       >
-        <span className="absolute left-1/2 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_12px_rgba(56,199,232,0.9)]" />
+        <span className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-[2px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_14px_rgba(226,189,98,0.65)]" />
+        <span className="absolute left-1/2 top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/25 blur-[3px]" />
       </span>
       {subtitle ? (
         <p className="max-w-2xl text-balance text-base leading-relaxed text-muted-foreground md:text-lg">

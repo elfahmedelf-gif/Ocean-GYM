@@ -388,6 +388,72 @@
     mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 20%, transparent 80%);
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 20%, transparent 80%);
   }
+
+  /* ===== Premium design system v5 — luxury layer (فخامة) ===== */
+
+  /* Champagne-gold gradient text — reserved for the few true luxury anchors
+     (منذ 2017 badge, featured marks). Cyan stays the identity color. */
+  .gold-gradient {
+    background: linear-gradient(100deg, #f8e7bd 0%, #e7c069 42%, #c9962e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Gold surface for premium badges (popular plan) */
+  .gold-badge {
+    background-image: linear-gradient(115deg, #f3ddab 0%, #e2bd62 48%, #bb8c2f 100%);
+    color: #2a1c05;
+    box-shadow:
+      0 10px 28px rgba(226, 189, 98, 0.35),
+      inset 0 1px 0 rgba(255, 244, 214, 0.65);
+  }
+  .gold-badge:hover {
+    filter: brightness(1.06);
+  }
+
+  /* Editorial outlined ghost numbers (section headers) */
+  .text-ghost-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(56, 199, 232, 0.14);
+    paint-order: stroke;
+  }
+
+  /* Luxury double frame for hero imagery — a gradient hairline offset behind
+     the photo + deep drop shadow, like a gallery frame */
+  .lux-frame {
+    box-shadow:
+      0 30px 80px -24px rgba(0, 0, 0, 0.65),
+      0 0 0 1px rgba(56, 199, 232, 0.18);
+  }
+
+  /* Radial light beam washing the top of deep bands — quiet stage lighting */
+  .beam-top {
+    background: radial-gradient(
+      58% 100% at 50% 0%,
+      rgba(56, 199, 232, 0.12),
+      transparent 72%
+    );
+  }
+
+  /* Frosted stat cell used inside the hero hairline grid */
+  .stat-cell {
+    background: linear-gradient(180deg, rgba(10, 22, 48, 0.82), rgba(8, 18, 40, 0.9));
+    transition: background-color 0.35s ease;
+  }
+  .group:hover .stat-cell,
+  .stat-cell:hover {
+    background: linear-gradient(180deg, rgba(56, 199, 232, 0.12), rgba(10, 22, 48, 0.85));
+  }
+
+  /* Duotone ocean tint for trainer portraits — lifts to full color on hover */
+  .duotone-ocean {
+    mix-blend-mode: overlay;
+    transition: opacity 0.7s ease;
+  }
+  .group:hover .duotone-ocean {
+    opacity: 0;
+  }
 }
 
 @keyframes border-flow {
@@ -520,3 +586,5 @@
 /* cache-bust v4-1795387000 */
 
 /* cache-bust v4b-1795387200 */
+
+/* cache-bust v5-luxury-1795390000 */

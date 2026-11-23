@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Quote, Star } from "lucide-react";
+import { BadgeCheck, Quote, Star } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { FadeUp } from "./fade-up";
@@ -15,7 +15,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
 
   return (
     <figure
-      className="card-sheen card-spotlight group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+      className="card-sheen card-spotlight group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_48px_-16px_rgba(56,199,232,0.3)]"
       {...spotlightProps}
     >
       {/* Giant ghost quote watermark behind the content — editorial depth */}
@@ -76,10 +76,15 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
             </Avatar>
           )}
         </span>
-        <div>
-          <div className="text-sm font-extrabold">{testimonial.name}</div>
-          <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+        <div className="min-w-0">
+          <div className="truncate text-sm font-extrabold">{testimonial.name}</div>
+          <div className="truncate text-xs text-muted-foreground">{testimonial.role}</div>
         </div>
+        {/* Verified-member gold check — quiet trust marker */}
+        <BadgeCheck
+          aria-hidden="true"
+          className="ms-auto size-4 shrink-0 text-[#e7c069]/80"
+        />
       </figcaption>
     </figure>
   );

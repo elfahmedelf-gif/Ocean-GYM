@@ -138,7 +138,7 @@ export default async function HomePage() {
   const { classes, trainers, plans, testimonials, gallery, slots } = await loadPageData();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-clip">
       {/* Fixed ambient backdrop — faint blueprint grid + drifting ocean glows
           that give the whole page depth without re-rendering on scroll */}
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
