@@ -38,17 +38,22 @@ export function PageHeader({
 }) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-4">
+        {/* Luxury icon tile — ocean gradient fill + gold hairline cap */}
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/25 text-primary"
+          className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/25 via-primary/10 to-transparent text-primary ring-1 ring-inset ring-primary/40 shadow-[0_8px_22px_rgba(56,199,232,0.22)]"
           aria-hidden="true"
         >
+          <span className="absolute inset-x-2 top-0 h-px bg-gradient-to-l from-transparent via-[#e2bd62]/60 to-transparent" />
           <Icon className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight">{title}</h1>
           {subtitle && (
-            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+            <p className="mt-1.5 flex items-center gap-2 text-sm text-muted-foreground">
+              <span aria-hidden="true" className="h-px w-5 bg-gradient-to-l from-primary/60 to-transparent" />
+              {subtitle}
+            </p>
           )}
         </div>
       </div>
@@ -73,7 +78,9 @@ const STATUS_BADGE_CLASS: Record<MemberStatus, string> = {
 export function StatusBadge({ status }: { status: string }) {
   const cls = STATUS_BADGE_CLASS[status as MemberStatus] ?? "bg-muted text-muted-foreground border-border";
   return (
-    <Badge variant="outline" className={cn("rounded-full px-2.5", cls)}>
+    <Badge variant="outline" className={cn("rounded-full px-2.5 gap-1.5", cls)}>
+      {/* Leading dot echoes the badge color for a quick-glance status signal */}
+      <span aria-hidden="true" className="size-1.5 rounded-full bg-current" />
       {statusLabel(status)}
     </Badge>
   );
@@ -97,13 +104,19 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 py-16 px-6 text-center rounded-xl border border-dashed bg-card",
+        "glass flex flex-col items-center justify-center gap-4 py-16 px-6 text-center rounded-2xl border border-dashed border-primary/25",
         className
       )}
     >
-      <Icon className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
-      <p className="text-muted-foreground font-medium">{title}</p>
-      {description && <p className="text-sm text-muted-foreground/80">{description}</p>}
+      <span
+        aria-hidden="true"
+        className="relative flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-transparent text-primary/70 ring-1 ring-inset ring-primary/30"
+      >
+        <span className="ring-dashed absolute -inset-2 opacity-50" />
+        <Icon className="h-7 w-7" />
+      </span>
+      <p className="font-bold">{title}</p>
+      {description && <p className="text-sm text-muted-foreground">{description}</p>}
       {children}
     </div>
   );

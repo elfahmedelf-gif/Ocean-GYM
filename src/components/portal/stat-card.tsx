@@ -52,13 +52,13 @@ export default function StatCard({
   tone = "default",
 }: StatCardProps) {
   return (
-    <Card className="bg-card/60">
+    <Card className="card-sheen group bg-card/60 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
       <CardContent className="p-4">
         <div className="flex items-center gap-2">
           {Icon && (
             <span
               className={cn(
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110",
                 CHIP_TONES[tone]
               )}
             >

@@ -687,6 +687,52 @@
   animation: ken-burns calc(var(--slide-duration, 6s) * 1.4) ease-out forwards;
 }
 
+/* ===== Premium design system v7 — dashboards luxury layer (لوحات التحكم) ===== */
+
+/* Deep frosted panel — the elevated card surface for admin & portal.
+   Pairs with ui/card and .glass: richer fill, cyan hairline, deeper shadow. */
+.panel-card {
+  background: linear-gradient(180deg, rgba(14, 28, 58, 0.72) 0%, rgba(9, 19, 42, 0.9) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(56, 199, 232, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 50px -26px rgba(0, 0, 0, 0.65);
+}
+
+/* Vertical aurora tuned for the admin sidebar — a soft light from the top
+   and a deep ocean glow at the bottom, no JS, no motion cost. */
+.sidebar-aurora {
+  background:
+    radial-gradient(92% 42% at 50% 0%, rgba(56, 199, 232, 0.11), transparent 70%),
+    radial-gradient(100% 44% at 50% 100%, rgba(30, 111, 232, 0.13), transparent 74%);
+}
+
+/* Champagne status dot used in badges/pills (today marker, gold accents) */
+.dot-gold {
+  box-shadow: 0 0 8px rgba(226, 189, 98, 0.85);
+}
+
+/* Gradient value text for big dashboard numbers (non-animated variant) */
+.text-gradient-value {
+  background: linear-gradient(120deg, #7dd8f0 0%, #38c7e8 45%, #1e6fe8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glass tab bar for the portal tab switcher */
+.tabbar-glass {
+  background: rgba(10, 22, 48, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 199, 232, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 14px 36px -20px rgba(0, 0, 0, 0.6);
+}
+
 /* cache-bust v4-1795387000 */
 
 /* cache-bust v4b-1795387200 */
@@ -694,3 +740,7 @@
 /* cache-bust v5-luxury-1795390000 */
 
 /* cache-bust v6-wow-1795394000 */
+
+/* cache-bust v7-dash-1795410000 */
+
+/* cache-bust v7b-1795412000 */

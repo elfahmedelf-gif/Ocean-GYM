@@ -29,7 +29,7 @@ import type {
 
 /** Shared active-state styling for the three tab triggers (single source of truth). */
 const TRIGGER_CLASS =
-  "min-h-11 gap-2 py-2.5 sm:min-h-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-primary data-[state=active]:text-primary-foreground";
+  "min-h-11 gap-2 py-2.5 sm:min-h-10 rounded-xl font-bold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-gradient-to-l data-[state=active]:from-primary data-[state=active]:to-[#1e6fe8] data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground";
 
 /** Subtle fade-up on tab content mount — skipped when reduced motion is preferred. */
 function TabFadeIn({ children }: { children: ReactNode }) {
@@ -120,7 +120,7 @@ export default function PortalDashboard() {
     <Tabs defaultValue="overview" dir="rtl" className="space-y-6">
       <h1 className="sr-only">بوابة أعضاء Ocean GYM</h1>
 
-      <TabsList className="grid h-auto w-full grid-cols-3 bg-card/60 p-1">
+      <TabsList className="tabbar-glass grid h-auto w-full grid-cols-3 rounded-2xl p-1.5">
         <TabsTrigger value="overview" className={TRIGGER_CLASS}>
           <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
           نظرة عامة

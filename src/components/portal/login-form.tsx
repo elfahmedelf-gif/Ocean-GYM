@@ -112,7 +112,7 @@ export default function LoginForm() {
 
       <Button
         type="submit"
-        className="h-11 w-full text-base font-semibold"
+        className="btn-gradient glow-cyan-strong shimmer h-11 w-full text-base font-bold"
         disabled={loading}
       >
         {loading ? (
@@ -131,7 +131,7 @@ export default function LoginForm() {
       <div className="rounded-lg border border-primary/25 bg-primary/5 p-3 text-center text-xs leading-relaxed text-muted-foreground">
         بيانات تجريبية للتجربة:{" "}
         <span className="font-mono font-semibold text-primary" dir="ltr">
-          nourhan@example.com / OC-1002
+          mohamed@example.com / OC-2024
         </span>
       </div>
     </form>

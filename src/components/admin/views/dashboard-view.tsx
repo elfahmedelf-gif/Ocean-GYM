@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { apiFetch } from "@/components/admin/api";
 import { StatusBadge } from "@/components/admin/shared";
+import { spotlightProps } from "@/components/site/spotlight";
 import { formatDate } from "@/lib/gym";
 import type { StatsResponse } from "@/components/admin/types";
 
@@ -38,6 +39,39 @@ const CHIP = {
   red: "bg-red-500/15 text-red-400 border-red-500/30",
   violet: "bg-violet-500/15 text-violet-400 border-violet-500/30",
 } as const;
+
+/**
+ * Dashboard welcome header — greeting chip with the gold diamond marker,
+ * live date, and a gradient hairline melting into the content below.
+ */
+function FadeHeader({ today }: { today: string }) {
+  return (
+    <div className="relative">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight">
+            مرحبًا بك في لوحة تحكم{" "}
+            <span className="text-gradient-ocean text-glow">Ocean GYM</span>
+          </h1>
+          <p
+            className="mt-1.5 flex items-center gap-2 text-sm text-muted-foreground"
+            suppressHydrationWarning
+          >
+            <span
+              aria-hidden="true"
+              className="size-1.5 rotate-45 rounded-[1px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] dot-gold"
+            />
+            {today || "جارٍ تحميل التاريخ..."}
+          </p>
+        </div>
+      </div>
+      <span
+        aria-hidden="true"
+        className="mt-4 block h-px w-full bg-gradient-to-l from-transparent via-primary/30 to-transparent"
+      />
+    </div>
+  );
+}
 
 const STAT_CARDS = [
   {
@@ -134,15 +168,8 @@ export default function DashboardView() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold">
-          مرحبًا بك في لوحة تحكم <span className="text-gradient-ocean">Ocean GYM</span>
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground" suppressHydrationWarning>
-          {today || "جارٍ تحميل التاريخ..."}
-        </p>
-      </div>
+      {/* Header — greeting chip + gradient hairline underline */}
+      <FadeHeader today={today} />
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -156,13 +183,22 @@ export default function DashboardView() {
                 ? card.format(value as number)
                 : String(value);
           return (
-            <Card key={card.key} className="p-0">
+            <Card
+              key={card.key}
+              className="card-sheen card-spotlight group relative overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+              {...spotlightProps}
+            >
+              {/* Gradient edge sweeping across the top on hover */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 z-10 h-[3px] origin-right scale-x-0 bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+              />
               <CardContent className="p-4 md:p-5 flex items-center gap-3 md:gap-4">
-                <div
-                  className={`flex h-10 w-10 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-xl border ${card.chip}`}
+                <span
+                  className={`flex h-10 w-10 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-110 ${card.chip}`}
                 >
                   <Icon className="h-5 w-5 md:h-6 md:w-6" aria-hidden="true" />
-                </div>
+                </span>
                 <div className="min-w-0">
                   {loading ? (
                     <>
@@ -171,10 +207,10 @@ export default function DashboardView() {
                     </>
                   ) : (
                     <>
-                      <p className="text-xl md:text-2xl font-bold tabular-nums">
+                      <p className="text-xl md:text-2xl font-black tabular-nums text-gradient-value">
                         {display}
                       </p>
-                      <p className="text-xs md:text-sm text-muted-foreground truncate">
+                      <p className="text-xs md:text-sm text-muted-foreground truncate transition-colors duration-300 group-hover:text-foreground/80">
                         {card.label}
                       </p>
                     </>
@@ -214,7 +250,7 @@ export default function DashboardView() {
                   </div>
                   <div className="h-2.5 w-full rounded-full bg-muted overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-l from-primary to-primary/50 transition-all duration-700"
+                      className="h-full rounded-full bg-gradient-to-l from-primary via-primary/80 to-[#1e6fe8]/60 shadow-[0_0_12px_rgba(56,199,232,0.45)] transition-all duration-700"
                       style={{ width: `${(d.count / maxDistribution) * 100}%` }}
                       role="progressbar"
                       aria-valuenow={d.count}
@@ -232,14 +268,18 @@ export default function DashboardView() {
 
       {/* Recent members + recent messages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">أحدث الأعضاء</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-border/60">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <span aria-hidden="true" className="h-4 w-1 rounded-full bg-gradient-to-b from-primary to-[#1e6fe8]" />
+              أحدث الأعضاء
+            </CardTitle>
             <Link
               href="/admin/members"
-              className="text-sm font-medium text-primary hover:underline"
+              className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >
               عرض الكل
+              <span aria-hidden="true" className="h-px w-0 bg-primary transition-all duration-300 group-hover:w-3" />
             </Link>
           </CardHeader>
           <CardContent>
@@ -284,14 +324,18 @@ export default function DashboardView() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">آخر الرسائل</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-border/60">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <span aria-hidden="true" className="h-4 w-1 rounded-full bg-gradient-to-b from-primary to-[#1e6fe8]" />
+              آخر الرسائل
+            </CardTitle>
             <Link
               href="/admin/messages"
-              className="text-sm font-medium text-primary hover:underline"
+              className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary/80"
             >
               عرض الكل
+              <span aria-hidden="true" className="h-px w-0 bg-primary transition-all duration-300 group-hover:w-3" />
             </Link>
           </CardHeader>
           <CardContent>

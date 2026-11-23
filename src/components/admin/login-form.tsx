@@ -117,7 +117,7 @@ export default function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full h-11 text-base font-semibold"
+        className="btn-gradient glow-cyan-strong shimmer h-11 w-full text-base font-bold"
         disabled={loading}
       >
         {loading ? (
