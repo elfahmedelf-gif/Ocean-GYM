@@ -454,7 +454,7 @@ export function VideoSection() {
                     updateBuffered();
                     scheduleHide();
                   }}
-                  className="group/seek relative mx-1 h-5 min-w-0 flex-1 cursor-pointer items-center"
+                  className="group/seek relative mx-1 flex h-5 min-w-0 flex-1 cursor-pointer items-center"
                 >
                   {/* Track */}
                   <span className="block h-1.5 w-full rounded-full bg-white/20 transition-all duration-200 group-hover/seek:h-2.5" />
