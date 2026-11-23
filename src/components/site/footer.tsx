@@ -19,6 +19,9 @@ export function SiteFooter() {
       {/* Shoreline from the plain contact section above — replaces a flat border */}
       <WaveDivider variant={2} className="text-background" />
 
+      {/* Living aurora across the whole footer */}
+      <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
+
       <div className="relative mx-auto max-w-7xl px-4 pb-12 pt-20 md:px-6 md:pb-16 md:pt-24">
         {/* Ambient glow behind the brand column */}
         <div
@@ -166,9 +169,10 @@ export function SiteFooter() {
               "inline-flex items-center gap-1.5 transition-colors hover:text-primary"
             )}
           >
+            {/* Gold diamond — tiny luxury marker */}
             <span
               aria-hidden="true"
-              className="size-1.5 rounded-full bg-primary/60"
+              className="size-1.5 rotate-45 rounded-[1px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_6px_rgba(226,189,98,0.5)]"
             />
             لوحة التحكم
           </Link>

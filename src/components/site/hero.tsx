@@ -157,6 +157,9 @@ export function Hero() {
         className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,13,31,0.7)_100%)]"
       />
 
+      {/* Cinematic film grain over the imagery — subtle, static, filmic */}
+      <div aria-hidden="true" className="grain absolute inset-0 z-[1]" />
+
       {/* Floating glow orbs */}
       <div
         aria-hidden="true"
@@ -186,6 +189,16 @@ export function Hero() {
             </span>
             <Waves className="size-4" aria-hidden="true" />
             أقوى جيم في القاهرة
+            {/* Twinkling champagne sparkles — the luxury signature */}
+            <Sparkles
+              aria-hidden="true"
+              className="animate-sparkle size-3.5 text-[#e7c069] drop-shadow-[0_0_6px_rgba(226,189,98,0.6)]"
+            />
+            <Sparkles
+              aria-hidden="true"
+              style={{ animationDelay: "1.3s" }}
+              className="animate-sparkle size-2.5 text-[#f3ddab]/80"
+            />
           </motion.span>
 
           <motion.h1

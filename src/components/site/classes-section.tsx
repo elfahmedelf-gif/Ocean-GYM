@@ -112,6 +112,8 @@ export function ClassesSection({ classes }: { classes: GymClassView[] }) {
       <WaveDivider variant={2} className="text-background" />
       {/* Stage light washing the top of the deep band */}
       <div aria-hidden="true" className="beam-top pointer-events-none absolute inset-x-0 top-0 h-44" />
+      {/* Living aurora — drifting glows keep the band alive */}
+      <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="الكلاسات"

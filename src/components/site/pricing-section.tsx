@@ -37,7 +37,13 @@ function PricingCard({ plan }: { plan: PlanView }) {
         />
       ) : null}
       {plan.popular ? (
-        <span className="gold-badge absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-black">
+        <div
+          aria-hidden="true"
+          className="absolute -inset-3 -z-10 rounded-[32px] bg-gradient-to-b from-[#e2bd62]/20 via-primary/10 to-transparent blur-2xl"
+        />
+      ) : null}
+      {plan.popular ? (
+        <span className="gold-badge gold-shimmer absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-black">
           <Flame className="size-3.5" aria-hidden="true" />
           الأكثر طلبًا
         </span>

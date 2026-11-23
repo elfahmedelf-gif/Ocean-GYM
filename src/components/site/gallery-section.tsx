@@ -39,6 +39,8 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
     >
       {/* Shoreline from the plain pricing section above */}
       <WaveDivider variant={3} className="text-background" />
+      {/* Living aurora — drifting glows keep the band alive */}
+      <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="المعرض"
@@ -78,10 +80,15 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                {/* Always-visible index chip — subtle editorial numbering */}
+                {/* Always-visible index chip — gold for the featured tile, cyan for the rest */}
                 <span
                   aria-hidden="true"
-                  className="absolute start-3 top-3 z-10 rounded-full border border-primary/25 bg-background/70 px-2.5 py-0.5 text-[11px] font-black tabular-nums text-primary/90 backdrop-blur-md"
+                  className={cn(
+                    "absolute start-3 top-3 z-10 rounded-full border px-2.5 py-0.5 text-[11px] font-black tabular-nums backdrop-blur-md",
+                    i === 0
+                      ? "border-[#e7c069]/40 bg-[#e2bd62]/10 text-[#e7c069]"
+                      : "border-primary/25 bg-background/70 text-primary/90"
+                  )}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>

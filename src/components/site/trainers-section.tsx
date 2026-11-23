@@ -93,6 +93,8 @@ export function TrainersSection({ trainers }: { trainers: TrainerView[] }) {
     >
       {/* Shoreline from the plain schedule section above */}
       <WaveDivider variant={1} className="text-background" />
+      {/* Living aurora — drifting glows keep the band alive */}
+      <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           kicker="المدربون"

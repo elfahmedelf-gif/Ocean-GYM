@@ -111,6 +111,9 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
       {/* Shoreline from the plain testimonials section above */}
       <WaveDivider variant={2} className="text-background" />
 
+      {/* Living aurora behind the whole deep band */}
+      <div aria-hidden="true" className="aurora pointer-events-none absolute inset-0" />
+
       {/* Decorative glow */}
       <div
         aria-hidden="true"

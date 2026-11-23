@@ -70,10 +70,10 @@ export function SectionHeading({
         {title}
       </h2>
       {/* Luxury accent bar — symmetric cyan hairline with a champagne-gold
-          diamond at its heart: the shared signature of every section header */}
+          diamond at its heart + a spark of light that keeps traveling along it */}
       <span
         aria-hidden="true"
-        className="relative h-[3px] w-32 rounded-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+        className="shimmer-line relative h-[3px] w-32 rounded-full bg-gradient-to-r from-transparent via-primary/60 to-transparent"
       >
         <span className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-[2px] bg-gradient-to-br from-[#f3ddab] to-[#c9962e] shadow-[0_0_14px_rgba(226,189,98,0.65)]" />
         <span className="absolute left-1/2 top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/25 blur-[3px]" />
