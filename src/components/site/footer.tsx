@@ -13,8 +13,10 @@ const LINK_FOCUS =
   "rounded-sm focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none";
 
 export function SiteFooter() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const year = new Date().getFullYear();
+  // Address follows the active language — Arabic script in AR, Latin in EN.
+  const address = lang === "ar" ? SITE.address : SITE.addressEn;
 
   return (
     <footer className="bg-deep relative">
@@ -126,7 +128,7 @@ export function SiteFooter() {
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                {SITE.address}
+                {address}
               </li>
             </ul>
           </div>

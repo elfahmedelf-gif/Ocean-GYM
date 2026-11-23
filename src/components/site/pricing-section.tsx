@@ -13,7 +13,7 @@ import { useJoinStore } from "./store";
 import type { PlanView } from "./types";
 
 function PricingCard({ plan }: { plan: PlanView }) {
-  const { t, lang } = useLang();
+  const { t, lang, tx } = useLang();
   const setPlanId = useJoinStore((s) => s.setPlanId);
 
   // Duration suffix — Arabic uses the localized helper, English composes its own units.
@@ -63,7 +63,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
         </span>
       ) : null}
 
-      <h3 className="text-xl font-black">{plan.name}</h3>
+      <h3 className="text-xl font-black">{tx(plan.name)}</h3>
 
       <div className="mt-4 flex items-baseline gap-2">
         <span
@@ -101,7 +101,7 @@ function PricingCard({ plan }: { plan: PlanView }) {
               >
                 <Check className="size-3" aria-hidden="true" />
               </span>
-              <span className="leading-relaxed text-muted-foreground">{feature}</span>
+              <span className="leading-relaxed text-muted-foreground">{tx(feature)}</span>
             </li>
           ))}
       </ul>

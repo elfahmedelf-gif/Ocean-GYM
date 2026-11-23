@@ -17,10 +17,12 @@ function WhatsAppIcon({ className }: { className?: string }) {
  * service sites). Opens a chat with a pre-filled inquiry message.
  */
 export function WhatsAppFloat() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  // Pre-filled chat message follows the active language.
+  const href = lang === "ar" ? SITE.whatsappHref : SITE.whatsappHrefEn;
   return (
     <a
-      href={SITE.whatsappHref}
+      href={href}
       target="_blank"
       rel="noreferrer"
       aria-label={t.floats.whatsapp}

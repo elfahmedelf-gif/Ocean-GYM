@@ -12,7 +12,7 @@ import { WaveDivider } from "./wave-divider";
 import type { TestimonialView } from "./types";
 
 function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
-  const { t } = useLang();
+  const { t, tx } = useLang();
   const rating = Math.min(5, Math.max(1, testimonial.rating));
 
   return (
@@ -55,7 +55,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
       </div>
 
       <blockquote className="flex-1 text-sm leading-relaxed text-muted-foreground">
-        {testimonial.content}
+        {tx(testimonial.content)}
       </blockquote>
 
       <figcaption className="flex items-center gap-3 border-t border-border/60 pt-4">
@@ -67,7 +67,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
           {testimonial.image ? (
             <Image
               src={testimonial.image}
-              alt={t.testimonials.imageAlt(testimonial.name)}
+              alt={t.testimonials.imageAlt(tx(testimonial.name))}
               width={40}
               height={40}
               className="size-10 shrink-0 rounded-full border border-background object-cover"
@@ -75,14 +75,14 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
           ) : (
             <Avatar className="size-10 border border-background">
               <AvatarFallback className="bg-primary/15 font-extrabold text-primary">
-                {testimonial.name.trim().charAt(0)}
+                {tx(testimonial.name).trim().charAt(0)}
               </AvatarFallback>
             </Avatar>
           )}
         </span>
         <div className="min-w-0">
-          <div className="truncate text-sm font-extrabold">{testimonial.name}</div>
-          <div className="truncate text-xs text-muted-foreground">{testimonial.role}</div>
+          <div className="truncate text-sm font-extrabold">{tx(testimonial.name)}</div>
+          <div className="truncate text-xs text-muted-foreground">{tx(testimonial.role)}</div>
         </div>
         {/* Verified-member gold check — quiet trust marker */}
         <BadgeCheck

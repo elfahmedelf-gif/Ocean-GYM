@@ -18,7 +18,7 @@ import { WaveDivider } from "./wave-divider";
 import type { GalleryView } from "./types";
 
 export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
-  const { t } = useLang();
+  const { t, tx } = useLang();
   /** Index of the image open in the lightbox (null = closed). */
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const selected = openIndex !== null ? gallery[openIndex] : null;
@@ -68,7 +68,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               <button
                 type="button"
                 onClick={() => setOpenIndex(i)}
-                aria-label={`${t.gallery.view}${item.title}`}
+                aria-label={`${t.gallery.view}${tx(item.title)}`}
                 className={cn(
                   "group relative block w-full overflow-hidden rounded-2xl border border-primary/15 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_22px_54px_-16px_rgba(56,199,232,0.4)] focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                   // First image becomes a wide featured banner (spans 2 columns from sm up)
@@ -79,7 +79,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               >
                 <Image
                   src={item.image}
-                  alt={item.title}
+                  alt={tx(item.title)}
                   fill
                   sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -99,7 +99,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                 {/* Title tag stays pinned on the featured tile (desktop) */}
                 {i === 0 ? (
                   <span className="absolute inset-x-0 bottom-0 hidden p-3 text-start text-sm font-bold lg:block">
-                    <span className="glass rounded-lg px-2.5 py-1">{item.title}</span>
+                    <span className="glass rounded-lg px-2.5 py-1">{tx(item.title)}</span>
                   </span>
                 ) : null}
                 <span
@@ -116,7 +116,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   </span>
                 </span>
                 <span className="absolute inset-x-0 bottom-0 translate-y-2 p-3 text-start text-sm font-bold opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  <span className="glass rounded-lg px-2.5 py-1">{item.title}</span>
+                  <span className="glass rounded-lg px-2.5 py-1">{tx(item.title)}</span>
                 </span>
               </button>
             </FadeUp>
@@ -144,7 +144,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                 <Image
                   key={selected.id}
                   src={selected.image}
-                  alt={selected.title}
+                  alt={tx(selected.title)}
                   fill
                   sizes="(max-width: 768px) 100vw, 768px"
                   className="object-cover"
@@ -177,7 +177,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               ) : null}
 
               <DialogHeader className="items-center text-center">
-                <DialogTitle className="text-lg font-extrabold">{selected.title}</DialogTitle>
+                <DialogTitle className="text-lg font-extrabold">{tx(selected.title)}</DialogTitle>
                 <DialogDescription className="sr-only">
                   {t.gallery.hint}
                 </DialogDescription>
@@ -190,7 +190,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
               </DialogHeader>
 
               <span className="sr-only" aria-live="polite">
-                {t.gallery.liveRegion(openIndex + 1, gallery.length, selected.title)}
+                {t.gallery.liveRegion(openIndex + 1, gallery.length, tx(selected.title))}
               </span>
             </>
           ) : null}

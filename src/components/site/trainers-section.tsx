@@ -21,7 +21,7 @@ function instagramHandle(raw: string | null | undefined): string | null {
 }
 
 function TrainerCard({ trainer }: { trainer: TrainerView }) {
-  const { t } = useLang();
+  const { t, tx } = useLang();
   const handle = instagramHandle(trainer.instagram);
 
   return (
@@ -38,7 +38,7 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
         {trainer.image ? (
           <Image
             src={trainer.image}
-            alt={t.trainers.trainerAlt(trainer.name)}
+            alt={t.trainers.trainerAlt(tx(trainer.name))}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:saturate-125"
@@ -64,10 +64,10 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
             aria-hidden="true"
             className="mb-3 block h-[2px] w-10 origin-right scale-x-100 rounded-full bg-gradient-to-l from-[#e7c069] to-[#c9962e]/30 shadow-[0_0_10px_rgba(226,189,98,0.4)] transition-transform duration-500 group-hover:scale-x-[2.2]"
           />
-          <h3 className="text-xl font-black transition-colors duration-300 group-hover:text-foreground">{trainer.name}</h3>
-          <p className="mt-1 text-sm font-bold text-primary drop-shadow-[0_0_10px_rgba(56,199,232,0.25)]">{trainer.role}</p>
+          <h3 className="text-xl font-black transition-colors duration-300 group-hover:text-foreground">{tx(trainer.name)}</h3>
+          <p className="mt-1 text-sm font-bold text-primary drop-shadow-[0_0_10px_rgba(56,199,232,0.25)]">{tx(trainer.role)}</p>
           {trainer.specialty ? (
-            <p className="mt-1.5 max-w-[85%] text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
+            <p className="mt-1.5 max-w-[85%] text-xs leading-relaxed text-muted-foreground">{tx(trainer.specialty)}</p>
           ) : null}
           {handle ? (
             <a

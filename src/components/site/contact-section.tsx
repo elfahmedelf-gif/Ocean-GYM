@@ -10,15 +10,20 @@ import { spotlightProps } from "./spotlight";
 import { WaveDivider } from "./wave-divider";
 
 /** Google Maps embed (no API key needed) centered on the club location. */
-const MAP_EMBED_SRC =
-  "https://maps.google.com/maps?q=" +
-  encodeURIComponent(SITE.address) +
-  "&z=13&hl=ar&output=embed";
+function mapEmbedSrc(address: string, lang: "ar" | "en") {
+  return (
+    "https://maps.google.com/maps?q=" +
+    encodeURIComponent(address) +
+    `&z=14&hl=${lang}&output=embed`
+  );
+}
 const MAP_DIRECTIONS_HREF =
   "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(SITE.address);
 
 export function ContactSection() {
   const { t, lang } = useLang();
+  // Address follows the active language — Arabic script in AR, Latin in EN.
+  const address = lang === "ar" ? SITE.address : SITE.addressEn;
 
   return (
     <section
@@ -32,7 +37,7 @@ export function ContactSection() {
         <SectionHeading
           kicker={t.contact.kicker}
           headingId="contact-title"
-          ghostNumber="08"
+          ghostNumber="09"
           title={
             <>
               {t.contact.titlePre}
@@ -73,7 +78,7 @@ export function ContactSection() {
               </span>
               <div>
                 <div className="text-xs text-muted-foreground">{t.contact.address}</div>
-                <div className="mt-1 font-bold">{SITE.address}</div>
+                <div className="mt-1 font-bold">{address}</div>
               </div>
             </div>
 
@@ -122,7 +127,7 @@ export function ContactSection() {
             />
             <div className="relative h-72 w-full md:h-96">
               <iframe
-                src={MAP_EMBED_SRC}
+                src={mapEmbedSrc(address, lang)}
                 title={t.contact.mapTitle}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -133,7 +138,7 @@ export function ContactSection() {
             <div className="flex flex-col items-start justify-between gap-3 border-t border-border/60 p-4 sm:flex-row sm:items-center">
               <div className="flex items-center gap-2 text-sm">
                 <MapPin className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                <span className="font-bold">{SITE.address}</span>
+                <span className="font-bold">{address}</span>
               </div>
               <a
                 href={MAP_DIRECTIONS_HREF}

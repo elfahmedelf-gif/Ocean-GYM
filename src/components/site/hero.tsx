@@ -35,19 +35,11 @@ const STACK_ITEM: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
+/** Slide imagery — alt texts live in the dictionary so EN mode stays English. */
 const SLIDES = [
-  {
-    src: "/images/hero-bg.jpg",
-    alt: "صالة Ocean GYM الرئيسية بأحدث الأجهزة الأمريكية",
-  },
-  {
-    src: "/images/hero-boxing.jpg",
-    alt: "كلاس البوكسينج بإشراف مدربين محترفين",
-  },
-  {
-    src: "/images/hero-weights.jpg",
-    alt: "منطقة الأوزان الحرة بالمعدات المتطورة",
-  },
+  { src: "/images/hero-bg.jpg" },
+  { src: "/images/hero-boxing.jpg" },
+  { src: "/images/hero-weights.jpg" },
 ] as const;
 
 const STATS = [
@@ -58,7 +50,7 @@ const STATS = [
 ] as const;
 
 export function Hero() {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   // Stat labels come from the dictionary, matched to STATS by index (members, trainers, sessions, years).
   const statLabels = [t.hero.stats.members, t.hero.stats.trainers, t.hero.stats.sessions, t.hero.stats.years];
   const [index, setIndex] = useState(0);
@@ -139,7 +131,7 @@ export function Hero() {
             >
               <Image
                 src={slide.src}
-                alt={slide.alt}
+                alt={t.hero.slideAlts[i] ?? ""}
                 fill
                 priority={i === 0}
                 loading={i === 0 ? undefined : "lazy"}
@@ -370,7 +362,7 @@ export function Hero() {
         </button>
 
         <span className="sr-only" aria-live="polite">
-          {t.hero.slideOf} {index + 1} {lang === "ar" ? "من" : "of"} {SLIDES.length}: {SLIDES[index].alt}
+          {t.hero.slideOf} {index + 1} {t.hero.of} {SLIDES.length}: {t.hero.slideAlts[index]}
         </span>
       </div>
 

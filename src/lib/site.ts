@@ -14,11 +14,15 @@ export const SITE = {
   whatsappHref:
     "https://wa.me/201001234567?text=" +
     encodeURIComponent("أهلاً Ocean GYM، عايز أستفسر عن الباقات والحصص"),
+  whatsappHrefEn:
+    "https://wa.me/201001234567?text=" +
+    encodeURIComponent("Hello Ocean GYM, I would like to ask about your plans and classes"),
 
   email: "info@oceangym.com",
   emailHref: "mailto:info@oceangym.com",
 
-  address: "التجمع الخامس، القاهرة الجديدة",
+  address: "المقطم حي الدبلومسيين",
+  addressEn: "Mokattam, Diplomats District",
 
   socials: [
     { label: "فيسبوك", href: "https://facebook.com" },

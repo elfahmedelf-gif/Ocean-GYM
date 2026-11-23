@@ -596,49 +596,6 @@
     paint-order: stroke;
     user-select: none;
   }
-
-  /* ─── Trust marquee — premium infinite ticker (hero → about connector) ─── */
-  /* Edge fade so items dissolve gracefully at both sides instead of hard-clipping */
-  .marquee-mask {
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%
-    );
-  }
-  /* The moving track: two identical copies + translateX(-50%) = seamless loop.
-     Hover pauses the drift so visitors can actually read an item. */
-  .marquee-track {
-    animation: marquee-x var(--marquee-duration, 34s) linear infinite;
-    will-change: transform;
-  }
-  .marquee:hover .marquee-track {
-    animation-play-state: paused;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .marquee-track {
-      animation: none;
-    }
-  }
-}
-
-/* Drift leftward one full copy-width — duplicated content makes it loop invisibly */
-@keyframes marquee-x {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
 }
 
 @keyframes aurora-drift {
@@ -767,7 +724,6 @@
   .animate-float,
   .animate-slider-progress,
   .animate-ping,
-  .animate-marquee,
   .animate-glow-pulse,
   .animate-spin-slower,
   .animate-sparkle,

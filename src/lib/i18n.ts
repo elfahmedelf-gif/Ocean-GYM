@@ -1,6 +1,6 @@
 /**
  * Ocean GYM — Site-wide bilingual dictionary (العربية / English).
- * UI chrome only — database content (class/trainer/plan names) stays as stored.
+ * UI chrome + a DB-content translation layer (see DB_EN at the bottom).
  */
 
 export type Lang = "ar" | "en";
@@ -24,6 +24,14 @@ const ar = {
     mainNav: "التنقل الرئيسي",
     mobileNav: "قائمة التنقل",
     langLabel: "اللغة",
+    homeAria: "Ocean GYM — الرئيسية",
+    logoAlt: "شعار Ocean GYM",
+  },
+  meta: {
+    title: "Ocean GYM | أوشن جيم — بحر من القوة",
+  },
+  a11y: {
+    skip: "تجاوز إلى المحتوى",
   },
   hero: {
     badge: "أقوى جيم في القاهرة",
@@ -46,18 +54,11 @@ const ar = {
     pause: "إيقاف تقليب الصور",
     play: "تشغيل تقليب الصور",
     slideOf: "الشريحة",
-  },
-  marquee: {
-    label: "لماذا Ocean GYM — أبرز المزايا",
-    items: [
-      "أحدث الأجهزة الأمريكية",
-      "مدربون معتمدون دوليًا",
-      "خطط تغذية مخصصة",
-      "+30 حصة أسبوعية",
-      "ساونا وجاكوزي",
-      "مساحة 1500 م² على 3 أدوار",
-      "بيئة تدريب آمنة",
-      "خبرة منذ 2017",
+    of: "من",
+    slideAlts: [
+      "صالة Ocean GYM الرئيسية بأحدث الأجهزة الأمريكية",
+      "كلاس البوكسينج بإشراف مدربين محترفين",
+      "منطقة الأوزان الحرة بالمعدات المتطورة",
     ],
   },
   about: {
@@ -186,6 +187,22 @@ const ar = {
     next: "الصورة التالية",
     hint: "صورة من معرض Ocean GYM — استخدم الأسهم للتنقل بين الصور",
   },
+  video: {
+    kicker: "فيديو Ocean GYM",
+    titlePre: "عيش ",
+    titleGradient: "الأجواء",
+    titlePost: " بنفسك",
+    subtitle:
+      "جولة سينمائية داخل Ocean GYM — من أرضية الأوزان إلى الكارديو والكلاسات، شاهد الأجواء التي تنتظرك قبل أن تزرنا.",
+    play: "تشغيل الفيديو التعريفي",
+    pause: "إيقاف الفيديو",
+    mute: "كتم الصوت",
+    unmute: "تشغيل الصوت",
+    fullscreen: "ملء الشاشة",
+    exitFullscreen: "الخروج من ملء الشاشة",
+    ctaHint: "شاهد الجولة الآن",
+    durationChip: "جولة سينمائية",
+  },
   testimonials: {
     kicker: "آراء العملاء",
     titlePre: "قصص ",
@@ -247,7 +264,7 @@ const ar = {
     titleGradient: "هنا",
     titlePost: " من أجلك",
     subtitle:
-      "لديك سؤال عن الباقات أو الحصص؟ زرنا في التجمع الخامس أو تواصل معنا مباشرة — فريقنا جاهز لمساعدتك.",
+      "لديك سؤال عن الباقات أو الحصص؟ زرنا في المقطم — حي الدبلومسيين أو تواصل معنا مباشرة — فريقنا جاهز لمساعدتك.",
     phone: "الهاتف",
     address: "العنوان",
     hours: "مواعيد العمل",
@@ -255,11 +272,11 @@ const ar = {
     satThu: "السبت — الخميس:",
     fri: "الجمعة:",
     directions: "احصل على الاتجاهات",
-    mapTitle: "موقع Ocean GYM على الخريطة — التجمع الخامس، القاهرة الجديدة",
+    mapTitle: "موقع Ocean GYM على الخريطة — المقطم، حي الدبلومسيين",
   },
   footer: {
     logoAlt: "شعار Ocean GYM",
-    desc: "أقوى جيم في القاهرة الجديدة — أحدث الأجهزة الأمريكية، مدربون معتمدون دوليًا، وأجواء تدفعك كل يوم لتكون نسخة أقوى من نفسك.",
+    desc: "أقوى جيم في المقطم — حي الدبلومسيين: أحدث الأجهزة الأمريكية، مدربون معتمدون دوليًا، وأجواء تدفعك كل يوم لتكون نسخة أقوى من نفسك.",
     quickLinks: "روابط سريعة",
     contactUs: "تواصل معنا",
     certified: "مدربون معتمدون دوليًا — تجربة تمرين آمنة وممتعة",
@@ -298,6 +315,14 @@ const en: Dict = {
     mainNav: "Main navigation",
     mobileNav: "Navigation menu",
     langLabel: "Language",
+    homeAria: "Ocean GYM — Home",
+    logoAlt: "Ocean GYM logo",
+  },
+  meta: {
+    title: "Ocean GYM — A Sea of Strength",
+  },
+  a11y: {
+    skip: "Skip to content",
   },
   hero: {
     badge: "The Strongest Gym in Cairo",
@@ -320,18 +345,11 @@ const en: Dict = {
     pause: "Pause slideshow",
     play: "Play slideshow",
     slideOf: "Slide",
-  },
-  marquee: {
-    label: "Why Ocean GYM — Highlights",
-    items: [
-      "Latest American Equipment",
-      "Internationally Certified Coaches",
-      "Custom Nutrition Plans",
-      "30+ Weekly Classes",
-      "Sauna & Jacuzzi",
-      "1,500 m² Across 3 Floors",
-      "A Safe Training Environment",
-      "Expertise Since 2017",
+    of: "of",
+    slideAlts: [
+      "Ocean GYM main hall with the latest American equipment",
+      "Boxing class supervised by professional coaches",
+      "Free weights zone with advanced machines",
     ],
   },
   about: {
@@ -453,6 +471,22 @@ const en: Dict = {
     next: "Next image",
     hint: "Image from the Ocean GYM gallery — use the arrows to navigate between images",
   },
+  video: {
+    kicker: "Ocean GYM Video",
+    titlePre: "Feel The ",
+    titleGradient: "Atmosphere",
+    titlePost: " Yourself",
+    subtitle:
+      "A cinematic tour inside Ocean GYM — from the weights floor to cardio and classes, see the atmosphere waiting for you before you visit.",
+    play: "Play the promo video",
+    pause: "Pause video",
+    mute: "Mute",
+    unmute: "Unmute",
+    fullscreen: "Fullscreen",
+    exitFullscreen: "Exit fullscreen",
+    ctaHint: "Watch the tour now",
+    durationChip: "Cinematic tour",
+  },
   testimonials: {
     kicker: "Reviews",
     titlePre: "Member ",
@@ -514,7 +548,7 @@ const en: Dict = {
     titleGradient: "Here",
     titlePost: " for You",
     subtitle:
-      "A question about plans or classes? Visit us in New Cairo or reach out directly — our team is ready to help.",
+      "A question about plans or classes? Visit us in Mokattam — Diplomats District or reach out directly — our team is ready to help.",
     phone: "Phone",
     address: "Address",
     hours: "Working Hours",
@@ -522,11 +556,11 @@ const en: Dict = {
     satThu: "Saturday — Thursday:",
     fri: "Friday:",
     directions: "Get Directions",
-    mapTitle: "Ocean GYM location on the map — New Cairo",
+    mapTitle: "Ocean GYM location on the map — Mokattam, Diplomats District",
   },
   footer: {
     logoAlt: "Ocean GYM logo",
-    desc: "The strongest gym in New Cairo — the latest American equipment, internationally certified coaches, and an atmosphere that pushes you every day to become a stronger version of yourself.",
+    desc: "The strongest gym in Mokattam — Diplomats District: the latest American equipment, internationally certified coaches, and an atmosphere that pushes you every day to become a stronger version of yourself.",
     quickLinks: "Quick Links",
     contactUs: "Contact Us",
     certified: "Internationally certified coaches — a safe and fun training experience",
@@ -545,3 +579,119 @@ const en: Dict = {
 };
 
 export const translations: Record<Lang, Dict> = { ar, en };
+
+/**
+ * Database-content translation layer — maps every stored Arabic string
+ * (class names/descriptions/schedules, trainer names/roles/bios, plan names/
+ * features, testimonials, gallery titles) to its English counterpart.
+ * Unknown strings gracefully fall back to the original stored text, so
+ * admin-managed content still renders in English mode (just untranslated).
+ */
+const DB_EN: Record<string, string> = {
+  // ── Classes — names ──
+  "بوكسينج": "Boxing",
+  "كروسفت": "CrossFit",
+  "كمال أجسام": "Bodybuilding",
+  "سبيننج": "Spinning",
+  "يوجا": "Yoga",
+  "تمارين وظيفية": "Functional Training",
+
+  // ── Classes — descriptions ──
+  "كلاس بوكسينج احترافي بتقنيات الملاكمه الحديثة، يبني قوة التحمل وسرعة رد الفعل ويحرق أكبر عدد سعرات في أقصر وقت.":
+    "A professional boxing class using modern boxing techniques — builds endurance and reaction speed while burning the most calories in the shortest time.",
+  "تمارين عالية الكثافة تجمع بين القوة والتحمل، WOD يومي متغير يشتغل على كل عضلات الجسم في جو حماسي جماعي.":
+    "High-intensity workouts that combine strength and endurance — a daily changing WOD that works every muscle of the body in an electric group atmosphere.",
+  "أحدث أجهزة Hammer Strength وLife Fitness مع متابعة بوتير متخصص لبناء عضلي متناسق وبرامج تضخيم وتجفيف مدروسة.":
+    "The latest Hammer Strength and Life Fitness machines with a dedicated personal coach for balanced muscle building and proven bulking and cutting programs.",
+  "ركوب دراجات جماعي بإضاءة وصوتيات محفزة، حرق يصل إلى 700 سعرة في الحصة مع مدرب يشجعك تكتمل الرحلة.":
+    "Group indoor cycling with motivating lights and sound — burn up to 700 calories per session with a coach who pushes you until the ride is done.",
+  "جلسات يوجا هادئة لتحسين المرونة والتنفس وخفض التوتر، مناسبة لكل المستويات من المبتدئ للمتقدم.":
+    "Calm yoga sessions to improve flexibility, breathing and stress relief — suitable for every level, from beginner to advanced.",
+  "Functional Training بتحسين حركتك اليومية، تمارين كيتلبل وروبات وبوكس جامب لتقوية الجسم كوحدة واحدة.":
+    "Functional training that improves your daily movement — kettlebell, rope and box-jump exercises that strengthen the body as one unit.",
+
+  // ── Classes — schedule strings ──
+  "السبت والاثنين والأربعاء — 7:00 مساً": "Sat, Mon & Wed — 7:00 PM",
+  "يومياً — 8:00 صباحاً و 7:00 مساً": "Daily — 8:00 AM & 7:00 PM",
+  "متاح طوال ساعات العمل": "Available throughout working hours",
+  "الأحد والثلاثاء والخميس — 6:00 مساً": "Sun, Tue & Thu — 6:00 PM",
+  "السبت والأربعاء — 10:00 صباحاً": "Sat & Wed — 10:00 AM",
+  "الأحد والثلاثاء — 9:00 صباحاً": "Sun & Tue — 9:00 AM",
+
+  // ── Trainers ──
+  "كريم الشناوي": "Karim El Shenawy",
+  "المدير الرياضي وبوتير معتمد": "Athletic Director & Certified Coach",
+  "خبرة 12 سنة في بناء العضلات وتكوين الجسم، مدرب معتمد من NASM وISSA، متخصص في تحويل الأجسام وبرامج التضخيم العضلي.":
+    "12 years of experience in muscle building and body recomposition, NASM & ISSA certified coach, specialized in body transformation and muscle-growth programs.",
+  "بناء العضلات وتكوين الجسم": "Muscle Building & Body Recomposition",
+  "سارة محمود": "Sara Mahmoud",
+  "مدربة كلاسات جروب ولياقة": "Group Classes & Fitness Coach",
+  "مدربة يوجا ولياقة معتمدة دولياً، شغوفة بمساعدة المتدربات على الوصول لأفضل نسخة من نفسهم عبر كلاسات ممتعة وفعالة.":
+    "Internationally certified yoga and fitness coach, passionate about helping trainees reach the best version of themselves through fun, effective classes.",
+  "يوجا وتمارين الحرق": "Yoga & Fat-Burning Workouts",
+  "أحمد فتحي": "Ahmed Fathy",
+  "مدرب بوكسينج وفنون قتالية": "Boxing & Martial Arts Coach",
+  "بطل جمهورية سابق في الملاكمه، مدرب بوكسينج وMMA بخبرة 8 سنوات في تدريب المحترفين والمبتدئين.":
+    "Former national boxing champion, boxing and MMA coach with 8 years of experience training professionals and beginners.",
+  "بوكسينج وكارديو عالي": "Boxing & High-Intensity Cardio",
+
+  // ── Plans — names ──
+  "الباقة الشهرية": "Monthly Plan",
+  "الباقة الفضية": "Silver Plan",
+  "الباقة الذهبية": "Gold Plan",
+
+  // ── Plans — features ──
+  "دخول غير محدود للجيم": "Unlimited gym access",
+  "خزانة تغيير ملابس": "Locker room access",
+  "برنامج تدريب أساسي": "Basic training program",
+  "متابعة أول تقييم مع مدرب": "First assessment follow-up with a coach",
+  "كل مزايا الباقة الشهرية": "All Monthly Plan benefits",
+  "كلاسات جروب غير محدودة": "Unlimited group classes",
+  "خطة تدريب شخصية": "Personal training plan",
+  "تقييم لياقة شهري": "Monthly fitness assessment",
+  "خصم 15% على المكملات": "15% off supplements",
+  "كل مزايا الباقة الفضية": "All Silver Plan benefits",
+  "بوتير شخصي مخصص": "Dedicated personal coach",
+  "خطة تغذية من متخصص": "Nutrition plan from a specialist",
+  "دخول بوابة الأعضاء والمتابعة": "Member portal access & progress tracking",
+  "ساونا وجاكوزي": "Sauna & jacuzzi",
+  "ضيف مجاني أسبوعياً": "Free guest pass every week",
+
+  // ── Testimonials ──
+  "محمد السيد": "Mohamed El Sayed",
+  "عضو منذ سنتين": "Member for 2 years",
+  "أفضل جيم جربته في حياتي. الأجهزة بجرمني والمدربين بيتابعوا معايا خطوة بخطوة. جسمي اتغير 180 درجة في سنة، والمكان نظيف والجو رائع.":
+    "The best gym I have ever tried. The machines are brand new and the coaches follow up with me step by step. My body changed 180 degrees in a year, the place is spotless and the atmosphere is great.",
+  "نهى عبد الله": "Noha Abdallah",
+  "عضوة كلاسات جروب": "Group Classes Member",
+  "كلاسات السارة في اليوجا والسبيننج حياتي اتغيرت بجد. الجو حماسي والبنات متعاونين، وأول مرة ألتزم بروتين رياضي لمدة سنة كاملة.":
+    "Sara's yoga and spinning classes genuinely changed my life. The energy is amazing and the girls are supportive — for the first time I stuck to a fitness routine for a full year.",
+  "أحمد طارق": "Ahmed Tarek",
+  "خسر 9 كيلو في 5 شهور": "Lost 9 kg in 5 months",
+  "جربت نوادي كتير وفشلت، لكن مع خطة التغذية والمتابعة على بوابة الأعضاء هنا، خسرت 9 كيلو وأخيراً فهمت إزاي أطبعم صح. الشكر للفريق كله.":
+    "I tried many clubs and failed, but with the nutrition plan and the follow-up on the member portal here, I lost 9 kg and finally understood how to eat right. Thanks to the whole team.",
+  "م. عمرو دياب": "Eng. Amr Diab",
+  "عضو الباقة الذهبية": "Gold Plan Member",
+  "الساونا والجاكوزي بعد التدريب تجربة تانية خالص. الأسعار ممتازة مقارنة بالمستوى، والقفل الإلكتروني والنظافة بيرفعوا التجربة لأعلى مستوى.":
+    "The sauna and jacuzzi after training are a completely different experience. The prices are excellent for this level, and the electronic lockers and cleanliness take the experience to the highest standard.",
+
+  // ── Gallery ──
+  "صالة الكمال أجسام الرئيسية": "Main Bodybuilding Floor",
+  "كلاس البوكسينج": "Boxing Class",
+  "منطقة الكروسفت": "CrossFit Zone",
+  "استوديو السبيننج": "Spinning Studio",
+  "منطقة التمارين الوظيفية": "Functional Training Zone",
+  "استوديو اليوجا": "Yoga Studio",
+  "أجواء النادي العامة": "General Club Atmosphere",
+};
+
+/**
+ * Translates a database-backed string to English when the site is in
+ * English mode; returns the original string in Arabic mode. Renderers
+ * call this through `tx()` from `useLang()` for any stored content.
+ */
+export function translateDb(text: string | null | undefined, lang: Lang): string {
+  if (!text) return "";
+  if (lang !== "en") return text;
+  return DB_EN[text] ?? text;
+}

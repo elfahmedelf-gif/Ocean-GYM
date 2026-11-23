@@ -4,16 +4,17 @@ import { Hero } from "@/components/site/hero";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { BackToTop } from "@/components/site/back-to-top";
 import { WhatsAppFloat } from "@/components/site/whatsapp-float";
+import { SkipLink } from "@/components/site/skip-link";
 import { AboutSection } from "@/components/site/about-section";
 import { ClassesSection } from "@/components/site/classes-section";
 import { ScheduleSection } from "@/components/site/schedule-section";
 import { TrainersSection } from "@/components/site/trainers-section";
 import { PricingSection } from "@/components/site/pricing-section";
 import { GallerySection } from "@/components/site/gallery-section";
+import { VideoSection } from "@/components/site/video-section";
 import { TestimonialsSection } from "@/components/site/testimonials-section";
 import { JoinSection } from "@/components/site/join-section";
 import { ContactSection } from "@/components/site/contact-section";
-import { TrustMarquee } from "@/components/site/trust-marquee";
 import { SiteFooter } from "@/components/site/footer";
 import type {
   GalleryView,
@@ -150,23 +151,18 @@ export default async function HomePage() {
       </div>
 
       {/* Skip-to-content — first focusable element, hidden until keyboard focus */}
-      <a
-        href="#main"
-        className="pointer-events-none fixed top-2 start-2 z-[60] rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground opacity-0 transition-opacity focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
-      >
-        تجاوز إلى المحتوى
-      </a>
+      <SkipLink />
       <ScrollProgress />
       <Navbar />
       <main id="main" className="flex-1">
         <Hero />
-        <TrustMarquee />
         <AboutSection />
         <ClassesSection classes={classes} />
         <ScheduleSection slots={slots} initialDay={currentGymDay()} />
         <TrainersSection trainers={trainers} />
         <PricingSection plans={plans} />
         <GallerySection gallery={gallery} />
+        <VideoSection />
         <TestimonialsSection testimonials={testimonials} />
         <JoinSection plans={plans} />
         <ContactSection />

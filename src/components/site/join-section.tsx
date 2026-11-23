@@ -33,7 +33,7 @@ interface FieldErrors {
 
 export function JoinSection({ plans }: { plans: PlanView[] }) {
   const { toast } = useToast();
-  const { t } = useLang();
+  const { t, tx } = useLang();
   const planId = useJoinStore((s) => s.planId);
   const setPlanId = useJoinStore((s) => s.setPlanId);
 
@@ -270,7 +270,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                       <SelectContent>
                         {plans.map((plan) => (
                           <SelectItem key={plan.id} value={plan.id}>
-                            {t.join.form.planItem(plan.name, formatPriceDigits(plan.price))}
+                            {t.join.form.planItem(tx(plan.name), formatPriceDigits(plan.price))}
                           </SelectItem>
                         ))}
                       </SelectContent>

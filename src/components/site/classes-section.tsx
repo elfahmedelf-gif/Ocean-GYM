@@ -11,7 +11,7 @@ import { WaveDivider } from "./wave-divider";
 import type { GymClassView } from "./types";
 
 function ClassCard({ gymClass }: { gymClass: GymClassView }) {
-  const { t } = useLang();
+  const { t, tx } = useLang();
   const levelStyle = levelBadgeClass(gymClass.level);
 
   return (
@@ -28,7 +28,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
         {gymClass.image ? (
           <Image
             src={gymClass.image}
-            alt={t.classes.classAlt(gymClass.name)}
+            alt={t.classes.classAlt(tx(gymClass.name))}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:saturate-125"
@@ -59,7 +59,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
             on hover, and on keyboard focus of anything inside the card. */}
         <a
           href="#join"
-          aria-label={t.classes.bookAria(gymClass.name)}
+          aria-label={t.classes.bookAria(tx(gymClass.name))}
           className="absolute inset-x-3 bottom-3 flex min-h-11 translate-y-2 items-center justify-center gap-2 rounded-xl border border-primary/40 bg-background/80 py-2.5 text-sm font-bold text-primary opacity-80 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:shadow-[0_10px_30px_-8px_rgba(56,199,232,0.55)] focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100"
         >
           {t.classes.book}
@@ -68,15 +68,15 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-xl font-black transition-colors duration-300 group-hover:text-primary">{gymClass.name}</h3>
+        <h3 className="text-xl font-black transition-colors duration-300 group-hover:text-primary">{tx(gymClass.name)}</h3>
         <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
-          {gymClass.description}
+          {tx(gymClass.description)}
         </p>
 
         <div className="mt-auto grid grid-cols-2 gap-x-2 gap-y-2.5 border-t border-border/60 pt-4 text-xs text-muted-foreground">
           <span className="col-span-2 flex items-center gap-1.5">
             <Calendar className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-            {gymClass.schedule}
+            {tx(gymClass.schedule)}
           </span>
           <span className="chip max-w-fit">
             <Timer className="size-3.5 shrink-0" aria-hidden="true" />
@@ -93,7 +93,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
           {gymClass.trainerName ? (
             <span className="col-span-2 flex items-center gap-1.5">
               <User className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-              {t.classes.trainerPrefix}{gymClass.trainerName}
+              {t.classes.trainerPrefix}{tx(gymClass.trainerName)}
             </span>
           ) : null}
         </div>

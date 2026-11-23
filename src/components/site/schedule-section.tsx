@@ -15,7 +15,7 @@ import { WaveDivider } from "./wave-divider";
 import type { ScheduleSlotView } from "./types";
 
 function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
-  const { t } = useLang();
+  const { t, tx } = useLang();
 
   const [hStr = "0", mStr = "00"] = slot.time.split(":");
   const h = parseInt(hStr, 10);
@@ -62,7 +62,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
         />
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-black transition-colors duration-300 group-hover/slot:text-primary md:text-lg">{slot.gymClass.name}</h3>
+            <h3 className="text-sm font-black transition-colors duration-300 group-hover/slot:text-primary md:text-lg">{tx(slot.gymClass.name)}</h3>
             <span
               className={cn(
                 "rounded-full border px-2.5 py-0.5 text-[11px] font-bold md:text-xs",
@@ -76,7 +76,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
             {slot.trainer ? (
               <span className="flex items-center gap-1.5">
                 <User className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-                {slot.trainer.name}
+                {tx(slot.trainer.name)}
               </span>
             ) : null}
             <span className="flex items-center gap-1.5">
@@ -88,7 +88,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
         {slot.gymClass.image ? (
           <Image
             src={slot.gymClass.image}
-            alt={t.schedule.trainerAlt(slot.gymClass.name)}
+            alt={t.schedule.trainerAlt(tx(slot.gymClass.name))}
             width={64}
             height={48}
             className="h-12 w-16 shrink-0 rounded-lg border border-primary/20 object-cover shadow-[0_6px_18px_-6px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover/slot:scale-105 group-hover/slot:border-primary/50"

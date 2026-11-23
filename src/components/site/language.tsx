@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { motion } from "framer-motion";
 import { Languages } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { translations, type Dict, type Lang } from "@/lib/i18n";
+import { translations, translateDb, type Dict, type Lang } from "@/lib/i18n";
 
 const STORAGE_KEY = "ocean-lang";
 
@@ -12,6 +12,8 @@ interface LangContextValue {
   lang: Lang;
   dir: "rtl" | "ltr";
   t: Dict;
+  /** Translates a database-backed string to English in EN mode (falls back to the stored text). */
+  tx: (text: string | null | undefined) => string;
   setLang: (lang: Lang) => void;
   toggle: () => void;
 }
@@ -20,6 +22,7 @@ const LangContext = createContext<LangContextValue>({
   lang: "ar",
   dir: "rtl",
   t: translations.ar,
+  tx: (text) => text ?? "",
   setLang: () => {},
   toggle: () => {},
 });
@@ -44,6 +47,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const dir = lang === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = lang;
     document.documentElement.dir = dir;
+    // Keep the browser tab title bilingual in sync with the active language.
+    document.title = translations[lang].meta.title;
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
@@ -72,6 +77,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       lang,
       dir: lang === "ar" ? "rtl" : "ltr",
       t: translations[lang],
+      tx: (text) => translateDb(text, lang),
       setLang,
       toggle,
     }),
@@ -104,7 +110,8 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       <Languages className="pointer-events-none absolute -start-1 -top-1 size-3.5 rounded-full bg-background/90 p-0.5 text-primary shadow-sm" aria-hidden="true" />
       {(
         [
-          { value: "ar" as Lang, label: "عربي" },
+          // Latin-script label in English mode — the Arabic word never shows in EN.
+          { value: "ar" as Lang, label: lang === "ar" ? "عربي" : "AR" },
           { value: "en" as Lang, label: "EN" },
         ]
       ).map((option) => {

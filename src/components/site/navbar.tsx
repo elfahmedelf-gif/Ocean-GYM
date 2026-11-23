@@ -109,11 +109,11 @@ export function Navbar() {
         <a
           href="#home"
           className={cn("group flex items-center gap-3 rounded-lg", NAV_FOCUS)}
-          aria-label="Ocean GYM — الرئيسية"
+          aria-label={t.nav.homeAria}
         >
           <Image
             src="/images/logo.png"
-            alt="شعار Ocean GYM"
+            alt={t.nav.logoAlt}
             width={48}
             height={48}
             priority
