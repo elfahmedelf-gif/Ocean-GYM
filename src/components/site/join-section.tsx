@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CircleCheckBig, LoaderCircle, Phone, Send } from "lucide-react";
+import { CircleCheckBig, LoaderCircle, Lock, Phone, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -182,7 +182,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
               <div
                 ref={successRef}
                 tabIndex={-1}
-                className="glass ocean-ring flex flex-col items-center gap-4 rounded-2xl p-10 text-center focus-visible:outline-none"
+                className="glass ocean-ring flex flex-col items-center gap-4 rounded-3xl p-10 text-center focus-visible:outline-none"
                 aria-live="polite"
               >
                 <span className="glow-cyan flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-primary/10 text-primary ring-1 ring-inset ring-primary/40">
@@ -197,7 +197,7 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="gradient-border space-y-4 rounded-2xl p-6 md:p-8" aria-labelledby="join-title">
+              <form onSubmit={handleSubmit} noValidate className="gradient-border space-y-4 rounded-3xl p-6 md:p-8" aria-labelledby="join-title">
                 <div className="space-y-2">
                   <Label htmlFor="join-name">الاسم الكامل</Label>
                   <Input
@@ -311,6 +311,12 @@ export function JoinSection({ plans }: { plans: PlanView[] }) {
                     </>
                   )}
                 </Button>
+
+                {/* Quiet trust microcopy under the submit — closes the loop */}
+                <p className="flex items-center justify-center gap-2 pt-1 text-center text-xs text-muted-foreground">
+                  <Lock className="size-3.5 shrink-0 text-primary/80" aria-hidden="true" />
+                  بياناتك محفوظة بسرية تام ولا تُشارك مع أي جهة خارجية
+                </p>
               </form>
             )}
           </FadeUp>

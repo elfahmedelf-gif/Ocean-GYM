@@ -103,7 +103,7 @@ export function AboutSection() {
               {/* Since-2017 badge — the luxury gold anchor of the section */}
               <div className="glass ocean-ring absolute bottom-6 start-6 z-20 flex items-center gap-2.5 rounded-2xl px-5 py-3">
                 <Waves className="size-5 text-[#e7c069]" aria-hidden="true" />
-                <span className="gold-gradient text-lg font-black">منذ 2017</span>
+                <span className="text-gradient-gold-animated text-lg font-black">منذ 2017</span>
               </div>
             </div>
           </FadeUp>
@@ -128,7 +128,7 @@ export function AboutSection() {
                 {FEATURES.map((feature, i) => (
                   <div
                     key={feature.title}
-                    className="card-sheen card-spotlight group relative flex items-start gap-3.5 overflow-hidden rounded-2xl border bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 md:p-5"
+                    className="card-sheen card-spotlight lux-card group relative flex items-start gap-3.5 overflow-hidden rounded-2xl border border-primary/15 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_20px_50px_-18px_rgba(56,199,232,0.3)] md:p-5"
                     {...spotlightProps}
                   >
                     {/* Editorial index — tiny, top-end corner */}

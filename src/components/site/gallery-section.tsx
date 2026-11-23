@@ -66,7 +66,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                 onClick={() => setOpenIndex(i)}
                 aria-label={`عرض صورة: ${item.title}`}
                 className={cn(
-                  "group relative block w-full overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/15 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
+                  "group relative block w-full overflow-hidden rounded-2xl border border-primary/15 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_22px_54px_-16px_rgba(56,199,232,0.4)] focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                   // First image becomes a wide featured banner (spans 2 columns from sm up)
                   i === 0
                     ? "aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-full"
@@ -123,7 +123,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
       {/* Lightbox with prev/next navigation (RTL: next = visual left) */}
       <Dialog open={openIndex !== null} onOpenChange={(open) => !open && setOpenIndex(null)}>
         <DialogContent
-          className="max-w-3xl gap-3 border-primary/30 bg-card p-3 md:p-4"
+          className="max-w-3xl gap-3 rounded-3xl border-primary/25 bg-background/90 p-3 backdrop-blur-xl md:p-4"
           onKeyDown={(event) => {
             if (event.key === "ArrowLeft") {
               event.preventDefault();
@@ -136,7 +136,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
         >
           {selected && openIndex !== null ? (
             <>
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl">
+              <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-[0_30px_80px_-24px_rgba(0,0,0,0.7)]">
                 <Image
                   key={selected.id}
                   src={selected.image}
@@ -144,6 +144,10 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                   fill
                   sizes="(max-width: 768px) 100vw, 768px"
                   className="object-cover"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 rounded-2xl shadow-[inset_0_0_0_1px_rgba(56,199,232,0.25)]"
                 />
               </div>
 
@@ -175,7 +179,7 @@ export function GallerySection({ gallery }: { gallery: GalleryView[] }) {
                 </DialogDescription>
                 <span
                   dir="ltr"
-                  className="text-xs font-semibold tabular-nums text-muted-foreground"
+                  className="rounded-full border border-primary/25 bg-primary/10 px-3 py-0.5 text-xs font-semibold tabular-nums text-primary"
                 >
                   {openIndex + 1} / {gallery.length}
                 </span>

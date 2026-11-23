@@ -15,7 +15,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
 
   return (
     <article
-      className="card-spotlight group relative flex flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_24px_60px_-16px_rgba(56,199,232,0.35)]"
+      className="card-spotlight group relative flex flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_30px_72px_-20px_rgba(56,199,232,0.45)]"
       {...spotlightProps}
     >
       {/* Gradient edge that sweeps in across the top on hover */}
@@ -59,7 +59,7 @@ function ClassCard({ gymClass }: { gymClass: GymClassView }) {
         <a
           href="#join"
           aria-label={`احجز مكانك في كلاس ${gymClass.name}`}
-          className="absolute inset-x-3 bottom-3 flex min-h-11 translate-y-2 items-center justify-center gap-2 rounded-xl border border-primary/40 bg-background/80 py-2.5 text-sm font-bold text-primary opacity-80 backdrop-blur-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100"
+          className="absolute inset-x-3 bottom-3 flex min-h-11 translate-y-2 items-center justify-center gap-2 rounded-xl border border-primary/40 bg-background/80 py-2.5 text-sm font-bold text-primary opacity-80 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:shadow-[0_10px_30px_-8px_rgba(56,199,232,0.55)] focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100"
         >
           احجز مكانك
           <ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" />

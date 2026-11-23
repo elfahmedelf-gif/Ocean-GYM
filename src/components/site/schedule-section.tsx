@@ -48,7 +48,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
 
       {/* Vertical connector line with dot */}
       <div aria-hidden="true" className="relative flex w-3 shrink-0 flex-col items-center">
-        <span className="glow-cyan mt-4 size-3 shrink-0 rounded-full bg-primary" />
+        <span className="glow-cyan mt-4 flex size-3 shrink-0 animate-pulse rounded-full bg-primary [animation-duration:2.6s]" />
         <span className="w-px flex-1 bg-gradient-to-b from-primary/50 via-primary/20 to-transparent" />
       </div>
 
@@ -93,7 +93,7 @@ function SlotRow({ slot, index }: { slot: ScheduleSlotView; index: number }) {
             alt={`كلاس ${slot.gymClass.name}`}
             width={64}
             height={48}
-            className="h-12 w-16 shrink-0 rounded-lg border border-primary/20 object-cover transition-all duration-300 group-hover/slot:scale-105 group-hover/slot:border-primary/50"
+            className="h-12 w-16 shrink-0 rounded-lg border border-primary/20 object-cover shadow-[0_6px_18px_-6px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover/slot:scale-105 group-hover/slot:border-primary/50"
           />
         ) : null}
       </div>
@@ -214,7 +214,7 @@ export function ScheduleSection({
           aria-labelledby={`schedule-day-tab-${selectedDay}`}
         >
           {daySlots.length === 0 ? (
-            <FadeUp className="mx-auto max-w-lg rounded-2xl border-2 border-dashed border-primary/25 p-10 text-center">
+            <FadeUp className="glass mx-auto max-w-lg rounded-3xl border-2 border-dashed border-primary/25 p-10 text-center">
               <Dumbbell className="mx-auto mb-3 size-10 text-primary/50" aria-hidden="true" />
               <p className="font-bold">لا توجد حصص مجدولة في هذا اليوم</p>
               <p className="mt-1 text-sm text-muted-foreground">استمتع براحة أو تمرن فردّي</p>

@@ -3,7 +3,21 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { KeyRound, Menu } from "lucide-react";
+import {
+  CalendarDays,
+  Dumbbell,
+  Home,
+  Images,
+  Info,
+  KeyRound,
+  Mail,
+  Menu,
+  Sparkles,
+  Star,
+  Users,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +32,19 @@ import { NAV_LINKS } from "./nav-links";
 
 /** Sections observed for scroll-spy (desktop nav only). */
 const SPY_IDS = NAV_LINKS.map((l) => l.href.slice(1));
+
+/** Icon per section — gives the mobile drawer a professional, scannable look. */
+const NAV_ICONS: Record<string, LucideIcon> = {
+  home: Home,
+  about: Info,
+  classes: Dumbbell,
+  schedule: CalendarDays,
+  trainers: Users,
+  pricing: Wallet,
+  gallery: Images,
+  testimonials: Star,
+  contact: Mail,
+};
 
 /** Shared keyboard-focus styling for nav links. */
 const NAV_FOCUS =
@@ -57,11 +84,14 @@ export function Navbar() {
   }, []);
 
   return (
-    <header
+    <motion.header
+      initial={{ y: -18, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
         scrolled
-          ? "border-b border-primary/15 bg-background/80 shadow-2xl shadow-black/50 backdrop-blur-xl"
+          ? "border-b border-primary/15 bg-background/85 shadow-2xl shadow-black/50 backdrop-blur-xl"
           : "bg-transparent"
       )}
     >
@@ -116,7 +146,7 @@ export function Navbar() {
                   <motion.span
                     layoutId="nav-active-pill"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    className="absolute inset-0 rounded-lg border border-primary/25 bg-primary/10"
+                    className="absolute inset-0 rounded-lg border border-primary/25 bg-primary/10 shadow-[0_0_16px_rgba(56,199,232,0.18)]"
                     aria-hidden="true"
                   />
                 ) : null}
@@ -178,19 +208,32 @@ export function Navbar() {
                 className="flex flex-1 flex-col gap-1 overflow-y-auto p-4"
               >
                 {NAV_LINKS.map((link) => {
-                  const isActive = activeId === link.href.slice(1);
+                  const id = link.href.slice(1);
+                  const isActive = activeId === id;
+                  const Icon = NAV_ICONS[id] ?? Sparkles;
                   return (
                     <a
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "rounded-xl px-4 py-3 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
+                        "group flex min-h-11 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none",
                         isActive
-                          ? "border border-primary/25 bg-primary/10 text-primary"
+                          ? "border border-primary/25 bg-primary/10 text-primary shadow-[inset_0_0_18px_rgba(56,199,232,0.08)]"
                           : "text-foreground/90 hover:bg-primary/10 hover:text-primary"
                       )}
                     >
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "flex size-8 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
+                          isActive
+                            ? "bg-gradient-to-br from-primary to-[#1e6fe8] text-primary-foreground shadow-md shadow-primary/30"
+                            : "bg-primary/10 text-primary/80 group-hover:bg-primary/20 group-hover:text-primary"
+                        )}
+                      >
+                        <Icon className="size-4" />
+                      </span>
                       {link.label}
                     </a>
                   );
@@ -217,6 +260,6 @@ export function Navbar() {
           </Sheet>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

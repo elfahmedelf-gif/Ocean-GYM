@@ -41,7 +41,7 @@ export function ContactSection() {
         <FadeUp className="flex flex-col gap-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div
-              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              className="card-sheen card-spotlight lux-card group flex items-start gap-3.5 rounded-3xl border border-primary/15 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_48px_-16px_rgba(56,199,232,0.3)]"
               {...spotlightProps}
             >
               <span className="icon-tile size-11">
@@ -60,7 +60,7 @@ export function ContactSection() {
             </div>
 
             <div
-              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              className="card-sheen card-spotlight lux-card group flex items-start gap-3.5 rounded-3xl border border-primary/15 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_48px_-16px_rgba(56,199,232,0.3)]"
               {...spotlightProps}
             >
               <span className="icon-tile size-11">
@@ -73,7 +73,7 @@ export function ContactSection() {
             </div>
 
             <div
-              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              className="card-sheen card-spotlight lux-card group flex items-start gap-3.5 rounded-3xl border border-primary/15 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_48px_-16px_rgba(56,199,232,0.3)]"
               {...spotlightProps}
             >
               <span className="icon-tile size-11">
@@ -90,7 +90,7 @@ export function ContactSection() {
             </div>
 
             <div
-              className="card-spotlight group flex items-start gap-3.5 rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+              className="card-sheen card-spotlight lux-card group flex items-start gap-3.5 rounded-3xl border border-primary/15 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_48px_-16px_rgba(56,199,232,0.3)]"
               {...spotlightProps}
             >
               <span className="icon-tile size-11">

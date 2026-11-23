@@ -282,12 +282,20 @@
     transform: rotate(-6deg) scale(1.08);
   }
 
-  /* Gradient primary surface for the strongest CTAs */
+  /* Gradient primary surface for the strongest CTAs —
+     now with a glossy inner top highlight like polished glass. */
   .btn-gradient {
     background-image: linear-gradient(115deg, #45cdea 0%, #38c7e8 35%, #1e6fe8 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 -1px 0 rgba(4, 16, 31, 0.2);
   }
   .btn-gradient:hover {
     background-image: linear-gradient(115deg, #5cd4ee 0%, #45cdea 35%, #2a7cf0 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(4, 16, 31, 0.2),
+      0 12px 32px -10px rgba(56, 199, 232, 0.55);
   }
 
   /* Soft cyan halo behind important text */
@@ -295,7 +303,7 @@
     text-shadow: 0 0 22px rgba(56, 199, 232, 0.35);
   }
 
-  /* Small pill chip (badges, meta labels) */
+  /* Small pill chip (badges, meta labels) — lifts with a soft cyan halo on hover */
   .chip {
     display: inline-flex;
     align-items: center;
@@ -308,6 +316,15 @@
     line-height: 1.25rem;
     font-weight: 700;
     color: var(--primary);
+    transition:
+      border-color 0.3s ease,
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .chip:hover {
+    border-color: rgba(56, 199, 232, 0.55);
+    background: rgba(56, 199, 232, 0.14);
+    box-shadow: 0 0 14px rgba(56, 199, 232, 0.18);
   }
 
   /* ===== Premium design system v4 — full-site refactor ===== */
@@ -519,6 +536,66 @@
   .animate-sparkle {
     animation: sparkle-twinkle 2.8s ease-in-out infinite;
   }
+
+  /* ===== Premium design system v8 — wow pass (مبهرة ×2) ===== */
+
+  /* The unified luxury card surface — deeper ocean fill, cyan hairline,
+     inner top light and a long soft shadow. Replaces flat bg-card on
+     feature/testimonial/contact cards for a consistent premium feel. */
+  .lux-card {
+    background: linear-gradient(165deg, rgba(14, 28, 58, 0.88) 0%, rgba(9, 19, 42, 0.94) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 18px 44px -24px rgba(0, 0, 0, 0.6);
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .group:hover .lux-card,
+  .lux-card:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 26px 60px -24px rgba(0, 0, 0, 0.65),
+      0 0 0 1px rgba(56, 199, 232, 0.12);
+  }
+
+  /* Flowing champagne-gold gradient (منذ 2017 badge, gold anchors) */
+  .text-gradient-gold-animated {
+    background: linear-gradient(
+      100deg,
+      #f8e7bd 0%,
+      #e7c069 25%,
+      #c9962e 50%,
+      #e7c069 75%,
+      #f8e7bd 100%
+    );
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gold-flow 6s ease-in-out infinite;
+  }
+
+  /* Top vignette — deepens the very top of the hero so the fixed glass
+     navbar always stays readable over bright imagery. */
+  .vignette-top {
+    background: linear-gradient(to bottom, rgba(5, 13, 31, 0.85), transparent);
+  }
+
+  /* Giant outlined editorial word (hero watermark) — pure decoration */
+  .hero-ghost-word {
+    font-size: clamp(4.5rem, 16vw, 13rem);
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(56, 199, 232, 0.1);
+    paint-order: stroke;
+    user-select: none;
+  }
 }
 
 @keyframes aurora-drift {
@@ -550,6 +627,16 @@
   50% {
     opacity: 1;
     transform: scale(1.12) rotate(18deg);
+  }
+}
+
+@keyframes gold-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 
@@ -643,6 +730,7 @@
   .animate-sparkle,
   .aurora,
   .text-gradient-ocean-animated,
+  .text-gradient-gold-animated,
   .gradient-border-animated {
     animation: none !important;
   }
@@ -744,3 +832,7 @@
 /* cache-bust v7-dash-1795410000 */
 
 /* cache-bust v7b-1795412000 */
+
+/* cache-bust v8-wow-1795460000 */
+
+/* cache-bust v8b-1795461000 */

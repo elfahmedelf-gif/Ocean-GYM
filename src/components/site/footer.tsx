@@ -55,7 +55,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.name}
-                  className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
+                  className="flex size-11 items-center justify-center rounded-full border border-primary/25 text-muted-foreground transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary/15 hover:text-primary hover:shadow-[0_10px_26px_-8px_rgba(56,199,232,0.5)] focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:outline-none"
                 >
                   <social.icon className="size-4" aria-hidden="true" />
                 </a>

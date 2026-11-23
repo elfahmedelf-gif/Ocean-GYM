@@ -15,7 +15,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
 
   return (
     <figure
-      className="card-sheen card-spotlight group flex h-full flex-col gap-4 rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_48px_-16px_rgba(56,199,232,0.3)]"
+      className="card-sheen card-spotlight lux-card group flex h-full flex-col gap-4 rounded-3xl border border-primary/15 p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_26px_60px_-18px_rgba(56,199,232,0.38)]"
       {...spotlightProps}
     >
       {/* Giant ghost quote watermark behind the content — editorial depth */}
@@ -26,7 +26,7 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
       {/* Gradient edge sweeps across the top on hover */}
       <span
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-2xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+        className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-3xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
       />
       <div className="flex items-center justify-between">
         <div
@@ -40,7 +40,9 @@ function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
               aria-hidden="true"
               className={cn(
                 "size-4",
-                i < rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"
+                i < rating
+                  ? "fill-amber-400 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.45)]"
+                  : "text-muted-foreground/40"
               )}
             />
           ))}

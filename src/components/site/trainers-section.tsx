@@ -24,7 +24,7 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
 
   return (
     <article
-      className="card-sheen card-spotlight group relative overflow-hidden rounded-3xl border bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_24px_64px_-16px_rgba(56,199,232,0.4)]"
+      className="card-sheen card-spotlight group relative overflow-hidden rounded-3xl border border-primary/15 bg-card transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_30px_76px_-18px_rgba(56,199,232,0.5)]"
       {...spotlightProps}
     >
       {/* Gradient edge sweeps across the top on hover */}
@@ -62,8 +62,8 @@ function TrainerCard({ trainer }: { trainer: TrainerView }) {
             aria-hidden="true"
             className="mb-3 block h-[2px] w-10 origin-right scale-x-100 rounded-full bg-gradient-to-l from-[#e7c069] to-[#c9962e]/30 shadow-[0_0_10px_rgba(226,189,98,0.4)] transition-transform duration-500 group-hover:scale-x-[2.2]"
           />
-          <h3 className="text-xl font-black">{trainer.name}</h3>
-          <p className="mt-1 text-sm font-bold text-primary">{trainer.role}</p>
+          <h3 className="text-xl font-black transition-colors duration-300 group-hover:text-foreground">{trainer.name}</h3>
+          <p className="mt-1 text-sm font-bold text-primary drop-shadow-[0_0_10px_rgba(56,199,232,0.25)]">{trainer.role}</p>
           {trainer.specialty ? (
             <p className="mt-1.5 max-w-[85%] text-xs leading-relaxed text-muted-foreground">{trainer.specialty}</p>
           ) : null}

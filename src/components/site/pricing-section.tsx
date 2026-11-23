@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Flame } from "lucide-react";
+import { Check, Flame, RefreshCw, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatPriceDigits, durationLabel } from "@/lib/gym";
@@ -22,10 +22,10 @@ function PricingCard({ plan }: { plan: PlanView }) {
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col rounded-2xl p-6 transition-all duration-300 md:p-8",
+        "group relative flex h-full flex-col rounded-3xl p-6 transition-all duration-300 md:p-8",
         plan.popular
           ? "gradient-border gradient-border-animated glow-cyan-strong z-10 shadow-2xl md:scale-105"
-          : "card-spotlight border bg-card hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+          : "card-spotlight lux-card border border-primary/15 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_24px_56px_-20px_rgba(56,199,232,0.35)]"
       )}
       {...(plan.popular ? {} : spotlightProps)}
     >
@@ -33,13 +33,13 @@ function PricingCard({ plan }: { plan: PlanView }) {
       {!plan.popular ? (
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-2xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
+          className="absolute inset-x-0 top-0 h-[3px] origin-right scale-x-0 rounded-t-3xl bg-gradient-to-l from-primary via-[#1e6fe8] to-[#7dd8f0] transition-transform duration-500 group-hover:scale-x-100"
         />
       ) : null}
       {plan.popular ? (
         <div
           aria-hidden="true"
-          className="absolute -inset-3 -z-10 rounded-[32px] bg-gradient-to-b from-[#e2bd62]/20 via-primary/10 to-transparent blur-2xl"
+          className="absolute -inset-3 -z-10 rounded-[36px] bg-gradient-to-b from-[#e2bd62]/20 via-primary/10 to-transparent blur-2xl"
         />
       ) : null}
       {plan.popular ? (
@@ -153,6 +153,28 @@ export function PricingSection({ plans }: { plans: PlanView[] }) {
             ))}
           </div>
         )}
+
+        {/* Trust strip — quiet reassurance under the pricing stage */}
+        {plans.length > 0 ? (
+          <FadeUp
+            delay={0.15}
+            className="mt-12 flex flex-col items-center justify-center gap-x-8 gap-y-4 sm:flex-row md:mt-14"
+          >
+            {[
+              { icon: ShieldCheck, label: "دفع آمن ومضمون" },
+              { icon: RefreshCw, label: "ترقية الباقة في أي وقت" },
+              { icon: Sparkles, label: "حصة تقييم مجانية" },
+            ].map((item) => (
+              <span
+                key={item.label}
+                className="glass flex items-center gap-2.5 rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              >
+                <item.icon className="size-4 text-primary" aria-hidden="true" />
+                {item.label}
+              </span>
+            ))}
+          </FadeUp>
+        ) : null}
       </div>
     </section>
   );

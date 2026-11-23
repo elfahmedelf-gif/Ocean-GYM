@@ -156,6 +156,21 @@ export function Hero() {
         aria-hidden="true"
         className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,13,31,0.7)_100%)]"
       />
+      {/* Top vignette — keeps the fixed glass navbar readable over bright imagery */}
+      <div
+        aria-hidden="true"
+        className="vignette-top absolute inset-x-0 top-0 z-[2] h-40"
+      />
+
+      {/* Giant outlined editorial watermark — the quiet luxury signature
+          floating behind the headline (pure decoration, hidden from AT) */}
+      <span
+        aria-hidden="true"
+        dir="ltr"
+        className="hero-ghost-word pointer-events-none absolute left-1/2 top-24 z-[2] -translate-x-1/2 md:top-16"
+      >
+        OCEAN GYM
+      </span>
 
       {/* Cinematic film grain over the imagery — subtle, static, filmic */}
       <div aria-hidden="true" className="grain absolute inset-0 z-[1]" />
@@ -211,6 +226,13 @@ export function Hero() {
             </span>{" "}
             يبدأ من هنا
           </motion.h1>
+
+          {/* Champagne hairline under the headline — the editorial divider */}
+          <motion.span
+            variants={STACK_ITEM}
+            aria-hidden="true"
+            className="h-px w-40 bg-gradient-to-l from-transparent via-[#e2bd62]/50 to-transparent"
+          />
 
           <motion.p
             variants={STACK_ITEM}
