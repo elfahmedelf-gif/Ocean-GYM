@@ -17,8 +17,8 @@ import { FadeUp } from "./fade-up";
 import { SectionHeading } from "./section-heading";
 import { WaveDivider } from "./wave-divider";
 
-const VIDEO_SRC = "/videos/gym-promo.mp4";
-const VIDEO_WEBM_SRC = "/videos/gym-promo.webm";
+const VIDEO_SRC = "/videos/gym-promo-v2.mp4";
+const VIDEO_WEBM_SRC = "/videos/gym-promo-v2.webm";
 const POSTER_SRC = "/videos/gym-promo-poster.jpg";
 
 /** Formats raw seconds as M:SS for the player time readout. */
