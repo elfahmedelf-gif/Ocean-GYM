@@ -725,6 +725,7 @@
   .animate-slider-progress,
   .animate-ping,
   .animate-glow-pulse,
+  .poster-drift,
   .animate-spin-slower,
   .animate-sparkle,
   .aurora,
@@ -772,6 +773,19 @@
 }
 .animate-ken-burns {
   animation: ken-burns calc(var(--slide-duration, 6s) * 1.4) ease-out forwards;
+}
+
+/* Video stage — living poster: an ultra-slow cinematic breathe before play */
+.poster-drift {
+  animation: poster-drift 16s ease-in-out infinite alternate;
+}
+@keyframes poster-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
 }
 
 /* ===== Premium design system v7 — dashboards luxury layer (لوحات التحكم) ===== */

@@ -202,6 +202,10 @@ const ar = {
     exitFullscreen: "الخروج من ملء الشاشة",
     ctaHint: "شاهد الجولة الآن",
     durationChip: "جولة سينمائية",
+    loading: "جارٍ تحميل الفيديو...",
+    ambientChip: "تشغيل تلقائي — اضغط للتحكم",
+    stageLabel: "مشغل الفيديو التعريفي",
+    seekLabel: "شريط التقدم",
   },
   testimonials: {
     kicker: "آراء العملاء",
@@ -486,6 +490,10 @@ const en: Dict = {
     exitFullscreen: "Exit fullscreen",
     ctaHint: "Watch the tour now",
     durationChip: "Cinematic tour",
+    loading: "Loading the video...",
+    ambientChip: "Auto-playing — tap for controls",
+    stageLabel: "Promo video player",
+    seekLabel: "Seek bar",
   },
   testimonials: {
     kicker: "Reviews",
